@@ -42,7 +42,7 @@ jobs:
     - name: Sync with Postman (Update Collection)
       env:
         POSTMAN_API_KEY: ${{ secrets.POSTMAN_API_KEY }}
-        POSTMAN_COLLECTION_ID: ${{ secrets.POSTMAN_COLLECTION_ID }}
+        POSTMAN_COLLECTION_ID: ${{ secrets.POSTMAN_COLLECTION_UID }}
       run: |
         curl --location --request PUT "https://api.getpostman.com/collections/${POSTMAN_COLLECTION_ID}" \
           --header "X-Api-Key: $POSTMAN_API_KEY" \
