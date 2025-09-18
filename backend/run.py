@@ -15,6 +15,12 @@ def create_app():
             """Returns a greeting"""
             return {'message': 'Hello, World!'}
 
+    @ns.route('/greet/<string:name>')
+    class GreetUser(Resource):
+        def get(self, name):
+            """Greet a specific user by name"""
+            return {'message': f'Hello, {name}!'}
+
     @app.route("/")
     def home():
         return "HELLO FROM THE HOME PAGE"
