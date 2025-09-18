@@ -32,7 +32,6 @@ jobs:
         nohup python -m flask run --host=127.0.0.1 --port=5000 > ../flask.log 2>&1 &
         sleep 10
 
-
     - name: Show Flask server logs
       run: cat flask.log || true
 
@@ -40,27 +39,29 @@ jobs:
       run: |
         curl http://localhost:5000/swagger.json -o openapi.json
 
-    - name: Read OpenAPI JSON
-      id: read_api
+    - name: Prepare Postman payload
       run: |
-        CONTENT=$(cat openapi.json | jq -c .)
-        echo "api_content=$CONTENT" >> $GITHUB_OUTPUT
+        jq -n \
+          --arg name "Synced Flask API" \
+          --arg id "${{ secrets.POSTMAN_COLLECTION_UID }}" \
+          --argjson item "$(cat openapi.json)" \
+          '{
+            collection: {
+              info: {
+                name: $name,
+                _postman_id: $id,
+                schema: "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+              },
+              item: $item
+            }
+          }' > postman_payload.json
 
     - name: Sync with Postman
       env:
         POSTMAN_API_KEY: ${{ secrets.POSTMAN_API_KEY }}
-        COLLECTION_UID: ${{ secrets.POSTMAN_COLLECTION_UID }} 
+        COLLECTION_UID: ${{ secrets.POSTMAN_COLLECTION_UID }}
       run: |
         curl --location --request PUT "https://api.getpostman.com/collections/${COLLECTION_UID}" \
-        --header "X-Api-Key: $POSTMAN_API_KEY" \
-        --header "Content-Type: application/json" \
-        --data '{
-            "collection": {
-                "info": {
-                    "name": "Synced Flask API",
-                    "_postman_id": "'${COLLECTION_UID}'",
-                    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-                },
-                "item": '"${{ steps.read_api.outputs.api_content }}"'
-            }
-        }'
+          --header "X-Api-Key: $POSTMAN_API_KEY" \
+          --header "Content-Type: application/json" \
+          --data @postman_payload.json
