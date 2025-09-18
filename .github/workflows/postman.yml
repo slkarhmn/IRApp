@@ -29,8 +29,9 @@ jobs:
         FLASK_APP: run.py
         FLASK_ENV: development
       run: |
-        nohup flask run --host=127.0.0.1 --port=5000 > ../flask.log 2>&1 &
+        nohup python -m flask run --host=127.0.0.1 --port=5000 > ../flask.log 2>&1 &
         sleep 10
+
 
     - name: Show Flask server logs
       run: cat flask.log || true
