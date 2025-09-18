@@ -28,8 +28,12 @@ jobs:
         FLASK_APP: run.py 
         FLASK_ENV: development
       run: |
-        flask run --host=0.0.0.0 --port=5000 &
-        sleep 5  # Give the server time to start
+        nohup flask run --host=127.0.0.1 --port=5000 > flask.log 2>&1 &
+        sleep 10  # Wait longer to ensure the server is ready
+
+    - name: Show Flask server logs
+      run: |
+        cat flask.log || true
 
     - name: Fetch OpenAPI spec from /swagger.json
       run: |
