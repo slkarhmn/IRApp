@@ -39,29 +39,11 @@ jobs:
       run: |
         curl http://localhost:5000/swagger.json -o openapi.json
 
-    - name: Prepare Postman payload
+    - name: Sync with Postman (Import OpenAPI spec)
+      env:
+        POSTMAN_API_KEY: ${{ secrets.POSTMAN_API_KEY }}
       run: |
-        jq -n \
-          --arg name "Synced Flask API" \
-          --arg id "${{ secrets.POSTMAN_COLLECTION_UID }}" \
-          --argjson item "$(cat openapi.json)" \
-          '{
-            collection: {
-              info: {
-                name: $name,
-                _postman_id: $id,
-                schema: "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-              },
-              item: $item
-            }
-          }' > postman_payload.json
-
-  - name: Sync with Postman (Import OpenAPI spec)
-    env:
-      POSTMAN_API_KEY: ${{ secrets.POSTMAN_API_KEY }}
-    run: |
-      curl --location --request POST "https://api.getpostman.com/collections/import" \
-        --header "X-Api-Key: $POSTMAN_API_KEY" \
-        --header "Content-Type: application/json" \
-        --data @openapi.json
-
+        curl --location --request POST "https://api.getpostman.com/collections/import" \
+          --header "X-Api-Key: $POSTMAN_API_KEY" \
+          --header "Content-Type: application/json" \
+          --data @openapi.json
