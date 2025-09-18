@@ -18,26 +18,18 @@ jobs:
       with:
         python-version: '3.11'
 
-    - name: Install Poetry
+    - name: Install dependencies from requirements.txt
       run: |
-        curl -sSL https://install.python-poetry.org | python3 -
-      env:
-        POETRY_HOME: $HOME/.poetry
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
 
-    - name: Add Poetry to PATH
-      run: echo "$HOME/.poetry/bin" >> $GITHUB_PATH
-
-    - name: Install dependencies with Poetry
-      run: |
-        poetry install
-
-    - name: Start Flask server using Poetry
+    - name: Start Flask server
       working-directory: backend
       env:
         FLASK_APP: run.py
         FLASK_ENV: development
       run: |
-        nohup poetry run flask run --host=127.0.0.1 --port=5000 > ../flask.log 2>&1 &
+        nohup flask run --host=127.0.0.1 --port=5000 > ../flask.log 2>&1 &
         sleep 10
 
     - name: Show Flask server logs
