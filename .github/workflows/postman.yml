@@ -56,12 +56,12 @@ jobs:
             }
           }' > postman_payload.json
 
-    - name: Sync with Postman
-      env:
-        POSTMAN_API_KEY: ${{ secrets.POSTMAN_API_KEY }}
-        COLLECTION_UID: ${{ secrets.POSTMAN_COLLECTION_UID }}
-      run: |
-        curl --location --request PUT "https://api.getpostman.com/collections/${COLLECTION_UID}" \
-          --header "X-Api-Key: $POSTMAN_API_KEY" \
-          --header "Content-Type: application/json" \
-          --data @postman_payload.json
+  - name: Sync with Postman (Import OpenAPI spec)
+    env:
+      POSTMAN_API_KEY: ${{ secrets.POSTMAN_API_KEY }}
+    run: |
+      curl --location --request POST "https://api.getpostman.com/collections/import" \
+        --header "X-Api-Key: $POSTMAN_API_KEY" \
+        --header "Content-Type: application/json" \
+        --data @openapi.json
+
