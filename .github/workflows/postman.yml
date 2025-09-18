@@ -43,7 +43,7 @@ jobs:
     - name: Read OpenAPI JSON
       id: read_api
       run: |
-        CONTENT=$(cat openapi.json | jq -Rs .)
+        CONTENT=$(cat openapi.json | jq -c .)
         echo "api_content=$CONTENT" >> $GITHUB_OUTPUT
 
     - name: Sync with Postman
