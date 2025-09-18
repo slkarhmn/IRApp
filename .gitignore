@@ -2,6 +2,8 @@ env/
 all-files/
 .venv/
 .env/
+__pycache__/
+*.py[cod]
 
 # Logs
 logs

@@ -1,6 +1,7 @@
 import os
-from datetime import timedelta
-
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.declarative import declarative_base
 
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'dev-secret-key'
@@ -29,3 +30,19 @@ config = {
     'testing': TestingConfig,
     'default': DevelopmentConfig,
 }
+
+sqlite_engine = create_engine('sqlite:///app.db')
+
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=sqlite_engine)
+
+Base = declarative_base()
+
+def init_db():
+    Base.metadata.create_all(bind=sqlite_engine)
+
+def get_db():
+    db = SessionLocal()  
+    try:
+        yield db
+    finally:
+        db.close()
