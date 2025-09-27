@@ -4,6 +4,11 @@ all-files/
 .env/
 __pycache__/
 *.py[cod]
+*.db
+*.pyc
+.flaskenv
+instance/
+.env
 
 # Logs
 logs
