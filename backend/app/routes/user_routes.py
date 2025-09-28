@@ -3,9 +3,9 @@ from app.config import db
 from flask_restx import Namespace, Resource, fields
 from flask import request
 
-api = Namespace('users', description='User operations')
+user_crud = Namespace('users', description='User operations')
 
-user_input_model = api.model('UserInput', {
+user_input_model = user_crud.model('UserInput', {
     'first_name': fields.String(required=True),
     'last_name': fields.String(required=True),
     'email': fields.String(required=True),
@@ -13,7 +13,7 @@ user_input_model = api.model('UserInput', {
     'user_type': fields.String(required=True, enum=[e.value for e in UserType])
 })
 
-user_output_model = api.model('UserOutput', {
+user_output_model = user_crud.model('UserOutput', {
     'id': fields.Integer,
     'first_name': fields.String,
     'last_name': fields.String,
@@ -21,14 +21,13 @@ user_output_model = api.model('UserOutput', {
     'user_type': fields.String
 })
 
-
-@api.route('/')
+@user_crud.route('/')
 class UserList(Resource):
-    @api.marshal_list_with(user_output_model)
+    @user_crud.marshal_list_with(user_output_model)
     def get(self):
         return Users.query.all(), 200
 
-    @api.expect(user_input_model)
+    @user_crud.expect(user_input_model)
     def post(self):
         data = request.json
         new_user = Users(
@@ -42,14 +41,14 @@ class UserList(Resource):
         db.session.commit()
         return {'message': 'User created successfully'}, 201
 
-@api.route('/<int:id>')
+@user_crud.route('/<int:id>')
 class UserDetail(Resource):
-    @api.marshal_with(user_output_model)
+    @user_crud.marshal_with(user_output_model)
     def get(self, id):
         user = Users.query.get_or_404(id)
         return user, 200
 
-    @api.expect(user_input_model)
+    @user_crud.expect(user_input_model)
     def put(self, id):
         data = request.json
         user = Users.query.get_or_404(id)
@@ -66,3 +65,4 @@ class UserDetail(Resource):
         db.session.delete(user)
         db.session.commit()
         return {'message': 'User deleted'}, 204
+    

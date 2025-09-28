@@ -2,7 +2,7 @@ from app.config import db, config as AppConfig
 from flask import Flask
 from flask_migrate import Migrate
 from flask_restx import Api
-from app.routes.user_routes import api as UserAPI
+from app.routes.user_routes import user_crud as UserAPI
 
 def create_app(config_setting):
     app = Flask(__name__)

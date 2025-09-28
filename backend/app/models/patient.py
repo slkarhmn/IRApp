@@ -1,5 +1,7 @@
 from app.config import db
 from sqlalchemy import Column, Integer, String, JSON, Float, DateTime, Text, Boolean
+from sqlalchemy.orm import relationship
+from datetime import datetime
 
 class Patient(db.Model):
     __tablename__ = 'patients'
@@ -36,8 +38,30 @@ class Patient(db.Model):
     inr = Column(Float)
     pt = Column(Float)
     ptt = Column(Float)
-    
-    procedure_history = Column(JSON)
  
     created_date = Column(DateTime)
     updated_date = Column(DateTime)
+    
+    procedures = relationship('PatientProcedures')
+    
+    def update_vitals(self, blood_pressure_systolic, blood_pressure_diastolic, heart_rate, temperature, respiratory_rate, oxygen_saturation):
+        self.blood_pressure_systolic = blood_pressure_systolic
+        self.blood_pressure_diastolic = blood_pressure_diastolic
+        self.heart_rate = heart_rate
+        self.temperature = temperature
+        self.respiratory_rate = respiratory_rate
+        self. oxygen_saturation = oxygen_saturation
+        self.updated_date = datetime.today().strftime('%Y-%m-%d %H:%M:%S')
+        
+    def update_lab_results(self, hemoglobin, hematocrit, platelet_count, white_blood_cell_count, creatinine, bun, glucose, inr, pt, ptt):
+        self.hemoglobin = hemoglobin
+        self.hematocrit = hematocrit
+        self.platelet_count = platelet_count
+        self.white_blood_cell_count = white_blood_cell_count
+        self.creatinine = creatinine
+        self.bun = bun
+        self.glucose = glucose
+        self.inr = inr
+        self.pt = pt
+        self.ptt = ptt
+        self.updated_date = datetime.today().strftime('%Y-%m-%d %H:%M:%S')

@@ -9,6 +9,7 @@ __pycache__/
 .flaskenv
 instance/
 .env
+*.cpython-312.pyc
 
 # Logs
 logs
