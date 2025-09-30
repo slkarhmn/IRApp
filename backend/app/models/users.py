@@ -1,6 +1,7 @@
 from app.config import db
 from sqlalchemy import Column, Boolean, Text, Integer, DateTime, String, Enum as SQLEnum
 from sqlalchemy.orm import relationship
+from flask_login import UserMixin
 from enum import Enum as PyEnum
 from werkzeug.security import generate_password_hash, gen_salt, check_password_hash
 
@@ -8,7 +9,7 @@ class UserType(str, PyEnum):
     PT = 'Patient'
     ST = 'Staff'
     
-class Users(db.Model):
+class Users(db.Model, UserMixin):
     __tablename__ = 'users'
     
     id = Column(Integer, primary_key=True)
@@ -18,7 +19,7 @@ class Users(db.Model):
     password_hash = Column(String(128), nullable=False)
     user_type = Column(SQLEnum(UserType, name="user_type_enum"), nullable=False)
     
-    staff = relationship("Staff", back_populates="user", uselist=False)
+    staff = relationship("Staff", back_populates="users", uselist=False)
     
     def __init__(self, first_name, last_name, email, user_type, password):
         super().__init__()

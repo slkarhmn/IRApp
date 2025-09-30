@@ -8,7 +8,7 @@ class Base(DeclarativeBase):
 db = SQLAlchemy(model_class=Base)
 
 class Config:
-    SECRET_KEY = os.environ.get('SECRET_KEY') or 'dev-secret-key'
+    SECRET_KEY = os.environ.get('SECRET_KEY') or 'dev-secret-key' #TODO: Set a secure key
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     CORS_ORIGINS = os.environ.get('CORS_ORIGINS', 'http://localhost:3000').split(',')
 

@@ -18,7 +18,7 @@ class Staff(db.Model):
     title = Column(SQLEnum(StaffTitle, name="staff_title_enum"), nullable=False)
     specialty = Column(Integer, ForeignKey('specialties.id'))
     
-    user = relationship('Users')
+    users = relationship('Users')
     specialty_rel = relationship("Specialties", back_populates="staff_members")
     
     def __init__(self, user_id, staff_id, first_name, last_name, title, specialty):

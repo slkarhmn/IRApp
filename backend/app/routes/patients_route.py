@@ -1,83 +1,127 @@
-from flask import Blueprint, request, jsonify
+from flask_restx import Namespace, Resource, fields
+from flask import request
+from datetime import datetime
+from app.config import db
 from app.models.patient import Patient
-from app.services.patient_service import PatientService
-from app.utils.validators import validate_patient_data
 
-patients_bp = Blueprint('patients', __name__)
-patient_service = PatientService()
+patient_ns = Namespace('patients', description='Patient records')
 
+patient_model = patient_ns.model('Patient', {
+    'id': fields.Integer(readonly=True),
+    'mrn': fields.String(required=True),
+    'first_name': fields.String(required=True),
+    'last_name': fields.String(required=True),
+    'age': fields.Integer(required=True),
+    'gender': fields.String(required=True),
+    'phone': fields.String(),
+    'insurance': fields.Boolean(),
 
-@patients_bp.route('/patients', methods=['GET'])
-def get_patients():
-    """Get all patients with optional filtering"""
-    try:
-        # Get query parameters
-        search = request.args.get('search', '')
-        gender = request.args.get('gender', '')
-        age_min = request.args.get('age_min', type=int)
-        age_max = request.args.get('age_max', type=int)
-        has_allergies = request.args.get('has_allergies', type=bool)
+    'allergies': fields.String(),
+    'medications': fields.String(),
+    'medical_history': fields.Raw(),
 
-        # Build filters
-        filters = {}
-        if search:
-            filters['search'] = search
-        if gender:
-            filters['gender'] = gender
-        if age_min is not None:
-            filters['age_min'] = age_min
-        if age_max is not None:
-            filters['age_max'] = age_max
-        if has_allergies is not None:
-            filters['has_allergies'] = has_allergies
+    'blood_pressure_systolic': fields.String(),
+    'blood_pressure_diastolic': fields.String(),
+    'heart_rate': fields.Integer(),
+    'temperature': fields.Float(),
+    'respiratory_rate': fields.Integer(),
+    'oxygen_saturation': fields.Float(),
+    'weight_kg': fields.Float(),
+    'height_cm': fields.Float(),
 
-        patients = patient_service.get_patients(filters)
-        return jsonify([patient.to_dict() for patient in patients])
+    'hemoglobin': fields.Float(),
+    'hematocrit': fields.Float(),
+    'platelet_count': fields.Float(),
+    'white_blood_cell_count': fields.Float(),
+    'creatinine': fields.Float(),
+    'bun': fields.Float(),
+    'glucose': fields.Float(),
+    'inr': fields.Float(),
+    'pt': fields.Float(),
+    'ptt': fields.Float(),
 
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
+    'created_date': fields.DateTime(),
+    'updated_date': fields.DateTime(),
+})
 
+def update_patient_from_data(patient, data):
+    for field in data:
+        if hasattr(patient, field):
+            setattr(patient, field, data[field])
+    patient.updated_date = datetime.utcnow()
 
-@patients_bp.route('/patients/<int:patient_id>', methods=['GET'])
-def get_patient(patient_id):
-    """Get specific patient by ID"""
-    try:
-        patient = patient_service.get_patient_by_id(patient_id)
-        if not patient:
-            return jsonify({'error': 'Patient not found'}), 404
-        return jsonify(patient.to_dict())
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
+@patient_ns.route('/')
+class PatientList(Resource):
+    @patient_ns.marshal_list_with(patient_model)
+    def get(self):
+        """List all patients"""
+        return Patient.query.all()
 
+    @patient_ns.expect(patient_model)
+    @patient_ns.marshal_with(patient_model, code=201)
+    def post(self):
+        """Create a new patient"""
+        data = request.json
+        now = datetime.utcnow()
+        patient = Patient(
+            mrn=data['mrn'],
+            first_name=data['first_name'],
+            last_name=data['last_name'],
+            age=data['age'],
+            gender=data['gender'],
+            phone=data.get('phone'),
+            insurance=data.get('insurance'),
+            allergies=data.get('allergies'),
+            medications=data.get('medications'),
+            medical_history=data.get('medical_history'),
+            blood_pressure_systolic=data.get('blood_pressure_systolic'),
+            blood_pressure_diastolic=data.get('blood_pressure_diastolic'),
+            heart_rate=data.get('heart_rate'),
+            temperature=data.get('temperature'),
+            respiratory_rate=data.get('respiratory_rate'),
+            oxygen_saturation=data.get('oxygen_saturation'),
+            weight_kg=data.get('weight_kg'),
+            height_cm=data.get('height_cm'),
+            hemoglobin=data.get('hemoglobin'),
+            hematocrit=data.get('hematocrit'),
+            platelet_count=data.get('platelet_count'),
+            white_blood_cell_count=data.get('white_blood_cell_count'),
+            creatinine=data.get('creatinine'),
+            bun=data.get('bun'),
+            glucose=data.get('glucose'),
+            inr=data.get('inr'),
+            pt=data.get('pt'),
+            ptt=data.get('ptt'),
+            created_date=now,
+            updated_date=now,
+        )
+        db.session.add(patient)
+        db.session.commit()
+        return patient, 201
 
-@patients_bp.route('/patients/search', methods=['GET'])
-def search_patients():
-    """Search patients by name or MRN"""
-    try:
-        query = request.args.get('q', '')
-        if not query:
-            return jsonify({'error': 'Search query required'}), 400
+@patient_ns.route('/<int:id>')
+@patient_ns.response(404, 'Patient not found')
+class PatientResource(Resource):
+    @patient_ns.marshal_with(patient_model)
+    def get(self, id):
+        """Get patient by ID"""
+        return Patient.query.get_or_404(id)
 
-        patients = patient_service.search_patients(query)
-        return jsonify([patient.to_dict() for patient in patients])
+    @patient_ns.expect(patient_model)
+    @patient_ns.marshal_with(patient_model)
+    def put(self, id):
+        """Update a patient"""
+        patient = Patient.query.get_or_404(id)
+        data = request.json
+        update_patient_from_data(patient, data)
+        db.session.commit()
+        return patient
 
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
+    @patient_ns.response(204, 'Patient deleted')
+    def delete(self, id):
+        """Delete a patient"""
+        patient = Patient.query.get_or_404(id)
+        db.session.delete(patient)
+        db.session.commit()
+        return '', 204
 
-
-@patients_bp.route('/patients', methods=['POST'])
-def create_patient():
-    """Create new patient"""
-    try:
-        data = request.get_json()
-
-        # Validate data
-        errors = validate_patient_data(data)
-        if errors:
-            return jsonify({'errors': errors}), 400
-
-        patient = patient_service.create_patient(data)
-        return jsonify(patient.to_dict()), 201
-
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
