@@ -35,6 +35,7 @@
     font-weight: 556;
     line-height: normal;
     margin-left: 6px;
+    margin-bottom: 15px;
 }
 .profile-icon{
     width: 40px;
@@ -43,7 +44,7 @@
     border-radius: 40px;
     background-color: #64748B;
     margin-left: 5px;
-    margin-top: 30px;
+    margin-top: 20px;
 }
 /* icons */
 
