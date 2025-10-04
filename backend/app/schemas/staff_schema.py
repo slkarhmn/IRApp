@@ -1,33 +1,25 @@
-from marshmallow import Schema, fields, post_load
-from app.models.staff import Specialties
-from marshmallow.validate import Length
-from app.models.staff import Staff, StaffTitle
+from marshmallow_sqlalchemy import SQLAlchemyAutoSchema, auto_field
+from marshmallow import fields
+from app.models.staff import Staff, Specialties
+from app.schemas.user_schema import UserSchema
 
-class SpecialtySchema(Schema):
-    id = fields.Int(dump_only=True)
-    name = fields.Str(required=True)
+class SpecialtySchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = Specialties
+        load_instance = True
+        include_relationships = False 
+        
+class StaffSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = Staff
+        load_instance = True
+        include_fk = True
+        include_relationships = True
 
-    @post_load
-    def make_specialty(self, data, **kwargs):
-        return Specialties(**data)
+    title = auto_field()
 
-class StaffSchema(Schema):
-    id = fields.Int(dump_only=True)
-    user_id = fields.Int(required=True)
-    staff_id = fields.Str(required=True, validate=Length(min=1, max=50))
-    first_name = fields.Str(required=True, validate=Length(min=1, max=25))
-    last_name = fields.Str(required=True, validate=Length(min=1, max=25))
-    
-    # Enum field
-    title = fields.Enum(StaffTitle, by_value=True, required=True)
-    
-    # Related specialty (as ID for load, full object for dump)
-    specialty = fields.Int(load_only=True, required=True)
     specialty_rel = fields.Nested(SpecialtySchema, dump_only=True)
 
-    # Optionally add related user if needed
-    # user = fields.Nested(UserSchema, dump_only=True)  # Only if you want to include user details
+    specialty = auto_field(load_only=True)
 
-    @post_load
-    def make_staff(self, data, **kwargs):
-        return Staff(**data)
+    users = fields.Nested(UserSchema, dump_only=True)
