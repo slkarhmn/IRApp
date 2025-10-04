@@ -51,10 +51,23 @@
 .dashboard-icon{
     margin-left: 10px;
 }
-.patient-list-icon{
+.patient-list-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     margin-top: 20px;
-        margin-left: 10px;
+    margin-left: 10px;
 }
+
+.patient-list-icon.active{
+   margin-top: 10px;
+    margin-left: 3px;
+    color: #000; 
+    background-color: #DFECC6; 
+    border-radius: 3px;
+    padding: 8px;
+}
+
 .settings{
     margin-top: 340px;
     margin-left: 10px;

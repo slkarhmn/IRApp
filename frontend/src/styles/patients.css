@@ -1,0 +1,21 @@
+
+
+.title h1{
+    color: #000;
+    
+}
+
+.search-container{
+    margin-top: 10px;
+    
+}
+
+.search{
+    display: flex;
+    padding: 10px 14px;
+    align-items: center;
+    gap: 8px;
+    align-self: stretch;
+    background: var(--Neutral-N0, #FFF);
+    
+}
