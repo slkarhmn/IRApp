@@ -2,8 +2,11 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 
+import { Input } from "antd";
 import "../../styles/patients.css"
-
+import DateRangePicker from "../ui/datepicker";
+import SearchIcon from "../../assets/icons/search"
+import FilterIcon from "../../assets/icons/filter-icon";
 function PatientList(){
     return (
         <>
@@ -17,13 +20,21 @@ function PatientList(){
                 </div>
                 {/* search box */}
                 <div className="search-container">
-                    <div className="search"></div>
-                    <div className="filter"></div>
+                    <div className="search">
+                        <Input 
+                        placeholder="Search"
+                        prefix={<SearchIcon size={12} />}
+                        />
+                        <DateRangePicker />
+                    </div>
+                    <div className="filter">
+                        <FilterIcon  />
+                    </div>
                 </div>
             
             </div>
 
-            <div className="body-div">
+            <div className="patient-body-container">
 
                 {/* id */}
                 <div className="id"></div>

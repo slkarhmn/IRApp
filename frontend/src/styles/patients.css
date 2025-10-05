@@ -1,21 +1,34 @@
 
+.patient-list-page{
+    margin-left: 20px;
+}
 
 .title h1{
     color: #000;
+
     
 }
 
 .search-container{
     margin-top: 10px;
-    
+    display: flex;
 }
 
 .search{
     display: flex;
-    padding: 10px 14px;
     align-items: center;
     gap: 8px;
     align-self: stretch;
     background: var(--Neutral-N0, #FFF);
     
+}
+.filter{
+    margin-top: 8px;
+    margin-left: 20px;
+}
+
+/* body */
+
+.patient-body-container{
+    display: flex;
 }
