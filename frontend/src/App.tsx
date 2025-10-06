@@ -5,8 +5,8 @@ import Sidebar from './components/layout/Sidebar'
 
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import Layout from './components/layout/Layout'
-import PatientList from './components/patients/PatientList'
-
+import PatientSearch from './components/patients/PatientSearch'
+import PatientPage from './pages/Patients'
 
 
 function App() {
@@ -17,7 +17,7 @@ function App() {
       <Route path='/' element={<Layout />}>
       {/* sets the default path to the patient list */}
         <Route index element={<Navigate to="/patients" replace />}></Route>
-        <Route path='patients' element={<PatientList />}></Route>
+        <Route path='patients' element={<PatientPage />}></Route>
       </Route>
     </Routes>
     </BrowserRouter>

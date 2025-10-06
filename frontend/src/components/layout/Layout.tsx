@@ -4,7 +4,7 @@ import '../../styles/sidebar.css'
 import { Outlet } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import "../../styles/layout.css"
-import PatientList from '../patients/PatientList';
+import PatientSearch from '../patients/PatientSearch';
 
 function Layout(){
     return (
