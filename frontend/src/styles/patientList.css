@@ -1,7 +1,62 @@
 .patient-table {
   color: black;
+  margin-top: 40px;
+  /* margin-left: 40px; */
+      border-collapse: collapse;
+
 }
 
 .patient-table * {
   color: black;
+  font-family:'DM sans';
+  
 }
+
+.yes-button{
+    display: flex;
+    padding: 8px 16px;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    border-radius: 4px;
+    border: 1px solid #000;
+    background: #DFECC6;
+    box-shadow: 0 0 0 0 #000;
+}
+
+.no-button{
+    display: flex;
+    padding: 8px 16px;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    border-radius: 4px;
+    border: 1px solid #000;
+    background: #ECD0C6;
+    box-shadow: 0 0 0 0 #000;
+}
+
+/* adding spacing bw columns */
+
+.header-cell,
+.body-cell {
+    padding: 12px 34px; 
+}
+.header-cell{
+    text-align: left;
+}
+.body-row{
+    border-bottom: 1px solid rgba(0, 0, 0, 0.14);
+}
+
+/* style fields */
+.agengender-style,
+.phonenum-style{
+    color: rgba(0, 0, 0, 0.44);
+font-family: "DM Sans";
+font-size: 16px;
+font-style: normal;
+font-weight: 400;
+line-height: 100%; /* 16px */
+}
+

@@ -7,7 +7,9 @@
   flex: 1;
   padding: 20px;
   overflow-y: auto;
-  background-color: #ffffff; /* Default background */
+  background-color: #ffffff; 
+  height: 100vh;
+  margin-left: 74px;
 }
 
 /* Page-specific backgrounds 

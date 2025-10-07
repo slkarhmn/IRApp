@@ -4,7 +4,8 @@
     background-color: aliceblue;
     color: black;
     padding: 12px;
-
+    overflow-y: auto;
+    position: fixed;
     border-radius: 4px;
     border-right: 1px solid rgba(0, 0, 0, 0.11);
     background: var(--Shades-White, #FFF);

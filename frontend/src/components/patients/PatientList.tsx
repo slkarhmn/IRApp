@@ -4,6 +4,7 @@
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable, type ColumnDef } from "@tanstack/react-table";
 import "./patientDataList.json"
 import "../../styles/patientList.css"
+import React from "react";
 // define the fields
 // type PatientDetail = {
 
@@ -60,7 +61,7 @@ const columns: ColumnDef<PatientDetail>[] = [
         cell: ({row}) =>(
             <div>
                 <div className="font-medium">{row.original.fullName}</div>
-                <div className="text-sm text-gray-500">
+                <div className="agengender-style">
                 {row.original.age} yrs, {row.original.gender}
                 </div>
             </div>
@@ -72,8 +73,8 @@ const columns: ColumnDef<PatientDetail>[] = [
         header: 'Contact Information',
         cell: ({ row }) => (
             <div className="text-sm">
-                <div>{row.original.email}</div>
-                <div className="text-gray-500">{row.original.phoneNumber}</div>
+                <div className="email-style">{row.original.email}</div>
+                <div className="phonenum-style">{row.original.phoneNumber}</div>
             </div>
         ),
     },
@@ -90,8 +91,8 @@ const columns: ColumnDef<PatientDetail>[] = [
         <button
             className={`px-4 py-1 rounded ${
             row.original.hasInsurance
-                ? "bg-green-100 text-green-800"
-                : "bg-red-100 text-red-800"
+                ? "yes-button"
+                : "no-button"
             }`}
         >
             {row.original.hasInsurance ? "Yes" : "No"}
@@ -122,40 +123,47 @@ export function PatientTable ({data}: PatientTableProps){
         getCoreRowModel: getCoreRowModel(),
     });
 
-     return (
-        <div className="patient-table rounded-md border">
-        <table className="w-full">
-            <thead>
-            {table.getHeaderGroups().map((headerGroup) => (
-                <tr key={headerGroup.id} className="border-b bg-gray-50">
-                {headerGroup.headers.map((header) => (
-                    <th
-                    key={header.id}
-                    className="px-4 py-3 text-left text-sm font-medium text-gray-700"
-                    >
-                    {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                        )}
-                    </th>
-                ))}
-                </tr>
-            ))}
-            </thead>
-            <tbody>
-            {table.getRowModel().rows.map((row) => (
-                <tr key={row.id} className="border-b hover:bg-gray-50">
-                {row.getVisibleCells().map((cell) => (
-                    <td key={cell.id} className="px-4 py-3 text-sm">
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </td>
-                ))}
-                </tr>
-            ))}
-            </tbody>
-        </table>
+    return (
+        <div className="patient-table-container">
+            <table className="patient-table">
+                {/* TABLE HEAD - Render column headers */}
+                <thead className="table-header">
+                    {table.getHeaderGroups().map(headerGroup => (
+                        <tr key={headerGroup.id} className="header-row">
+                            {headerGroup.headers.map(header => (
+                                <th key={header.id} className="header-cell">
+                                    <div className="header-content">
+                                        {header.isPlaceholder
+                                            ? null
+                                            : flexRender(
+                                                header.column.columnDef.header,
+                                                header.getContext()
+                                            )}
+                                    </div>
+                                </th>
+                            ))}
+                        </tr>
+                    ))}
+                </thead>
+
+                {/* TABLE BODY - Render data rows */}
+                <tbody className="table-body">
+                    {table.getRowModel().rows.map(row => (
+                        <tr key={row.id} className="body-row">
+                            {row.getVisibleCells().map(cell => (
+                                <td key={cell.id} className="body-cell">
+                                    <div className="cell-content">
+                                        {flexRender(
+                                            cell.column.columnDef.cell,
+                                            cell.getContext()
+                                        )}
+                                    </div>
+                                </td>
+                            ))}
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
         </div>
     );
 }
