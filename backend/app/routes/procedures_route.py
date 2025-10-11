@@ -2,7 +2,7 @@ import logging
 from flask_restx import Namespace, Resource, fields
 from flask import request
 from datetime import datetime, timezone
-from app.config import db
+from app.extensions.database import db
 from app.models.procedure import Procedures, PatientProcedures, Status, Urgency
 from app.schemas.procedure_schema import PatientProcedureSchema, ProcedureSchema
 
@@ -33,25 +33,25 @@ class ProcedureList(Resource):
         procedures = Procedures.query.all()
         return procedures_schema.dump(procedures), 200
 
-    def post(self):
-        """Create a new procedure"""
-        json_data = request.get_json()
-        logger.info("Attempting to create a new procedure")
+    #def post(self):
+    #    """Create a new procedure"""
+    #    json_data = request.get_json()
+    #    logger.info("Attempting to create a new procedure")
 
-        if not json_data:
-            logger.warning("No input data provided for procedure creation")
-            return {'message': 'No input data provided'}, 400
+    #   if not json_data:
+    #        logger.warning("No input data provided for procedure creation")
+    #        return {'message': 'No input data provided'}, 400
 
-        try:
-            procedure = procedure_schema.load(json_data)
-        except Exception as e:
-            logger.error("Procedure creation failed: %s", str(e))
-            return {'message': 'Validation failed', 'errors': str(e)}, 422
+    #    try:
+    #        procedure = procedure_schema.load(json_data)
+    #    except Exception as e:
+    #        logger.error("Procedure creation failed: %s", str(e))
+    #        return {'message': 'Validation failed', 'errors': str(e)}, 422
 
-        db.session.add(procedure)
-        db.session.commit()
-        logger.info("Procedure created successfully: %s", procedure.procedure_code)
-        return procedure_schema.dump(procedure), 201
+    #    db.session.add(procedure)
+    #    db.session.commit()
+    #    logger.info("Procedure created successfully: %s", procedure.procedure_code)
+    #    return procedure_schema.dump(procedure), 201
 
 
 @procedure_ns.route('/<int:id>')
@@ -63,38 +63,38 @@ class ProcedureResource(Resource):
         procedure = Procedures.query.get_or_404(id)
         return procedure_schema.dump(procedure), 200
 
-    def put(self, id):
-        """Update a procedure"""
-        logger.info("Updating procedure with ID: %d", id)
-        procedure = Procedures.query.get_or_404(id)
-        json_data = request.get_json()
+    #def put(self, id):
+    #    """Update a procedure"""
+    #    logger.info("Updating procedure with ID: %d", id)
+    #    procedure = Procedures.query.get_or_404(id)
+    #    json_data = request.get_json()
 
-        if not json_data:
-            logger.warning("No input data provided for procedure update: ID %d", id)
-            return {'message': 'No input data provided'}, 400
+    #    if not json_data:
+    #        logger.warning("No input data provided for procedure update: ID %d", id)
+    #        return {'message': 'No input data provided'}, 400
 
-        try:
-            data = procedure_schema.load(json_data, partial=True)
-        except Exception as e:
-            logger.error("Procedure update failed for ID %d: %s", id, str(e))
-            return {'message': 'Validation failed', 'errors': str(e)}, 422
+    #    try:
+    #        data = procedure_schema.load(json_data, partial=True)
+    #    except Exception as e:
+    #        logger.error("Procedure update failed for ID %d: %s", id, str(e))
+    #        return {'message': 'Validation failed', 'errors': str(e)}, 422
 
-        for key, value in data.__dict__.items():
-            if key != '_sa_instance_state':
-                setattr(procedure, key, value)
+    #    for key, value in data.__dict__.items():
+    #        if key != '_sa_instance_state':
+    #            setattr(procedure, key, value)
 
-        db.session.commit()
-        logger.info("Procedure updated successfully: ID %d", id)
-        return procedure_schema.dump(procedure), 200
+    #    db.session.commit()
+    #    logger.info("Procedure updated successfully: ID %d", id)
+    #    return procedure_schema.dump(procedure), 200
 
-    def delete(self, id):
-        """Delete a procedure"""
-        logger.info("Deleting procedure with ID: %d", id)
-        procedure = Procedures.query.get_or_404(id)
-        db.session.delete(procedure)
-        db.session.commit()
-        logger.info("Procedure deleted: ID %d", id)
-        return '', 204
+    #def delete(self, id):
+    #    """Delete a procedure"""
+    #    logger.info("Deleting procedure with ID: %d", id)
+    #    procedure = Procedures.query.get_or_404(id)
+    #    db.session.delete(procedure)
+    #    db.session.commit()
+    #    logger.info("Procedure deleted: ID %d", id)
+    #    return '', 204
 
 
 @patient_procedure_ns.route('/')

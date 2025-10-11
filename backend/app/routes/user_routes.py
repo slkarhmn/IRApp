@@ -4,7 +4,7 @@ from flask_restx import Namespace, Resource, fields
 from flask_login import login_user, logout_user, login_required, current_user
 
 from app.models.users import Users, UserType
-from app.config import db
+from app.extensions.database import db
 from app.schemas.user_schema import UserSchema
 
 logger = logging.getLogger(__name__)

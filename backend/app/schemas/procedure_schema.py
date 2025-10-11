@@ -2,7 +2,7 @@ from app.models.procedure import Procedures, PatientProcedures
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema, auto_field
 from marshmallow import fields
 from app.schemas.checklist_schema import ProcedurePlanningSchema, SignInSchema, SignOutSchema
-from app.config import db
+from app.extensions.database import db
 
 class ProcedureSchema(SQLAlchemyAutoSchema):
     class Meta:

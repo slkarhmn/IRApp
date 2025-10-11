@@ -2,7 +2,7 @@ from marshmallow_sqlalchemy import SQLAlchemySchema, auto_field
 from marshmallow import post_load, post_dump, EXCLUDE, fields, ValidationError, validates
 from marshmallow_enum import EnumField
 from app.models.users import Users, UserType
-from app.config import db
+from app.extensions.database import db
 
 class UserSchema(SQLAlchemySchema):
     class Meta:

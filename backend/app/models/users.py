@@ -1,4 +1,4 @@
-from app.config import db
+from app.extensions.database import db
 from sqlalchemy import Column, Boolean, Text, Integer, DateTime, String, Enum as SQLEnum, UniqueConstraint
 from sqlalchemy.orm import relationship
 from flask_login import UserMixin

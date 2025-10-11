@@ -2,7 +2,7 @@ import logging
 from flask_restx import Namespace, Resource, fields
 from flask import request
 from marshmallow import ValidationError
-from app.config import db
+from app.extensions.database import db
 from app.models.checklist import ProcedurePlanning, SignIn, SignOut
 from app.schemas.checklist_schema import ProcedurePlanningSchema, SignInSchema, SignOutSchema
 

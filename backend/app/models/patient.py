@@ -1,4 +1,4 @@
-from app.config import db
+from app.extensions.database import db
 from sqlalchemy import Column, Integer, String, JSON, Float, DateTime, Text, Boolean, UniqueConstraint
 from sqlalchemy.orm import relationship
 from datetime import datetime, timezone

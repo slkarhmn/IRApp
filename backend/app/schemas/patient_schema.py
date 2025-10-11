@@ -2,7 +2,7 @@ from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 from marshmallow import fields
 from app.models.patient import Patient
 from app.schemas.procedure_schema import PatientProcedureSchema 
-from app.config import db
+from app.extensions.database import db
 
 class PatientSchema(SQLAlchemyAutoSchema):
     class Meta:

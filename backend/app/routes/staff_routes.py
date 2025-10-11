@@ -1,7 +1,7 @@
 import logging
 from flask_restx import Namespace, Resource, fields
 from flask import request
-from app.config import db
+from app.extensions.database import db
 from app.models.staff import Staff, StaffTitle, Specialties
 from app.schemas.staff_schema import StaffSchema, SpecialtySchema
 
@@ -29,12 +29,13 @@ staff_model = staff_ns.model('Staff', {
 
 @staff_ns.route('/')
 class StaffList(Resource):
-    def get(self):
-        """List all staff"""
-        logger.info("Fetching all staff records")
-        staffs = Staff.query.all()
-        return staffs_schema.dump(staffs), 200
-
+    #def get(self):
+    #    """List all staff"""
+    #    logger.info("Fetching all staff records")
+    #    staffs = Staff.query.all()
+    #    return staffs_schema.dump(staffs), 200
+    
+    @staff_ns.expect(staff_model)
     def post(self):
         """Create a new staff"""
         json_data = request.get_json()
@@ -110,25 +111,25 @@ class SpecialtyList(Resource):
         specialties = Specialties.query.all()
         return specialties_schema.dump(specialties), 200
 
-    def post(self):
-        """Create a new specialty"""
-        json_data = request.get_json()
-        logger.info("Creating new specialty")
+    #def post(self):
+    #    """Create a new specialty"""
+    #    json_data = request.get_json()
+    #    logger.info("Creating new specialty")
 
-        if not json_data:
-            logger.warning("No input data provided for specialty creation")
-            return {'message': 'No input data provided'}, 400
+    #   if not json_data:
+    #        logger.warning("No input data provided for specialty creation")
+    #        return {'message': 'No input data provided'}, 400
 
-        try:
-            specialty = specialty_schema.load(json_data)
-        except Exception as e:
-            logger.error("Specialty creation failed: %s", str(e))
-            return {'message': 'Validation failed', 'errors': str(e)}, 422
+    #    try:
+    #        specialty = specialty_schema.load(json_data)
+    #    except Exception as e:
+    #        logger.error("Specialty creation failed: %s", str(e))
+     #       return {'message': 'Validation failed', 'errors': str(e)}, 422
 
-        db.session.add(specialty)
-        db.session.commit()
-        logger.info("Specialty created successfully: ID %d", specialty.id)
-        return specialty_schema.dump(specialty), 201
+    #    db.session.add(specialty)
+    #    db.session.commit()
+    #    logger.info("Specialty created successfully: ID %d", specialty.id)
+    #    return specialty_schema.dump(specialty), 201
 
 
 @specialty_ns.route('/<int:id>')

@@ -1,13 +1,14 @@
-from app.config import db, config as AppConfig
+from .extensions.database import db
+from .config import config as AppConfig
 from flask import Flask, Blueprint
 from flask_migrate import Migrate
 from flask_restx import Api
-from app.extensions.login_manager import login_manager
-from app.routes.user_routes import user_ns as UserAPI
-from app.routes.staff_routes import staff_ns as StaffAPI, specialty_ns as SpecialtyAPI
-from app.routes.procedures_route import patient_procedure_ns as PatientProcedureAPI, procedure_ns as ProceduresAPI
-from app.routes.patients_route import patient_ns as PatientsAPI
-from app.routes.checklists_route import checklist_ns as ChecklistAPI
+from .extensions.login_manager import login_manager
+from .routes.user_routes import user_ns as UserAPI
+from .routes.staff_routes import staff_ns as StaffAPI, specialty_ns as SpecialtyAPI
+from .routes.procedures_route import patient_procedure_ns as PatientProcedureAPI, procedure_ns as ProceduresAPI
+from .routes.patients_route import patient_ns as PatientsAPI
+from .routes.checklists_route import checklist_ns as ChecklistAPI
 
 def create_app(config_setting):
     app = Flask(__name__)

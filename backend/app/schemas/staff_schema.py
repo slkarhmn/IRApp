@@ -2,7 +2,7 @@ from marshmallow_sqlalchemy import SQLAlchemyAutoSchema, auto_field
 from marshmallow import fields
 from app.models.staff import Staff, Specialties
 from app.schemas.user_schema import UserSchema
-from app.config import db
+from app.extensions.database import db
 
 class SpecialtySchema(SQLAlchemyAutoSchema):
     class Meta:

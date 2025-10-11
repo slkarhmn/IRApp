@@ -1,7 +1,7 @@
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 from marshmallow import fields
 from app.models.checklist import ProcedurePlanning, SignIn, SignOut
-from app.config import db
+from app.extensions.database import db
 
 class ProcedurePlanningSchema(SQLAlchemyAutoSchema):
     class Meta:

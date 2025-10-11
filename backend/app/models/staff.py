@@ -1,4 +1,4 @@
-from app.config import db
+from app.extensions.database import db
 from sqlalchemy import Column, Boolean, Text, Integer, DateTime, String, Enum as SQLEnum, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import relationship
 from enum import Enum as PyEnum

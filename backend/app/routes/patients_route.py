@@ -2,7 +2,7 @@ import logging
 from flask_restx import Namespace, Resource, fields
 from flask import request
 from datetime import datetime, timezone
-from app.config import db
+from app.extensions.database import db
 from app.models.patient import Patient
 from app.schemas.patient_schema import PatientSchema
 
