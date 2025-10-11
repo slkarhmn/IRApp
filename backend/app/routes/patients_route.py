@@ -1,10 +1,18 @@
+import logging
 from flask_restx import Namespace, Resource, fields
 from flask import request
-from datetime import datetime
+from datetime import datetime, timezone
 from app.config import db
 from app.models.patient import Patient
+from app.schemas.patient_schema import PatientSchema
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
 
 patient_ns = Namespace('patients', description='Patient records')
+
+patient_schema = PatientSchema()
+patients_schema = PatientSchema(many=True)
 
 patient_model = patient_ns.model('Patient', {
     'id': fields.Integer(readonly=True),
@@ -48,80 +56,77 @@ def update_patient_from_data(patient, data):
     for field in data:
         if hasattr(patient, field):
             setattr(patient, field, data[field])
-    patient.updated_date = datetime.utcnow()
+    patient.updated_date = datetime.now(timezone.utc)
+
 
 @patient_ns.route('/')
 class PatientList(Resource):
-    @patient_ns.marshal_list_with(patient_model)
     def get(self):
         """List all patients"""
-        return Patient.query.all()
+        logger.info("Fetching all patient records")
+        patients = Patient.query.all()
+        return patients_schema.dump(patients), 200
 
-    @patient_ns.expect(patient_model)
-    @patient_ns.marshal_with(patient_model, code=201)
     def post(self):
         """Create a new patient"""
-        data = request.json
-        now = datetime.utcnow()
-        patient = Patient(
-            mrn=data['mrn'],
-            first_name=data['first_name'],
-            last_name=data['last_name'],
-            age=data['age'],
-            gender=data['gender'],
-            phone=data.get('phone'),
-            insurance=data.get('insurance'),
-            allergies=data.get('allergies'),
-            medications=data.get('medications'),
-            medical_history=data.get('medical_history'),
-            blood_pressure_systolic=data.get('blood_pressure_systolic'),
-            blood_pressure_diastolic=data.get('blood_pressure_diastolic'),
-            heart_rate=data.get('heart_rate'),
-            temperature=data.get('temperature'),
-            respiratory_rate=data.get('respiratory_rate'),
-            oxygen_saturation=data.get('oxygen_saturation'),
-            weight_kg=data.get('weight_kg'),
-            height_cm=data.get('height_cm'),
-            hemoglobin=data.get('hemoglobin'),
-            hematocrit=data.get('hematocrit'),
-            platelet_count=data.get('platelet_count'),
-            white_blood_cell_count=data.get('white_blood_cell_count'),
-            creatinine=data.get('creatinine'),
-            bun=data.get('bun'),
-            glucose=data.get('glucose'),
-            inr=data.get('inr'),
-            pt=data.get('pt'),
-            ptt=data.get('ptt'),
-            created_date=now,
-            updated_date=now,
-        )
-        db.session.add(patient)
+        json_data = request.get_json()
+        logger.info("Creating a new patient record")
+
+        if not json_data:
+            logger.warning("No input data provided for patient creation")
+            return {'message': 'No input data provided'}, 400
+
+        try:
+            data = patient_schema.load(json_data)
+        except Exception as e:
+            logger.error("Patient creation failed: %s", str(e))
+            return {'message': 'Validation failed', 'errors': str(e)}, 422
+
+        now = datetime.now(timezone.utc)
+        data.created_date = now
+        data.updated_date = now
+
+        db.session.add(data)
         db.session.commit()
-        return patient, 201
+        logger.info("Patient created successfully: MRN=%s", data.mrn)
+        return patient_schema.dump(data), 201
+
 
 @patient_ns.route('/<int:id>')
 @patient_ns.response(404, 'Patient not found')
 class PatientResource(Resource):
-    @patient_ns.marshal_with(patient_model)
     def get(self, id):
         """Get patient by ID"""
-        return Patient.query.get_or_404(id)
+        logger.info("Fetching patient with ID: %d", id)
+        patient = Patient.query.get_or_404(id)
+        return patient_schema.dump(patient), 200
 
-    @patient_ns.expect(patient_model)
-    @patient_ns.marshal_with(patient_model)
     def put(self, id):
         """Update a patient"""
+        logger.info("Updating patient with ID: %d", id)
         patient = Patient.query.get_or_404(id)
-        data = request.json
+        json_data = request.get_json()
+
+        if not json_data:
+            logger.warning("No input data provided for patient update: ID %d", id)
+            return {'message': 'No input data provided'}, 400
+
+        try:
+            data = patient_schema.load(json_data, partial=True)
+        except Exception as e:
+            logger.error("Patient update failed for ID %d: %s", id, str(e))
+            return {'message': 'Validation failed', 'errors': str(e)}, 422
+
         update_patient_from_data(patient, data)
         db.session.commit()
-        return patient
+        logger.info("Patient updated successfully: ID %d", id)
+        return patient_schema.dump(patient), 200
 
-    @patient_ns.response(204, 'Patient deleted')
     def delete(self, id):
         """Delete a patient"""
+        logger.info("Deleting patient with ID: %d", id)
         patient = Patient.query.get_or_404(id)
         db.session.delete(patient)
         db.session.commit()
+        logger.info("Patient deleted successfully: ID %d", id)
         return '', 204
-

@@ -1,16 +1,16 @@
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 from marshmallow import fields
 from app.models.checklist import ProcedurePlanning, SignIn, SignOut
-from app.models.procedure import PatientProcedures 
-from app.schemas.procedure_schema import PatientProcedureSchema
+from app.config import db
 
 class ProcedurePlanningSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = ProcedurePlanning
         load_instance = True
         include_fk = True
+        sqla_session = db.session
 
-    patient_procedure = fields.Nested(PatientProcedureSchema, exclude=("procedure_planning",))
+    patient_procedure = fields.Nested('PatientProcedureSchema', exclude=("procedure_planning",))
 
 
 class SignInSchema(SQLAlchemyAutoSchema):
@@ -18,8 +18,9 @@ class SignInSchema(SQLAlchemyAutoSchema):
         model = SignIn
         load_instance = True
         include_fk = True
+        sqla_session = db.session
 
-    patient_procedure = fields.Nested(PatientProcedureSchema, exclude=("sign_in",))
+    patient_procedure = fields.Nested('PatientProcedureSchema', exclude=("sign_in",))
 
 
 class SignOutSchema(SQLAlchemyAutoSchema):
@@ -27,5 +28,6 @@ class SignOutSchema(SQLAlchemyAutoSchema):
         model = SignOut
         load_instance = True
         include_fk = True
+        sqla_session = db.session
 
-    patient_procedure = fields.Nested(PatientProcedureSchema, exclude=("sign_out",))
+    patient_procedure = fields.Nested('PatientProcedureSchema', exclude=("sign_out",))

@@ -10,6 +10,7 @@ __pycache__/
 instance/
 .env
 *.cpython-312.pyc
+data_gen.py 
 
 # Logs
 logs

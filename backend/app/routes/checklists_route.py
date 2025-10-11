@@ -1,14 +1,28 @@
+import logging
 from flask_restx import Namespace, Resource, fields
 from flask import request
+from marshmallow import ValidationError
 from app.config import db
 from app.models.checklist import ProcedurePlanning, SignIn, SignOut
+from app.schemas.checklist_schema import ProcedurePlanningSchema, SignInSchema, SignOutSchema
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
 
 checklist_ns = Namespace('checklist', description='Checklist operations')
+
+procedure_planning_schema = ProcedurePlanningSchema()
+procedure_planning_list_schema = ProcedurePlanningSchema(many=True)
+
+sign_in_schema = SignInSchema()
+sign_in_list_schema = SignInSchema(many=True)
+
+sign_out_schema = SignOutSchema()
+sign_out_list_schema = SignOutSchema(many=True)
 
 procedure_planning_model = checklist_ns.model('ProcedurePlanning', {
     'id': fields.Integer(readonly=True),
     'procedure_id': fields.Integer(required=True),
-
     'discussed_with_referring_physician': fields.Boolean(),
     'imaging_studies_reviewed': fields.Boolean(),
     'relevant_medical_history': fields.String(),
@@ -23,52 +37,9 @@ procedure_planning_model = checklist_ns.model('ProcedurePlanning', {
     'contrast_allergy_prophylaxis_necessary': fields.Boolean(),
 })
 
-@checklist_ns.route('/procedure-planning/')
-class ProcedurePlanningList(Resource):
-    @checklist_ns.marshal_list_with(procedure_planning_model)
-    def get(self):
-        """List all procedure planning entries"""
-        return ProcedurePlanning.query.all()
-
-    @checklist_ns.expect(procedure_planning_model)
-    @checklist_ns.marshal_with(procedure_planning_model, code=201)
-    def post(self):
-        """Create a new procedure planning entry"""
-        data = request.json
-        entry = ProcedurePlanning(**data)
-        db.session.add(entry)
-        db.session.commit()
-        return entry, 201
-
-@checklist_ns.route('/procedure-planning/<int:id>')
-@checklist_ns.response(404, 'ProcedurePlanning not found')
-class ProcedurePlanningResource(Resource):
-    @checklist_ns.marshal_with(procedure_planning_model)
-    def get(self, id):
-        return ProcedurePlanning.query.get_or_404(id)
-
-    @checklist_ns.expect(procedure_planning_model)
-    @checklist_ns.marshal_with(procedure_planning_model)
-    def put(self, id):
-        entry = ProcedurePlanning.query.get_or_404(id)
-        data = request.json
-        for key, value in data.items():
-            setattr(entry, key, value)
-        db.session.commit()
-        return entry
-
-    @checklist_ns.response(204, 'Deleted')
-    def delete(self, id):
-        entry = ProcedurePlanning.query.get_or_404(id)
-        db.session.delete(entry)
-        db.session.commit()
-        return '', 204
-
-
 sign_in_model = checklist_ns.model('SignIn', {
     'id': fields.Integer(readonly=True),
     'procedure_id': fields.Integer(required=True),
-
     'team_members_introduced': fields.String(),
     'records_given_to_patient': fields.String(),
     'correct_patient': fields.Boolean(),
@@ -85,49 +56,9 @@ sign_in_model = checklist_ns.model('SignIn', {
     'consent_obtained': fields.Boolean(),
 })
 
-@checklist_ns.route('/sign-in')
-class SignInList(Resource):
-    @checklist_ns.marshal_list_with(sign_in_model)
-    def get(self):
-        return SignIn.query.all()
-
-    @checklist_ns.expect(sign_in_model)
-    @checklist_ns.marshal_with(sign_in_model, code=201)
-    def post(self):
-        data = request.json
-        entry = SignIn(**data)
-        db.session.add(entry)
-        db.session.commit()
-        return entry, 201
-
-@checklist_ns.route('/sign-in/<int:id>')
-@checklist_ns.response(404, 'SignIn not found')
-class SignInResource(Resource):
-    @checklist_ns.marshal_with(sign_in_model)
-    def get(self, id):
-        return SignIn.query.get_or_404(id)
-
-    @checklist_ns.expect(sign_in_model)
-    @checklist_ns.marshal_with(sign_in_model)
-    def put(self, id):
-        entry = SignIn.query.get_or_404(id)
-        data = request.json
-        for key, value in data.items():
-            setattr(entry, key, value)
-        db.session.commit()
-        return entry
-
-    @checklist_ns.response(204, 'Deleted')
-    def delete(self, id):
-        entry = SignIn.query.get_or_404(id)
-        db.session.delete(entry)
-        db.session.commit()
-        return '', 204
-
 sign_out_model = checklist_ns.model('SignOut', {
     'id': fields.Integer(readonly=True),
     'procedure_id': fields.Integer(required=True),
-
     'post_op_note': fields.String(),
     'vital_signs_normal': fields.Boolean(),
     'medications_recorded': fields.String(),
@@ -142,41 +73,161 @@ sign_out_model = checklist_ns.model('SignOut', {
     'procedure_results_communicated_to_referring_physician': fields.Boolean(),
 })
 
-@checklist_ns.route('/sign-out/')
-class SignOutList(Resource):
-    @checklist_ns.marshal_list_with(sign_out_model)
-    def get(self):
-        return SignOut.query.all()
 
-    @checklist_ns.expect(sign_out_model)
-    @checklist_ns.marshal_with(sign_out_model, code=201)
+@checklist_ns.route('/procedure-planning/')
+class ProcedurePlanningList(Resource):
+    def get(self):
+        logger.info("Fetching all procedure planning entries")
+        entries = ProcedurePlanning.query.all()
+        return procedure_planning_list_schema.dump(entries), 200
+
     def post(self):
-        data = request.json
-        entry = SignOut(**data)
+        json_data = request.get_json()
+        logger.info("Creating a new procedure planning entry")
+        try:
+            entry = procedure_planning_schema.load(json_data)
+        except ValidationError as err:
+            logger.error("Procedure planning validation error: %s", err.messages)
+            return {"errors": err.messages}, 400
+
         db.session.add(entry)
         db.session.commit()
-        return entry, 201
+        logger.info("Procedure planning entry created: ID=%s", entry.id)
+        return procedure_planning_schema.dump(entry), 201
+
+
+@checklist_ns.route('/procedure-planning/<int:id>')
+@checklist_ns.response(404, 'ProcedurePlanning not found')
+class ProcedurePlanningResource(Resource):
+    def get(self, id):
+        logger.info("Fetching procedure planning entry with ID: %d", id)
+        entry = ProcedurePlanning.query.get_or_404(id)
+        return procedure_planning_schema.dump(entry), 200
+
+    def put(self, id):
+        logger.info("Updating procedure planning entry with ID: %d", id)
+        entry = ProcedurePlanning.query.get_or_404(id)
+        json_data = request.get_json()
+        try:
+            updated_entry = procedure_planning_schema.load(json_data, instance=entry, partial=True)
+        except ValidationError as err:
+            logger.error("Procedure planning update failed: %s", err.messages)
+            return {"errors": err.messages}, 400
+
+        db.session.commit()
+        logger.info("Procedure planning entry updated: ID=%d", id)
+        return procedure_planning_schema.dump(updated_entry), 200
+
+    def delete(self, id):
+        logger.info("Deleting procedure planning entry with ID: %d", id)
+        entry = ProcedurePlanning.query.get_or_404(id)
+        db.session.delete(entry)
+        db.session.commit()
+        logger.info("Procedure planning entry deleted: ID=%d", id)
+        return '', 204
+
+
+@checklist_ns.route('/sign-in/')
+class SignInList(Resource):
+    def get(self):
+        logger.info("Fetching all sign-in entries")
+        entries = SignIn.query.all()
+        return sign_in_list_schema.dump(entries), 200
+
+    def post(self):
+        json_data = request.get_json()
+        logger.info("Creating a new sign-in entry")
+        try:
+            entry = sign_in_schema.load(json_data)
+        except ValidationError as err:
+            logger.error("Sign-in validation error: %s", err.messages)
+            return {"errors": err.messages}, 400
+
+        db.session.add(entry)
+        db.session.commit()
+        logger.info("Sign-in entry created: ID=%s", entry.id)
+        return sign_in_schema.dump(entry), 201
+
+
+@checklist_ns.route('/sign-in/<int:id>')
+@checklist_ns.response(404, 'SignIn not found')
+class SignInResource(Resource):
+    def get(self, id):
+        logger.info("Fetching sign-in entry with ID: %d", id)
+        entry = SignIn.query.get_or_404(id)
+        return sign_in_schema.dump(entry), 200
+
+    def put(self, id):
+        logger.info("Updating sign-in entry with ID: %d", id)
+        entry = SignIn.query.get_or_404(id)
+        json_data = request.get_json()
+        try:
+            updated_entry = sign_in_schema.load(json_data, instance=entry, partial=True)
+        except ValidationError as err:
+            logger.error("Sign-in update failed: %s", err.messages)
+            return {"errors": err.messages}, 400
+
+        db.session.commit()
+        logger.info("Sign-in entry updated: ID=%d", id)
+        return sign_in_schema.dump(updated_entry), 200
+
+    def delete(self, id):
+        logger.info("Deleting sign-in entry with ID: %d", id)
+        entry = SignIn.query.get_or_404(id)
+        db.session.delete(entry)
+        db.session.commit()
+        logger.info("Sign-in entry deleted: ID=%d", id)
+        return '', 204
+
+
+@checklist_ns.route('/sign-out/')
+class SignOutList(Resource):
+    def get(self):
+        logger.info("Fetching all sign-out entries")
+        entries = SignOut.query.all()
+        return sign_out_list_schema.dump(entries), 200
+
+    def post(self):
+        json_data = request.get_json()
+        logger.info("Creating a new sign-out entry")
+        try:
+            entry = sign_out_schema.load(json_data)
+        except ValidationError as err:
+            logger.error("Sign-out validation error: %s", err.messages)
+            return {"errors": err.messages}, 400
+
+        db.session.add(entry)
+        db.session.commit()
+        logger.info("Sign-out entry created: ID=%s", entry.id)
+        return sign_out_schema.dump(entry), 201
+
 
 @checklist_ns.route('/sign-out/<int:id>')
 @checklist_ns.response(404, 'SignOut not found')
 class SignOutResource(Resource):
-    @checklist_ns.marshal_with(sign_out_model)
     def get(self, id):
-        return SignOut.query.get_or_404(id)
-
-    @checklist_ns.expect(sign_out_model)
-    @checklist_ns.marshal_with(sign_out_model)
-    def put(self, id):
+        logger.info("Fetching sign-out entry with ID: %d", id)
         entry = SignOut.query.get_or_404(id)
-        data = request.json
-        for key, value in data.items():
-            setattr(entry, key, value)
-        db.session.commit()
-        return entry
+        return sign_out_schema.dump(entry), 200
 
-    @checklist_ns.response(204, 'Deleted')
+    def put(self, id):
+        logger.info("Updating sign-out entry with ID: %d", id)
+        entry = SignOut.query.get_or_404(id)
+        json_data = request.get_json()
+        try:
+            updated_entry = sign_out_schema.load(json_data, instance=entry, partial=True)
+        except ValidationError as err:
+            logger.error("Sign-out update failed: %s", err.messages)
+            return {"errors": err.messages}, 400
+
+        db.session.commit()
+        logger.info("Sign-out entry updated: ID=%d", id)
+        return sign_out_schema.dump(updated_entry), 200
+
     def delete(self, id):
+        logger.info("Deleting sign-out entry with ID: %d", id)
         entry = SignOut.query.get_or_404(id)
         db.session.delete(entry)
         db.session.commit()
+        logger.info("Sign-out entry deleted: ID=%d", id)
         return '', 204

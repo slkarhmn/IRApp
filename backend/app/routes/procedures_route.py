@@ -1,10 +1,16 @@
+import logging
 from flask_restx import Namespace, Resource, fields
 from flask import request
-from datetime import datetime
+from datetime import datetime, timezone
 from app.config import db
 from app.models.procedure import Procedures, PatientProcedures, Status, Urgency
+from app.schemas.procedure_schema import PatientProcedureSchema, ProcedureSchema
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
 
 procedure_ns = Namespace('procedures', description='Procedure catalog operations')
+patient_procedure_ns = Namespace('patient_procedures', description='Patient procedure records')
 
 procedure_model = procedure_ns.model('Procedure', {
     'id': fields.Integer(readonly=True),
@@ -13,129 +19,157 @@ procedure_model = procedure_ns.model('Procedure', {
     'specialised_checklist': fields.Raw(required=False),
 })
 
+procedure_schema = ProcedureSchema()
+procedures_schema = ProcedureSchema(many=True)
+
+patient_procedure_schema = PatientProcedureSchema()
+patient_procedures_schema = PatientProcedureSchema(many=True)
+
 @procedure_ns.route('/')
 class ProcedureList(Resource):
-    @procedure_ns.marshal_list_with(procedure_model)
     def get(self):
         """List all procedures"""
-        return Procedures.query.all()
+        logger.info("Fetching all procedures")
+        procedures = Procedures.query.all()
+        return procedures_schema.dump(procedures), 200
 
-    @procedure_ns.expect(procedure_model)
-    @procedure_ns.marshal_with(procedure_model, code=201)
     def post(self):
         """Create a new procedure"""
-        data = request.json
-        procedure = Procedures(
-            procedure_name=data['procedure_name'],
-            procedure_code=data['procedure_code'],
-            specialised_checklist=data.get('specialised_checklist')
-        )
+        json_data = request.get_json()
+        logger.info("Attempting to create a new procedure")
+
+        if not json_data:
+            logger.warning("No input data provided for procedure creation")
+            return {'message': 'No input data provided'}, 400
+
+        try:
+            procedure = procedure_schema.load(json_data)
+        except Exception as e:
+            logger.error("Procedure creation failed: %s", str(e))
+            return {'message': 'Validation failed', 'errors': str(e)}, 422
+
         db.session.add(procedure)
         db.session.commit()
-        return procedure, 201
+        logger.info("Procedure created successfully: %s", procedure.procedure_code)
+        return procedure_schema.dump(procedure), 201
+
 
 @procedure_ns.route('/<int:id>')
 @procedure_ns.response(404, 'Procedure not found')
 class ProcedureResource(Resource):
-    @procedure_ns.marshal_with(procedure_model)
     def get(self, id):
         """Get a procedure by ID"""
-        return Procedures.query.get_or_404(id)
+        logger.info("Fetching procedure with ID: %d", id)
+        procedure = Procedures.query.get_or_404(id)
+        return procedure_schema.dump(procedure), 200
 
-    @procedure_ns.expect(procedure_model)
-    @procedure_ns.marshal_with(procedure_model)
     def put(self, id):
         """Update a procedure"""
+        logger.info("Updating procedure with ID: %d", id)
         procedure = Procedures.query.get_or_404(id)
-        data = request.json
-        procedure.procedure_name = data['procedure_name']
-        procedure.procedure_code = data['procedure_code']
-        procedure.specialised_checklist = data.get('specialised_checklist')
-        db.session.commit()
-        return procedure
+        json_data = request.get_json()
 
-    @procedure_ns.response(204, 'Deleted')
+        if not json_data:
+            logger.warning("No input data provided for procedure update: ID %d", id)
+            return {'message': 'No input data provided'}, 400
+
+        try:
+            data = procedure_schema.load(json_data, partial=True)
+        except Exception as e:
+            logger.error("Procedure update failed for ID %d: %s", id, str(e))
+            return {'message': 'Validation failed', 'errors': str(e)}, 422
+
+        for key, value in data.__dict__.items():
+            if key != '_sa_instance_state':
+                setattr(procedure, key, value)
+
+        db.session.commit()
+        logger.info("Procedure updated successfully: ID %d", id)
+        return procedure_schema.dump(procedure), 200
+
     def delete(self, id):
         """Delete a procedure"""
+        logger.info("Deleting procedure with ID: %d", id)
         procedure = Procedures.query.get_or_404(id)
         db.session.delete(procedure)
         db.session.commit()
+        logger.info("Procedure deleted: ID %d", id)
         return '', 204
 
-patient_procedure_ns = Namespace('patient_procedures', description='Patient procedure records')
-
-patient_procedure_model = patient_procedure_ns.model('PatientProcedure', {
-    'id': fields.Integer(readonly=True),
-    'patient_id': fields.Integer(required=True),
-    'procedure_name': fields.String(required=True),
-    'procedure_code': fields.String(required=True),
-    'scheduled_date': fields.DateTime(required=False),
-    'physician': fields.String(required=True),
-    'status': fields.String(enum=[s.name for s in Status]),
-    'urgency': fields.String(enum=[u.name for u in Urgency]),
-    'prep_requirements': fields.Raw(required=False),  # JSON field
-    'created_date': fields.DateTime(required=False),
-    'updated_date': fields.DateTime(required=False),
-})
 
 @patient_procedure_ns.route('/')
 class PatientProcedureList(Resource):
-    @patient_procedure_ns.marshal_list_with(patient_procedure_model)
     def get(self):
         """List all patient procedures"""
-        return PatientProcedures.query.all()
+        logger.info("Fetching all patient procedures")
+        patient_procedures = PatientProcedures.query.all()
+        return patient_procedures_schema.dump(patient_procedures), 200
 
-    @patient_procedure_ns.expect(patient_procedure_model)
-    @patient_procedure_ns.marshal_with(patient_procedure_model, code=201)
     def post(self):
         """Create a new patient procedure"""
-        data = request.json
-        now = datetime.utcnow()
-        procedure = PatientProcedures(
-            patient_id=data['patient_id'],
-            procedure_name=data['procedure_name'],
-            procedure_code=data['procedure_code'],
-            physician=data['physician'],
-            status=Status[data['status']],
-            urgency=Urgency[data['urgency']],
-            prep_requirements=data.get('prep_requirements'),
-            created_date=data.get('created_date', now),
-        )
+        json_data = request.get_json()
+        logger.info("Attempting to create a new patient procedure")
+
+        if not json_data:
+            logger.warning("No input data provided for patient procedure creation")
+            return {'message': 'No input data provided'}, 400
+
+        try:
+            procedure = patient_procedure_schema.load(json_data)
+        except Exception as e:
+            logger.error("Patient procedure creation failed: %s", str(e))
+            return {'message': 'Validation failed', 'errors': str(e)}, 422
+
+        now = datetime.now(timezone.utc)
+        if not procedure.created_date:
+            procedure.created_date = now
         procedure.updated_date = now
+
         db.session.add(procedure)
         db.session.commit()
-        return procedure, 201
+        logger.info("Patient procedure created successfully: ID %d", procedure.id)
+        return patient_procedure_schema.dump(procedure), 201
+
 
 @patient_procedure_ns.route('/<int:id>')
 @patient_procedure_ns.response(404, 'Patient procedure not found')
 class PatientProcedureResource(Resource):
-    @patient_procedure_ns.marshal_with(patient_procedure_model)
     def get(self, id):
         """Get a patient procedure by ID"""
-        return PatientProcedures.query.get_or_404(id)
+        logger.info("Fetching patient procedure with ID: %d", id)
+        procedure = PatientProcedures.query.get_or_404(id)
+        return patient_procedure_schema.dump(procedure), 200
 
-    @patient_procedure_ns.expect(patient_procedure_model)
-    @patient_procedure_ns.marshal_with(patient_procedure_model)
     def put(self, id):
         """Update a patient procedure"""
+        logger.info("Updating patient procedure with ID: %d", id)
         procedure = PatientProcedures.query.get_or_404(id)
-        data = request.json
-        procedure.patient_id = data['patient_id']
-        procedure.procedure_name = data['procedure_name']
-        procedure.procedure_code = data['procedure_code']
-        procedure.physician = data['physician']
-        procedure.status = Status[data['status']]
-        procedure.urgency = Urgency[data['urgency']]
-        procedure.prep_requirements = data.get('prep_requirements')
-        procedure.scheduled_date = data.get('scheduled_date')
-        procedure.updated_date = datetime.utcnow()
-        db.session.commit()
-        return procedure
+        json_data = request.get_json()
 
-    @patient_procedure_ns.response(204, 'Deleted')
+        if not json_data:
+            logger.warning("No input data provided for patient procedure update: ID %d", id)
+            return {'message': 'No input data provided'}, 400
+
+        try:
+            data = patient_procedure_schema.load(json_data, partial=True)
+        except Exception as e:
+            logger.error("Patient procedure update failed for ID %d: %s", id, str(e))
+            return {'message': 'Validation failed', 'errors': str(e)}, 422
+
+        for key, value in data.__dict__.items():
+            if key != '_sa_instance_state':
+                setattr(procedure, key, value)
+
+        procedure.updated_date = datetime.now(timezone.utc)
+        db.session.commit()
+        logger.info("Patient procedure updated successfully: ID %d", id)
+        return patient_procedure_schema.dump(procedure), 200
+
     def delete(self, id):
         """Delete a patient procedure"""
+        logger.info("Deleting patient procedure with ID: %d", id)
         procedure = PatientProcedures.query.get_or_404(id)
         db.session.delete(procedure)
         db.session.commit()
+        logger.info("Patient procedure deleted: ID %d", id)
         return '', 204
