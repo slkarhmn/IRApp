@@ -5,6 +5,7 @@ import { createColumnHelper, flexRender, getCoreRowModel, useReactTable, type Co
 import "./patientDataList.json"
 import "../../styles/patientList.css"
 import React from "react";
+import { Link } from "react-router-dom";
 // define the fields
 // type PatientDetail = {
 
@@ -60,7 +61,15 @@ const columns: ColumnDef<PatientDetail>[] = [
         header: 'Patient Details',
         cell: ({row}) =>(
             <div>
-                <div className="font-medium">{row.original.fullName}</div>
+                <div className="font-medium">
+                    <Link
+                        to={`/patients/${row.original.id}`}
+                        className="font-medium text-blue-600 hover:text-blue-800 hover:underline"
+
+                    >
+                        {row.original.fullName}
+                    </Link>
+                </div>
                 <div className="agengender-style">
                 {row.original.age} yrs, {row.original.gender}
                 </div>

@@ -1,0 +1,46 @@
+.icon-wrapper{
+    margin-top: 5px;
+    margin-left: 14px;
+}
+
+.patients-back{
+    color: black;
+    display: flex;
+    flex-direction: row;
+    padding: 20px;
+    gap: 20px;
+}
+.patients-title-pdp{
+    color: #000;
+font-family: "DM Sans";
+font-size: 32px;
+font-style: normal;
+font-weight: 600;
+line-height: 100%;
+}
+.patientdetail-page{
+    display: flex;
+    flex-direction: column;
+}
+.patient-info-pdp{
+    color:black;
+}
+.pdp-wrapper{
+    display: flex;
+    flex-direction: row;
+    margin-left: 50px;
+}
+
+.patient-name-individual-pdp{
+    color: rgba(0, 0, 0, 0.60);
+    font-family: "DM Sans";
+    font-size: 40px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 100%; 
+    border-bottom: 1px solid rgba(0, 0, 0, 0.20);
+background: #FFF;
+width: 740px;
+height: 50px;
+margin-top: 30px;
+}
