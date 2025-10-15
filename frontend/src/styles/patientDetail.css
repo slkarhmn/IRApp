@@ -1,46 +1,340 @@
-.icon-wrapper{
-    margin-top: 5px;
-    margin-left: 14px;
+
+.patient-detail-page {
+  min-height: 100vh;
+  background-color: #ffffff;
+  overflow-y: auto;
+  padding-bottom: 40px;
 }
 
-.patients-back{
-    color: black;
-    display: flex;
-    flex-direction: row;
-    padding: 20px;
-    gap: 20px;
+.header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 20px 40px;
+  background-color: white;
 }
-.patients-title-pdp{
-    color: #000;
-font-family: "DM Sans";
-font-size: 32px;
-font-style: normal;
-font-weight: 600;
-line-height: 100%;
+
+.header-back {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
 }
-.patientdetail-page{
-    display: flex;
+
+.header-title {
+  font-size: 32px;
+  font-weight: 600;
+  margin: 0;
+  font-family: "DM Sans", system-ui, -apple-system, sans-serif;
+  color: #000;
+}
+
+.content-wrapper {
+  display: flex;
+  gap: 20px;
+  padding: 0 40px;
+  max-width: 1400px;
+}
+
+.patient-info-section {
+  flex: 1;
+}
+
+.patient-name {
+  font-size: 40px;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.6);
+  margin-top: 20px;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+  font-family: "DM Sans", system-ui, -apple-system, sans-serif;
+}
+
+.info-columns {
+  display: flex;
+  gap: 20px;
+}
+
+.info-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.card {
+  background-color: white;
+  border-radius: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.card-medical {
+  min-height: 432px;
+}
+
+.card-title {
+  font-size: 18px;
+  font-weight: 500;
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-family: "DM Sans", system-ui, -apple-system, sans-serif;
+  color: #000;
+}
+
+/* contact information */
+.contact-item {
+  margin: 8px 0;
+  color: rgba(0, 0, 0, 0.7);
+  font-size: 14px;
+}
+
+/* medical information */
+.medical-section {
+  margin-bottom: 20px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+padding: 10px;
+}
+
+.medical-label {
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 10px;
+  color: rgba(0, 0, 0, 0.8);
+}
+
+.medical-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+
+}
+
+.allergy-tag {
+  background-color: #e8f5e9;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  color: #2e7d32;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+
+}
+
+.medical-text {
+  font-size: 13px;
+  color: rgba(0, 0, 0, 0.7);
+}
+
+.arrow-button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  color: rgba(0, 0, 0, 0.5);
+  padding: 0;
+}
+
+.arrow-button:hover {
+  color: rgba(0, 0, 0, 0.8);
+}
+
+/* vitals and lab values */
+.vitals-list,
+.lab-list {
+  font-size: 13px;
+  line-height: 1.8;
+  color: rgba(0, 0, 0, 0.8);
+}
+
+.vital-item,
+.lab-item {
+  margin-bottom: 4px;
+}
+
+.vital-item strong,
+.lab-item strong {
+  font-weight: 500;
+}
+
+/* procedures section */
+.procedures-section {
+  width: 380px;
+}
+
+.procedures-card {
+  background-color: white;
+  border-radius: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  padding: 20px;
+  margin-top: 20px;
+}
+
+.procedures-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.add-procedure-btn {
+  background-color: transparent;
+  border: none;
+  color: #485C11;
+  font-size: 13px;
+  cursor: pointer;
+  font-weight: 500;
+  padding: 0;
+  text-decoration-line: underline;
+
+}
+
+.add-procedure-btn:hover {
+  color: #485C11;
+}
+
+/* timeline */
+.timeline {
+  position: relative;
+}
+
+.timeline-item {
+  position: relative;
+  padding-left: 30px;
+  padding-bottom: 30px;
+}
+
+.timeline-item.last {
+  padding-bottom: 0;
+}
+
+.timeline-dot {
+  position: absolute;
+  left: 0;
+  top: 5px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: #9e9e9e;
+  border: 2px solid white;
+  box-shadow: 0 0 0 2px #9e9e9e;
+}
+
+.timeline-dot.active {
+  background-color: #485C11;
+  box-shadow: 0 0 0 2px #153e1f;
+}
+
+.timeline-line {
+  position: absolute;
+  left: 8px;
+  top: 24px;
+  bottom: 0;
+  width: 2px;
+  background-color: #e0e0e0;
+}
+
+.timeline-content {
+  flex: 1;
+}
+
+.procedure-date {
+  font-size: 11px;
+  color: #999;
+  margin-bottom: 5px;
+}
+
+.procedure-name {
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 5px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #000;
+}
+
+.status-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #4CAF50;
+}
+
+.procedure-items {
+  margin: 8px 0;
+  padding-left: 20px;
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.6);
+  line-height: 1.6;
+}
+
+.procedure-items li {
+  margin-bottom: 2px;
+}
+
+.view-checklist-btn {
+  background-color: transparent;
+  border: none;
+  color: #485C11;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 5px 0;
+  text-decoration: underline;
+}
+
+.view-checklist-btn:hover {
+  color: #333;
+}
+
+.view-all-btn {
+  margin-top: 20px;
+  background-color: transparent;
+  border: none;
+  color: #485C11;
+  font-size: 13px;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+}
+
+.view-all-btn:hover {
+  color: #485C11;
+}
+
+/* error message */
+.error-message {
+  padding: 40px;
+  text-align: center;
+  font-size: 18px;
+  color: #666;
+}
+
+/* responsiveness */
+@media (max-width: 1200px) {
+  .content-wrapper {
     flex-direction: column;
-}
-.patient-info-pdp{
-    color:black;
-}
-.pdp-wrapper{
-    display: flex;
-    flex-direction: row;
-    margin-left: 50px;
+  }
+  
+  .procedures-section {
+    width: 100%;
+  }
 }
 
-.patient-name-individual-pdp{
-    color: rgba(0, 0, 0, 0.60);
-    font-family: "DM Sans";
-    font-size: 40px;
-    font-style: normal;
-    font-weight: 600;
-    line-height: 100%; 
-    border-bottom: 1px solid rgba(0, 0, 0, 0.20);
-background: #FFF;
-width: 740px;
-height: 50px;
-margin-top: 30px;
+@media (max-width: 768px) {
+  .info-columns {
+    flex-direction: column;
+  }
+  
+  .header {
+    padding: 15px 20px;
+  }
+  
+  .content-wrapper {
+    padding: 0 20px;
+  }
+  
+  .patient-name {
+    font-size: 28px;
+  }
 }
