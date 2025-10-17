@@ -1,6 +1,9 @@
 name: Backend Flask App Test
 
 on: 
+  push:
+    branches:
+      - backend
   pull_request:
     branches:
       - backend
