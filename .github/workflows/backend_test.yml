@@ -42,4 +42,4 @@ jobs:
 
       - name: Run Tests with Poetry
         run: |
-          poetry run python ./tests/test_models.py
+          PYTHONPATH=. poetry run python ./tests/test_models.py
