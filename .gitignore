@@ -11,6 +11,7 @@ instance/
 .env
 *.cpython-312.pyc
 data_gen.py 
+backend/tests/bin
 
 # Logs
 logs
