@@ -38,7 +38,7 @@ jobs:
 
       - name: Install Dependencies with Poetry
         run: |
-          poetry install
+          poetry install --no-root
 
       - name: Run Tests with Poetry
         run: |
