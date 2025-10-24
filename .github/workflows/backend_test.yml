@@ -32,7 +32,7 @@ jobs:
           curl -sSL https://install.python-poetry.org | python3 -
           echo "$HOME/.local/bin" >> $GITHUB_PATH
 
-      - name: Configure Poetry (if needed)
+      - name: Configure Poetry
         run: |
           poetry config virtualenvs.in-project true
 
@@ -40,6 +40,6 @@ jobs:
         run: |
           poetry install --no-root
 
-      - name: Run Tests with Poetry
+      - name: Run Tests with Poetry and Pytest
         run: |
-          PYTHONPATH=. poetry run python ./tests/test_models.py
+          PYTHONPATH=. poetry run pytest

@@ -10,7 +10,7 @@ class Patient(db.Model):
     )
 
     id = Column(Integer, primary_key=True)
-    mrn = Column(String(20), nullable=False, index=True) 
+    mrn = Column(String(20), nullable=False, index=True)
     first_name = Column(String(50), nullable=False, index=True)
     last_name = Column(String(50), nullable=False, index=True)
     age = Column(Integer, nullable=False)
@@ -24,29 +24,29 @@ class Patient(db.Model):
 
     blood_pressure_systolic = Column(String(10))
     blood_pressure_diastolic = Column(String(10))
-    heart_rate = Column(Integer)
-    temperature = Column(Float)
-    respiratory_rate = Column(Integer)
-    oxygen_saturation = Column(Float)
+    heart_rate_bpm = Column(Integer)
+    temperature_celsius = Column(Float)
+    respiratory_rate_breaths_per_min = Column(Integer)
+    oxygen_saturation_percent = Column(Float)
     weight_kg = Column(Float)
     height_cm = Column(Float)
 
-    hemoglobin = Column(Float)
-    hematocrit = Column(Float)
-    platelet_count = Column(Float)
-    white_blood_cell_count = Column(Float)
-    creatinine = Column(Float)
-    bun = Column(Float)
-    glucose = Column(Float)
+    hemoglobin_gL = Column(Float)
+    hematocrit_LL = Column(Float)
+    platelet_count = Column(String)
+    white_blood_cell_count = Column(String)
+    creatinine = Column(String)
+    bun_mmolL = Column(Float)
+    glucose_mmolL = Column(Float)
     inr = Column(Float)
-    pt = Column(Float)
-    ptt = Column(Float)
- 
+    pt_seconds = Column(Float)
+    ptt_seconds = Column(Float)
+
     created_date = Column(DateTime)
     updated_date = Column(DateTime)
-    
+
     procedures = relationship('PatientProcedures')
-    
+
     def __init__(
         self,
         mrn,
@@ -61,22 +61,22 @@ class Patient(db.Model):
         medical_history=None,
         blood_pressure_systolic=None,
         blood_pressure_diastolic=None,
-        heart_rate=None,
-        temperature=None,
-        respiratory_rate=None,
-        oxygen_saturation=None,
+        heart_rate_bpm=None,
+        temperature_celsius=None,
+        respiratory_rate_breaths_per_min=None,
+        oxygen_saturation_percent=None,
         weight_kg=None,
         height_cm=None,
-        hemoglobin=None,
-        hematocrit=None,
+        hemoglobin_gL=None,
+        hematocrit_LL=None,
         platelet_count=None,
         white_blood_cell_count=None,
         creatinine=None,
-        bun=None,
-        glucose=None,
+        bun_mmolL=None,
+        glucose_mmolL=None,
         inr=None,
-        pt=None,
-        ptt=None
+        pt_seconds=None,
+        ptt_seconds=None
     ):
         self.mrn = mrn
         self.first_name = first_name
@@ -92,47 +92,66 @@ class Patient(db.Model):
 
         self.blood_pressure_systolic = blood_pressure_systolic
         self.blood_pressure_diastolic = blood_pressure_diastolic
-        self.heart_rate = heart_rate
-        self.temperature = temperature
-        self.respiratory_rate = respiratory_rate
-        self.oxygen_saturation = oxygen_saturation
+        self.heart_rate_bpm = heart_rate_bpm
+        self.temperature_celsius = temperature_celsius
+        self.respiratory_rate_breaths_per_min = respiratory_rate_breaths_per_min
+        self.oxygen_saturation_percent = oxygen_saturation_percent
         self.weight_kg = weight_kg
         self.height_cm = height_cm
 
-        self.hemoglobin = hemoglobin
-        self.hematocrit = hematocrit
+        self.hemoglobin_gL = hemoglobin_gL
+        self.hematocrit_LL = hematocrit_LL
         self.platelet_count = platelet_count
         self.white_blood_cell_count = white_blood_cell_count
         self.creatinine = creatinine
-        self.bun = bun
-        self.glucose = glucose
+        self.bun_mmolL = bun_mmolL
+        self.glucose_mmolL = glucose_mmolL
         self.inr = inr
-        self.pt = pt
-        self.ptt = ptt
+        self.pt_seconds = pt_seconds
+        self.ptt_seconds = ptt_seconds
 
         now = datetime.now(timezone.utc)
         self.created_date = now
         self.updated_date = now
 
-    
-    def update_vitals(self, blood_pressure_systolic, blood_pressure_diastolic, heart_rate, temperature, respiratory_rate, oxygen_saturation):
+    def update_vitals(
+        self,
+        blood_pressure_systolic,
+        blood_pressure_diastolic,
+        heart_rate_bpm,
+        temperature_celsius,
+        respiratory_rate_breaths_per_min,
+        oxygen_saturation_percent
+    ):
         self.blood_pressure_systolic = blood_pressure_systolic
         self.blood_pressure_diastolic = blood_pressure_diastolic
-        self.heart_rate = heart_rate
-        self.temperature = temperature
-        self.respiratory_rate = respiratory_rate
-        self.oxygen_saturation = oxygen_saturation
-        self.updated_date = datetime.today().strftime('%Y-%m-%d %H:%M:%S')
-        
-    def update_lab_results(self, hemoglobin, hematocrit, platelet_count, white_blood_cell_count, creatinine, bun, glucose, inr, pt, ptt):
-        self.hemoglobin = hemoglobin
-        self.hematocrit = hematocrit
+        self.heart_rate_bpm = heart_rate_bpm
+        self.temperature_celsius = temperature_celsius
+        self.respiratory_rate_breaths_per_min = respiratory_rate_breaths_per_min
+        self.oxygen_saturation_percent = oxygen_saturation_percent
+        self.updated_date = datetime.now(timezone.utc)
+
+    def update_lab_results(
+        self,
+        hemoglobin_gL,
+        hematocrit_LL,
+        platelet_count,
+        white_blood_cell_count,
+        creatinine,
+        bun_mmolL,
+        glucose_mmolL,
+        inr,
+        pt_seconds,
+        ptt_seconds
+    ):
+        self.hemoglobin_gL = hemoglobin_gL
+        self.hematocrit_LL = hematocrit_LL
         self.platelet_count = platelet_count
         self.white_blood_cell_count = white_blood_cell_count
         self.creatinine = creatinine
-        self.bun = bun
-        self.glucose = glucose
+        self.bun_mmolL = bun_mmolL
+        self.glucose_mmolL = glucose_mmolL
         self.inr = inr
-        self.pt = pt
-        self.ptt = ptt
-        self.updated_date = datetime.today().strftime('%Y-%m-%d %H:%M:%S')
+        self.pt_seconds = pt_seconds
+        self.ptt_seconds = ptt_seconds
+        self.updated_date = datetime.now(timezone.utc)

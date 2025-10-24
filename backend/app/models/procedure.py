@@ -27,7 +27,7 @@ class PatientProcedures(db.Model):
     procedure_name = Column(String(100))
     procedure_code = Column(String(25), ForeignKey('procedures.procedure_code', name='procedure_code_fk'))
 
-    scheduled_date = Column(DateTime)
+    scheduled_date = Column(DateTime) #THIS WILL BE DATE AND TIME
     
     physician = Column(String(50))
 
@@ -36,8 +36,8 @@ class PatientProcedures(db.Model):
 
     prep_requirements = Column(JSON) 
 
-    created_date = Column(DateTime)
-    updated_date = Column(DateTime)
+    created_date = Column(DateTime) #THIS WILL BE DATE AND TIME
+    updated_date = Column(DateTime) #THIS WILL BE DATE AND TIME!!!!!!!!!
     
     procedure_planning = relationship('ProcedurePlanning', uselist=False, back_populates='patient_procedure')
     sign_in = relationship('SignIn', uselist=False, back_populates='patient_procedure')
