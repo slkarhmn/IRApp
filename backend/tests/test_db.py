@@ -209,8 +209,7 @@ def test_procedure_planning_database(test_client):
     
     procedure = PatientProcedures(
         patient_id=1,
-        procedure_code="123",
-        procedure_name="CT-Guided Lung Biopsy",
+        procedure_id=1,
         physician="Dr Alice Brown",
         status="scheduled",
         urgency="routine",
@@ -264,7 +263,7 @@ def test_sign_in_database(test_client):
     
     procedure = PatientProcedures(
         patient_id=2,
-        procedure_code="456",
+        procedure_id=1,
         procedure_name="Ultrasound-Guided Liver Biopsy",
         physician="Dr James Patel",
         status="ready",
@@ -322,7 +321,7 @@ def test_sign_out_database(test_client):
 
     procedure = PatientProcedures(
         patient_id=3,
-        procedure_code="789",
+        procedure_id=1,
         procedure_name="CT Abdomen with Contrast",
         physician="Dr Sarah Johnson",
         status="completed",

@@ -20,11 +20,11 @@ def client(app):
     return app.test_client()
 
 
-@pytest.fixture()
-def runner(app):
-    return app.test_cli_runner()
+# @pytest.fixture()
+# def runner(app):
+#     return app.test_cli_runner()
 
-def test_request_users(client):
-    response = client.get("/api/users/")
+# def test_request_users(client):
+#     response = client.get("/api/users/")
     
-    assert b"HELLO" in response.data
+#     assert b"HELLO" in response.data

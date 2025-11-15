@@ -133,13 +133,12 @@ def test_new_patient_procedure():
     THEN check that all pre-procedure planning fields such as consent, fasting order, and prophylaxis are defined correctly
     """
     
-    patient_procedure = PatientProcedures(patient_id="1", procedure_code="47329847", procedure_name="Biopsy1", physician = "Dr Jane Doe", 
+    patient_procedure = PatientProcedures(patient_id="1", procedure_id=1, physician = "Dr Jane Doe", 
                                           status="scheduled", urgency="routine", prep_requirements="Fasting", 
                                           scheduled_date="03/06/2026", created_date="25/05/2026", updated_date="01/06/2026")
     
     assert patient_procedure.patient_id== "1"
-    assert patient_procedure.procedure_code == "47329847"
-    assert patient_procedure.procedure_name == "Biopsy1"
+    assert patient_procedure.procedure_id == "1"
     assert patient_procedure.physician == "Dr Jane Doe"
     assert patient_procedure.status == "scheduled"
     assert patient_procedure.urgency =="routine"
