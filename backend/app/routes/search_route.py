@@ -38,10 +38,11 @@ patient_model = search_ns.model("Patient", {
 
 @search_ns.route('/users')
 class SearchUsers(Resource):
+
+    @search_ns.param("keyword", "Search by first or last name")
     @search_ns.marshal_list_with(user_model)
     def get(self):
         keyword = request.args.get("keyword", "")
-
         query = Users.query
 
         if keyword:
@@ -52,16 +53,16 @@ class SearchUsers(Resource):
                     Users.last_name.ilike(keyword_like),
                 )
             )
-
         return query.all()
 
 
 @search_ns.route('/staff')
 class SearchStaff(Resource):
+
+    @search_ns.param("keyword", "Search by first or last name")
     @search_ns.marshal_list_with(staff_model)
     def get(self):
         keyword = request.args.get("keyword", "")
-
         query = Staff.query
 
         if keyword:
@@ -72,12 +73,16 @@ class SearchStaff(Resource):
                     Staff.last_name.ilike(keyword_like),
                 )
             )
-
         return query.all()
 
 
 @search_ns.route('/patients')
 class SearchPatients(Resource):
+
+    @search_ns.param("keyword", "Search by first or last name")
+    @search_ns.param("created_date", "Filter by created date (YYYY-MM-DD)")
+    @search_ns.param("updated_date", "Filter by updated date (YYYY-MM-DD)")
+    @search_ns.param("insurance", "Filter by insurance: true/false")
     @search_ns.marshal_list_with(patient_model)
     def get(self):
         keyword = request.args.get("keyword", "")
@@ -92,27 +97,25 @@ class SearchPatients(Resource):
             query = query.filter(
                 db.or_(
                     Patient.first_name.ilike(keyword_like),
-                    Patient.last_name.ilike(keyword_like)
+                    Patient.last_name.ilike(keyword_like),
                 )
             )
 
-        # created date filter
         if created_date:
             query = query.filter(
                 db.cast(Patient.created_date, db.String).like(f"{created_date}%")
             )
 
-        # updated filter
         if updated_date:
             query = query.filter(
                 db.cast(Patient.updated_date, db.String).like(f"{updated_date}%")
             )
 
-        # insurance filter
         if insurance is not None:
-            if insurance.lower() in ["true", "1", "yes"]:
+            insurance = insurance.lower()
+            if insurance in ["true", "1", "yes"]:
                 query = query.filter(Patient.insurance.is_(True))
-            elif insurance.lower() in ["false", "0", "no"]:
+            elif insurance in ["false", "0", "no"]:
                 query = query.filter(Patient.insurance.is_(False))
 
         return query.all()
