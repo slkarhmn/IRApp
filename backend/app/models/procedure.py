@@ -18,14 +18,13 @@ class Urgency(str, PyEnum):
 class PatientProcedures(db.Model):
     __tablename__ = 'patient_procedures'
     __table_args__ = (
-        UniqueConstraint('patient_id', 'procedure_code', 'scheduled_date', name='uq_patient_procedure_schedule'),
+        UniqueConstraint('patient_id', 'scheduled_date', name='uq_patient_procedure_schedule'),
     )
 
     id = Column(Integer, primary_key=True)
     patient_id = Column(Integer, ForeignKey('patients.id', name='procedure_to_patient_fk'))
     
-    procedure_name = Column(String(100))
-    procedure_code = Column(String(25), ForeignKey('procedures.procedure_code', name='procedure_code_fk'))
+    procedure_id = Column(Integer, ForeignKey('procedures.id', name="patient_procedure_to_procedures_fk"))
 
     scheduled_date = Column(DateTime) #THIS WILL BE DATE AND TIME
     
@@ -44,22 +43,17 @@ class PatientProcedures(db.Model):
     sign_out = relationship('SignOut', uselist=False, back_populates='patient_procedure')
 
     
-    def __init__(
-        self,
-        patient_id,
-        procedure_name,
-        procedure_code,
-        physician,
-        status=Status.scheduled,
-        urgency=Urgency.routine,
-        prep_requirements=None,
-        scheduled_date=None,
-        created_date=None,
-        updated_date=None
-    ):
+    def __init__(self, patient_id=None, procedure_id=None, physician=None,
+                 status=Status.scheduled, urgency=Urgency.routine,
+                 prep_requirements=None, scheduled_date=None,
+                 created_date=None, updated_date=None):
+        
+        if not patient_id or not procedure_id or not physician:
+            raise ValueError("patient_id, procedure_id and physician are required")
+
         self.patient_id = patient_id
-        self.procedure_name = procedure_name
-        self.procedure_code = procedure_code
+        self.procedure_id = procedure_id
+
         self.physician = physician
         self.status = status
         self.urgency = urgency

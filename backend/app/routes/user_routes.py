@@ -4,13 +4,15 @@ from flask_restx import Namespace, Resource, fields
 from flask_login import login_user, logout_user, login_required, current_user
 
 from app.models.users import Users, UserType
+from app.models.staff import Specialties, Staff
+from app.models.patient import Patient
 from app.extensions.database import db
 from app.schemas.user_schema import UserSchema
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
-user_ns = Namespace('users', description='User operations')
+user_ns = Namespace('users', description='Operations related to users and authentication')
 
 user_schema = UserSchema()
 user_schema_partial = UserSchema(partial=True)
@@ -36,9 +38,9 @@ login_model = user_ns.model('LoginInput', {
     'password': fields.String(required=True)
 })
 
-
 @user_ns.route('/register')
 class Register(Resource):
+    @user_ns.doc(description="Register a new user account")
     @user_ns.expect(user_input_model)
     def post(self):
         data = request.json
@@ -56,12 +58,13 @@ class Register(Resource):
 
         db.session.add(user)
         db.session.commit()
+
         logger.info("User registered successfully: %s", user.email)
         return {"message": "User registered successfully"}, 201
 
-
 @user_ns.route('/login')
 class Login(Resource):
+    @user_ns.doc(description="Authenticate and log in a user")
     @user_ns.expect(login_model)
     def post(self):
         data = request.json
@@ -75,35 +78,38 @@ class Login(Resource):
 
         login_user(user)
         logger.info("User logged in: %s", user.email)
-        return {"message": f"Logged in as {user.first_name}"}, 200
 
+        return {"message": f"Logged in as {user.first_name}"}, 200
 
 @user_ns.route('/logout')
 class Logout(Resource):
+    @user_ns.doc(description="Log out the current user")
     @login_required
     def post(self):
         logger.info("User logged out: %s", current_user.email)
         logout_user()
         return {"message": "Logged out successfully"}, 200
 
-
 @user_ns.route('/session')
 class SessionUser(Resource):
-    #@login_required
+    @user_ns.doc(description="Get current authenticated user session")
     @user_ns.marshal_with(user_output_model)
     def get(self):
-        logger.info("Session check for user: %s", current_user.email if current_user else 'Anonymous')
+        logger.info(
+            "Session check for user: %s",
+            current_user.email if current_user and not current_user.is_anonymous else 'Anonymous'
+        )
         return current_user, 200
 
-
-@user_ns.route('/')
+@user_ns.route('')
 class UserList(Resource):
-    #@login_required
+    @user_ns.doc(description="Retrieve all users")
     @user_ns.marshal_list_with(user_output_model)
     def get(self):
         logger.info("Fetching all users")
         return Users.query.all(), 200
 
+    @user_ns.doc(description="Create a new user (admin action)")
     @user_ns.expect(user_input_model)
     def post(self):
         data = request.json
@@ -122,19 +128,21 @@ class UserList(Resource):
         db.session.add(user)
         db.session.commit()
         logger.info("User created successfully: %s", user.email)
+
         return {"message": "User created successfully"}, 201
 
 
 @user_ns.route('/<int:id>')
+@user_ns.response(404, 'User not found')
 class UserDetail(Resource):
-    #@login_required
+    @user_ns.doc(description="Retrieve a user by ID")
     @user_ns.marshal_with(user_output_model)
     def get(self, id):
         logger.info("Fetching user with ID: %d", id)
         user = Users.query.get_or_404(id)
         return user, 200
 
-    #@login_required
+    @user_ns.doc(description="Update an existing user by ID")
     @user_ns.expect(user_input_model)
     def put(self, id):
         logger.info("Attempt to update user with ID: %d", id)
@@ -149,13 +157,16 @@ class UserDetail(Resource):
 
         db.session.commit()
         logger.info("User updated successfully: ID %d", id)
+
         return {"message": "User updated successfully"}, 200
 
-    #@login_required
+    @user_ns.doc(description="Delete a user by ID")
     def delete(self, id):
         logger.info("Attempt to delete user with ID: %d", id)
         user = Users.query.get_or_404(id)
+
         db.session.delete(user)
         db.session.commit()
+
         logger.info("User deleted: ID %d", id)
         return {'message': 'User deleted'}, 204

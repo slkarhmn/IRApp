@@ -42,6 +42,7 @@ class ProcedurePlanning(db.Model):
         post_precedural_bed_required=False,
         contrast_allergy_prophylaxis_necessary=False
     ):
+        print("error here")
         self.procedure_id = procedure_id
         self.discussed_with_referring_physician = discussed_with_referring_physician
         self.imaging_studies_reviewed = imaging_studies_reviewed

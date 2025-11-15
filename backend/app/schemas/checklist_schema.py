@@ -10,7 +10,7 @@ class ProcedurePlanningSchema(SQLAlchemyAutoSchema):
         include_fk = True
         sqla_session = db.session
 
-    patient_procedure = fields.Nested('PatientProcedureSchema', exclude=("procedure_planning",))
+    #patient_procedure = fields.Nested('PatientProcedureSchema', exclude=("procedure_planning",))
 
 
 class SignInSchema(SQLAlchemyAutoSchema):
@@ -20,7 +20,7 @@ class SignInSchema(SQLAlchemyAutoSchema):
         include_fk = True
         sqla_session = db.session
 
-    patient_procedure = fields.Nested('PatientProcedureSchema', exclude=("sign_in",))
+    #patient_procedure = fields.Nested('PatientProcedureSchema', exclude=("sign_in",))
 
 
 class SignOutSchema(SQLAlchemyAutoSchema):
@@ -30,4 +30,4 @@ class SignOutSchema(SQLAlchemyAutoSchema):
         include_fk = True
         sqla_session = db.session
 
-    patient_procedure = fields.Nested('PatientProcedureSchema', exclude=("sign_out",))
+    #patient_procedure = fields.Nested('PatientProcedureSchema', exclude=("sign_out",))

@@ -20,9 +20,9 @@ class PatientProcedureSchema(SQLAlchemyAutoSchema):
         include_relationships = True
         sqla_session = db.session
 
-    procedure_planning = fields.Nested(ProcedurePlanningSchema)
-    sign_in = fields.Nested(SignInSchema)
-    sign_out = fields.Nested(SignOutSchema)
+    procedure_planning = fields.Nested(ProcedurePlanningSchema, dump_only=True)
+    sign_in = fields.Nested(SignInSchema, dump_only=True)
+    sign_out = fields.Nested(SignOutSchema, dump_only=True)
 
     procedure_details = fields.Nested(ProcedureSchema, attribute="procedure", dump_only=True)
 

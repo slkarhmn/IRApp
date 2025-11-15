@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
 staff_ns = Namespace('staff', description='Staff related operations')
-specialty_ns = Namespace('specialties', description='Specialty related operations')
+specialty_ns = Namespace('specialties', description='Get operations for a fixed list of specialties')
 
 staff_schema = StaffSchema()
 staffs_schema = StaffSchema(many=True)
@@ -27,14 +27,9 @@ staff_model = staff_ns.model('Staff', {
     'specialty': fields.Integer(required=True),
 })
 
-@staff_ns.route('/')
+@staff_ns.route('')
 class StaffList(Resource):
-    #def get(self):
-    #    """List all staff"""
-    #    logger.info("Fetching all staff records")
-    #    staffs = Staff.query.all()
-    #    return staffs_schema.dump(staffs), 200
-    
+    @staff_ns.doc('create_staff', description='Create a new staff record')
     @staff_ns.expect(staff_model)
     def post(self):
         """Create a new staff"""
@@ -44,7 +39,7 @@ class StaffList(Resource):
         if not json_data:
             logger.warning("No input data provided for new staff")
             return {'message': 'No input data provided'}, 400
-        
+
         try:
             staff = staff_schema.load(json_data)
             if 'title' in json_data:
@@ -62,12 +57,14 @@ class StaffList(Resource):
 @staff_ns.route('/<int:id>')
 @staff_ns.response(404, 'Staff not found')
 class StaffResource(Resource):
+    @staff_ns.doc('get_staff', description='Retrieve a staff record by its ID')
     def get(self, id):
         """Get staff by ID"""
         logger.info("Fetching staff with ID: %d", id)
         staff = Staff.query.get_or_404(id)
         return staff_schema.dump(staff), 200
 
+    @staff_ns.doc('update_staff', description='Update a staff record by its ID')
     def put(self, id):
         """Update staff by ID"""
         logger.info("Updating staff with ID: %d", id)
@@ -93,6 +90,7 @@ class StaffResource(Resource):
         logger.info("Staff updated successfully: ID %d", id)
         return staff_schema.dump(staff), 200
 
+    @staff_ns.doc('delete_staff', description='Delete a staff record by its ID')
     def delete(self, id):
         """Delete staff by ID"""
         logger.info("Deleting staff with ID: %d", id)
@@ -101,10 +99,12 @@ class StaffResource(Resource):
         db.session.commit()
         logger.info("Staff deleted successfully: ID %d", id)
         return '', 204
+        return '', 204
 
 
-@specialty_ns.route('/')
+@specialty_ns.route('')
 class SpecialtyList(Resource):
+    @specialty_ns.doc('list_specialties', description='Retrieve all medical specialties')
     def get(self):
         """List all specialties"""
         logger.info("Fetching all specialties")
@@ -135,40 +135,41 @@ class SpecialtyList(Resource):
 @specialty_ns.route('/<int:id>')
 @specialty_ns.response(404, 'Specialty not found')
 class SpecialtyResource(Resource):
+    @specialty_ns.doc('get_specialty', description='Retrieve a specialty record by its ID')
     def get(self, id):
         """Get a specialty by ID"""
         logger.info("Fetching specialty with ID: %d", id)
         specialty = Specialties.query.get_or_404(id)
         return specialty_schema.dump(specialty), 200
 
-    def put(self, id):
-        """Update a specialty"""
-        logger.info("Updating specialty with ID: %d", id)
-        specialty = Specialties.query.get_or_404(id)
-        json_data = request.get_json()
+    # def put(self, id):
+    #     """Update a specialty"""
+    #     logger.info("Updating specialty with ID: %d", id)
+    #     specialty = Specialties.query.get_or_404(id)
+    #     json_data = request.get_json()
 
-        if not json_data:
-            logger.warning("No input data provided for specialty update: ID %d", id)
-            return {'message': 'No input data provided'}, 400
+    #     if not json_data:
+    #         logger.warning("No input data provided for specialty update: ID %d", id)
+    #         return {'message': 'No input data provided'}, 400
 
-        try:
-            data = specialty_schema.load(json_data, partial=True)
-            for key, value in data.__dict__.items():
-                if key != '_sa_instance_state':
-                    setattr(specialty, key, value)
-        except Exception as e:
-            logger.error("Specialty update failed for ID %d: %s", id, str(e))
-            return {'message': 'Validation failed', 'errors': str(e)}, 422
+    #     try:
+    #         data = specialty_schema.load(json_data, partial=True)
+    #         for key, value in data.__dict__.items():
+    #             if key != '_sa_instance_state':
+    #                 setattr(specialty, key, value)
+    #     except Exception as e:
+    #         logger.error("Specialty update failed for ID %d: %s", id, str(e))
+    #         return {'message': 'Validation failed', 'errors': str(e)}, 422
 
-        db.session.commit()
-        logger.info("Specialty updated successfully: ID %d", id)
-        return specialty_schema.dump(specialty), 200
+    #     db.session.commit()
+    #     logger.info("Specialty updated successfully: ID %d", id)
+    #     return specialty_schema.dump(specialty), 200
 
-    def delete(self, id):
-        """Delete a specialty"""
-        logger.info("Deleting specialty with ID: %d", id)
-        specialty = Specialties.query.get_or_404(id)
-        db.session.delete(specialty)
-        db.session.commit()
-        logger.info("Specialty deleted successfully: ID %d", id)
-        return '', 204
+    # def delete(self, id):
+    #     """Delete a specialty"""
+    #     logger.info("Deleting specialty with ID: %d", id)
+    #     specialty = Specialties.query.get_or_404(id)
+    #     db.session.delete(specialty)
+    #     db.session.commit()
+    #     logger.info("Specialty deleted successfully: ID %d", id)
+    #     return '', 204
