@@ -1,0 +1,42 @@
+{
+  "Vascular": [
+    { "procedure_code": "P001", "name": "Angiogram", "specialised_checklist": [{"step": "sample_boolean_step", "completed": false}, {"step": "sample_text_step", "notes": "notes"}] },
+    { "procedure_code": "P002", "name": "Angioplasty", "specialised_checklist": [] },
+    { "procedure_code": "P003", "name": "Venogram", "specialised_checklist": [] },
+    { "procedure_code": "P004", "name": "Venoplasty", "specialised_checklist": [] },
+    { "procedure_code": "P005", "name": "Fistulogram", "specialised_checklist": [] },
+    { "procedure_code": "P006", "name": "Fistuloplasty", "specialised_checklist": [] },
+    { "procedure_code": "P007", "name": "Stenting", "specialised_checklist": [] },
+    { "procedure_code": "P008", "name": "EVAR/ TEVAR", "specialised_checklist": [] },
+    { "procedure_code": "P009", "name": "Embolisation", "specialised_checklist": [] },
+    { "procedure_code": "P010", "name": "ChemoEmbolisation (TACE)", "specialised_checklist": [] },
+    { "procedure_code": "P011", "name": "RadioEmbolisation(SIRT)", "specialised_checklist": [] },
+    { "procedure_code": "P012", "name": "Shockwave", "specialised_checklist": [] },
+    { "procedure_code": "P013", "name": "Thrombolysis", "specialised_checklist": [] },
+    { "procedure_code": "P014", "name": "Thrombectomy", "specialised_checklist": [] },
+    { "procedure_code": "P015", "name": "Thrombininjection", "specialised_checklist": [] },
+    { "procedure_code": "P016", "name": "Sclerotherapy", "specialised_checklist": [] },
+    { "procedure_code": "P017", "name": "Ablation(RFA/Laser)", "specialised_checklist": [] },
+    { "procedure_code": "P018", "name": "IVCfilter placement/ retrieval", "specialised_checklist": [] },
+    {
+      "procedure_code": "P019",
+      "name": "Centrallines (PICC, Midline, Permacath, Portacath)",
+      "specialised_checklist": []
+    }
+  ],
+  "Non-vascular": [
+    { "procedure_code": "P020", "name": "FineNeedle aspiration/ FNA", "specialised_checklist": [] },
+    { "procedure_code": "P021", "name": "CoreBiopsy", "specialised_checklist": [] },
+    { "procedure_code": "P022", "name": "Abscessdrainage", "specialised_checklist": [] },
+    { "procedure_code": "P023", "name": "Thoraco/Paracentesis", "specialised_checklist": [] },
+    { "procedure_code": "P024", "name": "Biliarydrainage", "specialised_checklist": [] },
+    { "procedure_code": "P025", "name": "Nephrostomy", "specialised_checklist": [] },
+    { "procedure_code": "P026", "name": "Lithotripsy", "specialised_checklist": [] },
+    { "procedure_code": "P027", "name": "GIGUStents (Oeso/ Duodenum/ Colon)", "specialised_checklist": [] },
+    { "procedure_code": "P028", "name": "Gastrostomy/ GJ", "specialised_checklist": [] },
+    { "procedure_code": "P029", "name": "Ablation(RFA/ Microwave /Cryo)", "specialised_checklist": [] },
+    { "procedure_code": "P030", "name": "Vert/kyphoplasty", "specialised_checklist": [] },
+    { "procedure_code": "P031", "name": "Nerveblocks", "specialised_checklist": [] },
+    { "procedure_code": "P032", "name": "Jointinjections", "specialised_checklist": [] }
+  ]
+}

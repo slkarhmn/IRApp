@@ -1,99 +1,157 @@
-from app import db
-from datetime import datetime
-
+from app.extensions.database import db
+from sqlalchemy import Column, Integer, String, JSON, Float, DateTime, Text, Boolean, UniqueConstraint
+from sqlalchemy.orm import relationship
+from datetime import datetime, timezone
 
 class Patient(db.Model):
     __tablename__ = 'patients'
+    __table_args__ = (
+        UniqueConstraint('mrn', name='uq_patients_mrn'),
+    )
 
-    id = db.Column(db.Integer, primary_key=True)
-    mrn = db.Column(db.String(20), unique=True, nullable=False, index=True)
-    first_name = db.Column(db.String(50), nullable=False)
-    last_name = db.Column(db.String(50), nullable=False)
-    age = db.Column(db.Integer, nullable=False)
-    gender = db.Column(db.String(10), nullable=False)
-    phone = db.Column(db.String(20))
-    insurance = db.Column(db.String(100))
+    id = Column(Integer, primary_key=True)
+    mrn = Column(String(20), nullable=False, index=True)
+    first_name = Column(String(50), nullable=False, index=True)
+    last_name = Column(String(50), nullable=False, index=True)
+    age = Column(Integer, nullable=False)
+    gender = Column(String(10), nullable=False)
+    phone = Column(String(20))
+    insurance = Column(Boolean)
 
-    # Medical information
-    allergies = db.Column(db.JSON)  # List of allergies
-    medications = db.Column(db.JSON)  # List of current medications
-    medical_history = db.Column(db.JSON)  # List of medical conditions
+    allergies = Column(Text)
+    medications = Column(Text)
+    medical_history = Column(JSON)
 
-    # Vital signs (latest)
-    blood_pressure_systolic = db.Column(db.Integer)
-    blood_pressure_diastolic = db.Column(db.Integer)
-    heart_rate = db.Column(db.Integer)
-    temperature = db.Column(db.Float)
-    respiratory_rate = db.Column(db.Integer)
-    oxygen_saturation = db.Column(db.Integer)
-    weight_kg = db.Column(db.Integer)
-    height_cm = db.Column(db.Integer)
+    blood_pressure_systolic = Column(String(10))
+    blood_pressure_diastolic = Column(String(10))
+    heart_rate_bpm = Column(Integer)
+    temperature_celsius = Column(Float)
+    respiratory_rate_breaths_per_min = Column(Integer)
+    oxygen_saturation_percent = Column(Float)
+    weight_kg = Column(Float)
+    height_cm = Column(Float)
 
-    # Lab values (latest)
-    hemoglobin = db.Column(db.Float)
-    hematocrit = db.Column(db.Float)
-    platelet_count = db.Column(db.Integer)
-    white_blood_cell_count = db.Column(db.Float)
-    creatinine = db.Column(db.Float)
-    bun = db.Column(db.Integer)
-    glucose = db.Column(db.Integer)
-    inr = db.Column(db.Float)
-    pt = db.Column(db.Float)
-    ptt = db.Column(db.Float)
+    hemoglobin_gL = Column(Float)
+    hematocrit_LL = Column(Float)
+    platelet_count = Column(String)
+    white_blood_cell_count = Column(String)
+    creatinine = Column(String)
+    bun_mmolL = Column(Float)
+    glucose_mmolL = Column(Float)
+    inr = Column(Float)
+    pt_seconds = Column(Float)
+    ptt_seconds = Column(Float)
 
-    # Timestamps
-    created_date = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_date = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_date = Column(DateTime)
+    updated_date = Column(DateTime)
 
-    # Relationships
-    procedures = db.relationship('Procedure', backref='patient', lazy=True)
-    alerts = db.relationship('Alert', backref='patient', lazy=True)
+    procedures = relationship('PatientProcedures')
 
-    @property
-    def full_name(self):
-        return f"{self.first_name} {self.last_name}"
+    def __init__(
+        self,
+        mrn,
+        first_name,
+        last_name,
+        age,
+        gender,
+        phone=None,
+        insurance=False,
+        allergies=None,
+        medications=None,
+        medical_history=None,
+        blood_pressure_systolic=None,
+        blood_pressure_diastolic=None,
+        heart_rate_bpm=None,
+        temperature_celsius=None,
+        respiratory_rate_breaths_per_min=None,
+        oxygen_saturation_percent=None,
+        weight_kg=None,
+        height_cm=None,
+        hemoglobin_gL=None,
+        hematocrit_LL=None,
+        platelet_count=None,
+        white_blood_cell_count=None,
+        creatinine=None,
+        bun_mmolL=None,
+        glucose_mmolL=None,
+        inr=None,
+        pt_seconds=None,
+        ptt_seconds=None
+    ):
+        self.mrn = mrn
+        self.first_name = first_name
+        self.last_name = last_name
+        self.age = age
+        self.gender = gender
+        self.phone = phone
+        self.insurance = insurance
 
-    @property
-    def active_alerts_count(self):
-        return len([alert for alert in self.alerts if alert.status == 'Active'])
+        self.allergies = allergies
+        self.medications = medications
+        self.medical_history = medical_history
 
-    def to_dict(self):
-        return {
-            'id': self.id,
-            'mrn': self.mrn,
-            'first_name': self.first_name,
-            'last_name': self.last_name,
-            'full_name': self.full_name,
-            'age': self.age,
-            'gender': self.gender,
-            'phone': self.phone,
-            'insurance': self.insurance,
-            'allergies': self.allergies or [],
-            'medications': self.medications or [],
-            'medical_history': self.medical_history or [],
-            'vitals': {
-                'blood_pressure_systolic': self.blood_pressure_systolic,
-                'blood_pressure_diastolic': self.blood_pressure_diastolic,
-                'heart_rate': self.heart_rate,
-                'temperature': self.temperature,
-                'respiratory_rate': self.respiratory_rate,
-                'oxygen_saturation': self.oxygen_saturation,
-                'weight_kg': self.weight_kg,
-                'height_cm': self.height_cm,
-            },
-            'labs': {
-                'hemoglobin': self.hemoglobin,
-                'hematocrit': self.hematocrit,
-                'platelet_count': self.platelet_count,
-                'white_blood_cell_count': self.white_blood_cell_count,
-                'creatinine': self.creatinine,
-                'bun': self.bun,
-                'glucose': self.glucose,
-                'inr': self.inr,
-                'pt': self.pt,
-                'ptt': self.ptt,
-            },
-            'active_alerts_count': self.active_alerts_count,
-            'created_date': self.created_date.isoformat() if self.created_date else None,
-            'updated_date': self.updated_date.isoformat() if self.updated_date else None,
-        }
+        self.blood_pressure_systolic = blood_pressure_systolic
+        self.blood_pressure_diastolic = blood_pressure_diastolic
+        self.heart_rate_bpm = heart_rate_bpm
+        self.temperature_celsius = temperature_celsius
+        self.respiratory_rate_breaths_per_min = respiratory_rate_breaths_per_min
+        self.oxygen_saturation_percent = oxygen_saturation_percent
+        self.weight_kg = weight_kg
+        self.height_cm = height_cm
+
+        self.hemoglobin_gL = hemoglobin_gL
+        self.hematocrit_LL = hematocrit_LL
+        self.platelet_count = platelet_count
+        self.white_blood_cell_count = white_blood_cell_count
+        self.creatinine = creatinine
+        self.bun_mmolL = bun_mmolL
+        self.glucose_mmolL = glucose_mmolL
+        self.inr = inr
+        self.pt_seconds = pt_seconds
+        self.ptt_seconds = ptt_seconds
+
+        now = datetime.now(timezone.utc)
+        self.created_date = now
+        self.updated_date = now
+
+    def update_vitals(
+        self,
+        blood_pressure_systolic,
+        blood_pressure_diastolic,
+        heart_rate_bpm,
+        temperature_celsius,
+        respiratory_rate_breaths_per_min,
+        oxygen_saturation_percent
+    ):
+        self.blood_pressure_systolic = blood_pressure_systolic
+        self.blood_pressure_diastolic = blood_pressure_diastolic
+        self.heart_rate_bpm = heart_rate_bpm
+        self.temperature_celsius = temperature_celsius
+        self.respiratory_rate_breaths_per_min = respiratory_rate_breaths_per_min
+        self.oxygen_saturation_percent = oxygen_saturation_percent
+        self.updated_date = datetime.now(timezone.utc)
+
+    def update_lab_results(
+        self,
+        hemoglobin_gL,
+        hematocrit_LL,
+        platelet_count,
+        white_blood_cell_count,
+        creatinine,
+        bun_mmolL,
+        glucose_mmolL,
+        inr,
+        pt_seconds,
+        ptt_seconds
+    ):
+        self.hemoglobin_gL = hemoglobin_gL
+        self.hematocrit_LL = hematocrit_LL
+        self.platelet_count = platelet_count
+        self.white_blood_cell_count = white_blood_cell_count
+        self.creatinine = creatinine
+        self.bun_mmolL = bun_mmolL
+        self.glucose_mmolL = glucose_mmolL
+        self.inr = inr
+        self.pt_seconds = pt_seconds
+        self.ptt_seconds = ptt_seconds
+        self.updated_date = datetime.now(timezone.utc)

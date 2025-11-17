@@ -1,0 +1,24 @@
+{
+  "interventional_radiology_specialties": [
+    "Vascular Interventions",
+    "Neurointerventional Radiology",
+    "Oncologic Interventions",
+    "Interventional Oncology",
+    "Venous Disease Management",
+    "Peripheral Arterial Disease Treatment",
+    "Endovascular Aneurysm Repair",
+    "Interventional Pain Management",
+    "Hepatobiliary Interventions",
+    "Gastrointestinal Interventions",
+    "Genitourinary Interventions",
+    "Women's Health Interventions",
+    "Men's Health Interventions",
+    "Pediatric Interventional Radiology",
+    "Trauma Interventions",
+    "Dialysis Access Interventions",
+    "Embolization Procedures",
+    "Tumor Ablation",
+    "Image-Guided Biopsies",
+    "Non-Vascular Interventions"
+  ]
+}

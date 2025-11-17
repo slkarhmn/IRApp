@@ -4,6 +4,15 @@ all-files/
 .env/
 __pycache__/
 *.py[cod]
+*.db
+*.pyc
+.flaskenv
+instance/
+.env
+*.cpython-312.pyc
+data_gen.py 
+backend/tests/bin
+.actrc
 
 # Logs
 logs

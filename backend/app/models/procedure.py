@@ -1,55 +1,82 @@
-from app import db
-from datetime import datetime
+from app.extensions.database import db
+from sqlalchemy import Integer, DateTime, String, Enum as SQLEnum, ForeignKey, Column, JSON, UniqueConstraint
+from enum import Enum as PyEnum
+from sqlalchemy.orm import relationship
+from datetime import datetime, timezone
 
+class Status(str, PyEnum):
+    scheduled = "Scheduled"
+    ready = "Ready"
+    completed = "Completed"
+    cancelled = "Cancelled"
+    
+class Urgency(str, PyEnum):
+    routine = "Routine"
+    urgent = "Urgent"
+    emergent = "Emergent"
 
-class Procedure(db.Model):
+class PatientProcedures(db.Model):
+    __tablename__ = 'patient_procedures'
+    __table_args__ = (
+        UniqueConstraint('patient_id', 'scheduled_date', name='uq_patient_procedure_schedule'),
+    )
+
+    id = Column(Integer, primary_key=True)
+    patient_id = Column(Integer, ForeignKey('patients.id', name='procedure_to_patient_fk'))
+    
+    procedure_id = Column(Integer, ForeignKey('procedures.id', name="patient_procedure_to_procedures_fk"))
+
+    scheduled_date = Column(DateTime) #THIS WILL BE DATE AND TIME
+    
+    physician = Column(String(50))
+
+    status = Column(SQLEnum(Status, name="status_enum")) 
+    urgency = Column(SQLEnum(Urgency, name="urgency_enum"))
+
+    prep_requirements = Column(JSON) 
+
+    created_date = Column(DateTime) #THIS WILL BE DATE AND TIME
+    updated_date = Column(DateTime) #THIS WILL BE DATE AND TIME!!!!!!!!!
+    
+    procedure_planning = relationship('ProcedurePlanning', uselist=False, back_populates='patient_procedure')
+    sign_in = relationship('SignIn', uselist=False, back_populates='patient_procedure')
+    sign_out = relationship('SignOut', uselist=False, back_populates='patient_procedure')
+
+    
+    def __init__(self, patient_id=None, procedure_id=None, physician=None,
+                 status=Status.scheduled, urgency=Urgency.routine,
+                 prep_requirements=None, scheduled_date=None,
+                 created_date=None, updated_date=None):
+        
+        if not patient_id or not procedure_id or not physician:
+            raise ValueError("patient_id, procedure_id and physician are required")
+
+        self.patient_id = patient_id
+        self.procedure_id = procedure_id
+
+        self.physician = physician
+        self.status = status
+        self.urgency = urgency
+        self.prep_requirements = prep_requirements or {}
+        self.scheduled_date = scheduled_date
+
+        now = datetime.now(timezone.utc)
+        self.created_date = created_date or now
+        self.updated_date = updated_date or now
+    
+
+class Procedures(db.Model):
     __tablename__ = 'procedures'
-
-    id = db.Column(db.Integer, primary_key=True)
-    patient_id = db.Column(db.Integer, db.ForeignKey('patients.id'), nullable=False)
-
-    # Procedure details
-    procedure_name = db.Column(db.String(200), nullable=False)
-    procedure_code = db.Column(db.String(20), nullable=False)
-    category = db.Column(db.String(50), nullable=False)
-
-    # Scheduling
-    scheduled_date = db.Column(db.DateTime, nullable=False)
-    estimated_duration = db.Column(db.Integer)  # in minutes
-    location = db.Column(db.String(100))
-    physician = db.Column(db.String(100))
-
-    # Status
-    status = db.Column(db.String(20), default='Scheduled')  # Scheduled, In Preparation, Ready, In Progress, Completed, Cancelled
-    urgency = db.Column(db.String(20), default='Routine')   # Routine, Urgent, Emergent
-
-    # Requirements
-    prep_requirements = db.Column(db.JSON)  # List of preparation requirements
-
-    # Timestamps
-    created_date = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_date = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-
-    # Relationships
-    checklist = db.relationship('Checklist', backref='procedure', uselist=False, lazy=True)
-    alerts = db.relationship('Alert', backref='procedure', lazy=True)
-
-    def to_dict(self):
-        return {
-            'id': self.id,
-            'patient_id': self.patient_id,
-            'patient_name': self.patient.full_name if self.patient else None,
-            'patient_mrn': self.patient.mrn if self.patient else None,
-            'procedure_name': self.procedure_name,
-            'procedure_code': self.procedure_code,
-            'category': self.category,
-            'scheduled_date': self.scheduled_date.isoformat() if self.scheduled_date else None,
-            'estimated_duration': self.estimated_duration,
-            'location': self.location,
-            'physician': self.physician,
-            'status': self.status,
-            'urgency': self.urgency,
-            'prep_requirements': self.prep_requirements or [],
-            'created_date': self.created_date.isoformat() if self.created_date else None,
-            'updated_date': self.updated_date.isoformat() if self.updated_date else None,
-        }
+    __table_args__ = (
+        UniqueConstraint('procedure_code', name='uq_procedures_procedure_code'),
+    )
+    
+    id = Column(Integer, primary_key=True)
+    procedure_name = Column(String(100))
+    procedure_code = Column(String(25), index=True)
+    specialised_checklist = Column(JSON)
+    
+    def __init__(self, procedure_name, procedure_code, specialised_checklist=None):
+        self.procedure_name = procedure_name
+        self.procedure_code = procedure_code
+        self.specialised_checklist = specialised_checklist or {}
