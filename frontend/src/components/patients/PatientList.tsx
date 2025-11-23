@@ -1,39 +1,10 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-// create a table for patient list using tanstack
-
-import { createColumnHelper, flexRender, getCoreRowModel, useReactTable, type ColumnDef } from "@tanstack/react-table";
-import "./patientDataList.json"
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { flexRender, getCoreRowModel, useReactTable, type ColumnDef } from "@tanstack/react-table";
 import "../../styles/patientList.css"
-import React from "react";
 import { Link } from "react-router-dom";
-// define the fields
-// type PatientDetail = {
-
-//     id:{
-//         idNumber: number
-//     }
-//     patientDetail:{
-//         fullName: string
-//         age: number
-//         gender: string
-//     }
-//     contactInformation:{
-//         email: string
-//         phoneNumber: number
-//     }
-//     mrn:{
-//         mrnNumber: string 
-//     }
-//     insurance:{
-//         hasInsurance: boolean
-//     }
-//     createdAt:{
-//         dateCreated: string
-//     }
-//     updatedAt:{
-//         dateUpdated: string
-//     }
-// }
+import { useState, useEffect } from 'react';
+// @ts-expect-error fuck typescript
+import { patientService } from '../../services/patientService';
 
 export type PatientDetail = {
   id: number;
@@ -48,10 +19,7 @@ export type PatientDetail = {
   updatedAt: string;
 }
 
-
-
 const columns: ColumnDef<PatientDetail>[] = [
-    
     {
         accessorKey: 'id',
         header: 'ID',
@@ -65,7 +33,6 @@ const columns: ColumnDef<PatientDetail>[] = [
                     <Link
                         to={`/patients/${row.original.id}`}
                         className="font-medium text-blue-600 hover:text-blue-800 hover:underline"
-
                     >
                         {row.original.fullName}
                     </Link>
@@ -76,7 +43,6 @@ const columns: ColumnDef<PatientDetail>[] = [
             </div>
         ),
     },
-    //contact info
     {
         accessorKey: 'email',
         header: 'Contact Information',
@@ -87,12 +53,10 @@ const columns: ColumnDef<PatientDetail>[] = [
             </div>
         ),
     },
-    // mrn
     {
         accessorKey: 'mrnNumber',
         header:'MRN',
     },
-    //insurance
     {
         accessorKey:'hasInsurance',
         header:'Insurance',
@@ -108,13 +72,11 @@ const columns: ColumnDef<PatientDetail>[] = [
         </button>
         ),
     },
-    //created at
     {
         accessorKey:'createdAt',
         header:'Created At',
         cell: ({ row }) => new Date(row.original.createdAt).toLocaleDateString(),
     },
-    //updated at
     {
         accessorKey: 'updatedAt',
         header:'Updated On',
@@ -122,20 +84,55 @@ const columns: ColumnDef<PatientDetail>[] = [
     }
 ];
 
-interface PatientTableProps  {
-    data: PatientDetail[]
-}
-export function PatientTable ({data}: PatientTableProps){
+export function PatientTable() {
+    const [patients, setPatients] = useState<PatientDetail[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchPatients = async () => {
+            try {
+                const response = await patientService.getAllPatients();
+                
+                // Transform Flask data to match table format
+                const formattedPatients = response.data
+                    .map((patient: any) => ({
+                        id: patient.id,
+                        fullName: `${patient.first_name} ${patient.last_name}`,
+                        age: patient.age,
+                        gender: patient.gender,
+                        email: patient.email || 'N/A',
+                        phoneNumber: patient.phone || 'N/A',
+                        mrnNumber: patient.mrn,
+                        hasInsurance: patient.insurance,
+                        createdAt: patient.created_date,
+                        updatedAt: patient.updated_date,
+                    }))
+                    
+                
+                setPatients(formattedPatients);
+                setLoading(false);
+            } catch (error) {
+                console.error('Error fetching patients:', error);
+                setLoading(false);
+            }
+        };
+
+        fetchPatients();
+    }, []);
+
     const table = useReactTable({
-        data,
+        data: patients,
         columns,
         getCoreRowModel: getCoreRowModel(),
     });
 
+    if (loading) {
+        return <div style={{ padding: '40px', textAlign: 'center' }}>Loading patients...</div>;
+    }
+
     return (
         <div className="patient-table-container">
             <table className="patient-table">
-                {/* TABLE HEAD - Render column headers */}
                 <thead className="table-header">
                     {table.getHeaderGroups().map(headerGroup => (
                         <tr key={headerGroup.id} className="header-row">
@@ -155,7 +152,6 @@ export function PatientTable ({data}: PatientTableProps){
                     ))}
                 </thead>
 
-                {/* TABLE BODY - Render data rows */}
                 <tbody className="table-body">
                     {table.getRowModel().rows.map(row => (
                         <tr key={row.id} className="body-row">

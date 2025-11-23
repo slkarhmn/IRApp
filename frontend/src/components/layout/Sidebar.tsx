@@ -14,10 +14,7 @@ function Sidebar () {
         <p>IR</p>
       </div>
 
-      <nav className='sidebar-nav'>
 
-        <NavLink to='/patients' className={({isActive}) => isActive ? 'nav-link-active': 'nav-link'}></NavLink>
-      </nav>
 
       <div className='menu'>
         <p>Menu</p>

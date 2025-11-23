@@ -1,0 +1,824 @@
+/* Fonts */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap');
+
+* {
+  box-sizing: border-box;
+}
+
+/* ========================================
+   ALL PROCEDURES & CHECKLISTS PAGE
+   ======================================== */
+
+.all-procedures-page {
+  font-family: 'DM Sans', sans-serif;
+  background-color: #FAFAFA;
+  min-height: 100vh;
+  padding: 40px 50px;
+}
+
+/* ----------------------------------------
+   HEADER SECTION
+   ---------------------------------------- */
+
+.page-header {
+  margin-bottom: 32px;
+}
+
+.header-top {
+  margin-bottom: 16px;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #666666;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.back-link:hover {
+  color: #8E9C78;
+}
+
+.back-link svg {
+  transition: transform 0.2s ease;
+}
+
+.back-link:hover svg {
+  transform: translateX(-3px);
+}
+
+.header-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.header-title-section {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.page-title {
+  font-size: 32px;
+  font-weight: 600;
+  color: #1A1A1A;
+  margin: 0;
+}
+
+.patient-name-subtitle {
+  font-size: 14px;
+  color: #666666;
+  margin: 0;
+}
+
+.add-procedure-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #8E9C78;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: 'DM Sans', sans-serif;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.add-procedure-btn:hover {
+  background-color: #7a8966;
+}
+
+/* ----------------------------------------
+   STATS SECTION
+   ---------------------------------------- */
+
+.stats-section {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.stat-card {
+  background-color: #FFFFFF;
+  border: 1px solid #E8E8E8;
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 28px;
+  font-weight: 600;
+  color: #1A1A1A;
+  margin-bottom: 4px;
+}
+
+.stat-value.completed {
+  color: #2E7D32;
+}
+
+.stat-value.scheduled {
+  color: #B8860B;
+}
+
+.stat-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #888888;
+}
+
+/* ----------------------------------------
+   FILTERS SECTION
+   ---------------------------------------- */
+
+.filters-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.filter-tabs {
+  display: flex;
+  gap: 0;
+  background-color: #FFFFFF;
+  border: 1px solid #E8E8E8;
+  border-radius: 0px;
+  overflow: hidden;
+}
+
+.filter-tab {
+  padding: 10px 20px;
+  background: none;
+  border: none;
+  border-right: 1px solid #E8E8E8;
+  font-size: 13px;
+  font-weight: 500;
+  color: #666666;
+  cursor: pointer;
+    border-radius: 0px;
+
+  font-family: 'DM Sans', sans-serif;
+  transition: all 0.2s ease;
+}
+.filter-tab:focus{
+  outline: none;
+}
+
+.filter-tab:last-child {
+  border-right: none;
+}
+
+.filter-tab:hover {
+  background-color: #F5F5F5;
+}
+
+.filter-tab.active {
+  background-color: #8E9C78;
+  color: #FFFFFF;
+}
+
+.filter-tab:focus {
+  outline: none;
+}
+
+.search-and-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.search-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-icon {
+  position: absolute;
+  left: 12px;
+  color: #999999;
+}
+
+.search-box input {
+  padding: 10px 12px 10px 40px;
+  width: 260px;
+  font-size: 14px;
+  font-family: 'DM Sans', sans-serif;
+  color: #333333;
+  background-color: #FFFFFF;
+  border: 1px solid #E8E8E8;
+  border-radius: 6px;
+  transition: border-color 0.2s ease;
+}
+
+.search-box input:focus {
+  outline: none;
+  border-color: #8E9C78;
+}
+
+.search-box input::placeholder {
+  color: #999999;
+}
+
+.expand-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.expand-btn {
+  padding: 8px 14px;
+  background-color: #FFFFFF;
+  border: 1px solid #E8E8E8;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #666666;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  transition: all 0.2s ease;
+}
+
+.expand-btn:hover {
+  background-color: #F5F5F5;
+  border-color: #D0D0D0;
+}
+
+.expand-btn:focus {
+  outline: none;
+}
+
+/* ----------------------------------------
+   PROCEDURES LIST
+   ---------------------------------------- */
+
+.procedures-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.empty-state {
+  background-color: #FFFFFF;
+  border: 1px solid #E8E8E8;
+  border-radius: 8px;
+  padding: 60px 40px;
+  text-align: center;
+}
+
+.empty-state p {
+  color: #888888;
+  font-size: 15px;
+  margin: 0;
+}
+
+/* ----------------------------------------
+   PROCEDURE CARD
+   ---------------------------------------- */
+
+.procedure-card {
+  background-color: #FFFFFF;
+  border: 1px solid #E8E8E8;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: box-shadow 0.2s ease;
+}
+
+.procedure-card:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.procedure-card.expanded {
+  border-color: #D0D5C8;
+}
+
+.procedure-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.procedure-card-header:hover {
+  background-color: #FAFAFA;
+}
+
+.procedure-card-left {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.chevron-icon {
+  margin-top: 4px;
+  color: #888888;
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.chevron-icon.expanded {
+  transform: rotate(90deg);
+}
+
+.procedure-card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.procedure-card-date {
+  font-size: 12px;
+  font-weight: 500;
+  color: #888888;
+}
+
+.procedure-card-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1A1A1A;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.procedure-code {
+  font-size: 13px;
+  font-weight: 400;
+  color: #999999;
+}
+
+.procedure-card-physician {
+  font-size: 13px;
+  color: #666666;
+  margin-top: 2px;
+}
+
+.procedure-card-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.checklist-count {
+  font-size: 13px;
+  color: #888888;
+}
+
+/* ----------------------------------------
+   STATUS BADGE
+   ---------------------------------------- */
+
+.status-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-scheduled {
+  background-color: #FFF8E6;
+  color: #B8860B;
+}
+
+.status-ready {
+  background-color: #E8F4FD;
+  color: #1976D2;
+}
+
+.status-completed {
+  background-color: #E8F5E8;
+  color: #2E7D32;
+}
+
+.status-cancelled {
+  background-color: #FEECEC;
+  color: #C62828;
+}
+
+/* ----------------------------------------
+   PROCEDURE CARD CONTENT
+   ---------------------------------------- */
+
+.procedure-card-content {
+  padding: 0 24px 24px 24px;
+  animation: slideDown 0.2s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.checklists-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ----------------------------------------
+   CHECKLIST CARD
+   ---------------------------------------- */
+
+.checklist-card {
+  background-color: #FAFAFA;
+  border: 1px solid #F0F0F0;
+  border-radius: 6px;
+  padding: 16px;
+}
+
+.checklist-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.checklist-card-left {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.checklist-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-top: 5px;
+  flex-shrink: 0;
+}
+
+.checklist-dot.planning {
+  background-color: #8E9C78;
+}
+
+.checklist-dot.signin {
+  background-color: #5A7A8E;
+}
+
+.checklist-dot.signout {
+  background-color: #8E7A5A;
+}
+
+.checklist-card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.checklist-card-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333333;
+}
+
+.checklist-card-date {
+  font-size: 12px;
+  color: #888888;
+}
+
+.checklist-card-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* ----------------------------------------
+   CHECKLIST TYPE LABEL
+   ---------------------------------------- */
+
+.checklist-type-label {
+  display: inline-block;
+  padding: 3px 10px;
+  font-size: 11px;
+  font-weight: 500;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.checklist-type-label.planning {
+  background-color: #EEF3E8;
+  color: #5A6B4A;
+}
+
+.checklist-type-label.signin {
+  background-color: #E8F0F3;
+  color: #5A6B7A;
+}
+
+.checklist-type-label.signout {
+  background-color: #F3EEE8;
+  color: #7A6B5A;
+}
+
+/* ----------------------------------------
+   PROGRESS BAR
+   ---------------------------------------- */
+
+.progress-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.progress-bar {
+  width: 60px;
+  height: 6px;
+  background-color: #E8E8E8;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background-color: #8E9C78;
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.progress-text {
+  font-size: 12px;
+  font-weight: 500;
+  color: #666666;
+  min-width: 35px;
+}
+
+/* ----------------------------------------
+   CHECKLIST ITEMS
+   ---------------------------------------- */
+
+.checklist-card-items {
+  margin-bottom: 12px;
+}
+
+.checklist-card-items ul {
+  margin: 0;
+  padding: 0 0 0 18px;
+  list-style: none;
+}
+
+.checklist-card-items li {
+  position: relative;
+  padding-left: 14px;
+  font-size: 13px;
+  color: #666666;
+  line-height: 1.6;
+  margin-bottom: 2px;
+}
+
+.checklist-card-items li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 8px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background-color: #CCCCCC;
+}
+
+.checklist-card-items li.more-items {
+  color: #888888;
+  font-style: italic;
+}
+
+.checklist-card-items li.more-items::before {
+  display: none;
+}
+
+/* ----------------------------------------
+   VIEW DETAILS LINK
+   ---------------------------------------- */
+
+.view-details-link {
+  display: inline-block;
+  font-size: 13px;
+  font-weight: 500;
+  color: #8E9C78;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.view-details-link:hover {
+  color: #7a8966;
+  text-decoration: underline;
+}
+
+/* ----------------------------------------
+   RESPONSIVE DESIGN
+   ---------------------------------------- */
+
+@media (max-width: 1200px) {
+  .stats-section {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 992px) {
+  .filters-section {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filter-tabs {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .filter-tab {
+    flex: 1;
+    text-align: center;
+  }
+
+  .search-and-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-box {
+    width: 100%;
+  }
+
+  .search-box input {
+    width: 100%;
+  }
+
+  .expand-actions {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .all-procedures-page {
+    padding: 24px 20px;
+  }
+
+  .page-title {
+    font-size: 26px;
+  }
+
+  .header-main {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .add-procedure-btn {
+    align-self: flex-start;
+  }
+
+  .stats-section {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .stat-card {
+    padding: 16px;
+  }
+
+  .stat-value {
+    font-size: 24px;
+  }
+
+  .procedure-card-header {
+    padding: 16px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .procedure-card-right {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .checklist-card-header {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .checklist-card-right {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 480px) {
+  .all-procedures-page {
+    padding: 20px 16px;
+  }
+
+  .page-title {
+    font-size: 22px;
+  }
+
+  .stats-section {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .filter-tabs {
+    flex-wrap: wrap;
+  }
+
+  .filter-tab {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+
+  .procedure-card-content {
+    padding: 0 16px 16px 16px;
+  }
+
+  .checklist-card {
+    padding: 12px;
+  }
+}
+
+/* ----------------------------------------
+   PRINT STYLES
+   ---------------------------------------- */
+
+@media print {
+  .all-procedures-page {
+    padding: 20px;
+    background-color: white;
+  }
+
+  .back-link,
+  .add-procedure-btn,
+  .filters-section,
+  .expand-actions {
+    display: none;
+  }
+
+  .procedure-card {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .checklist-card {
+    break-inside: avoid;
+  }
+}
+
+/* ----------------------------------------
+   ANIMATIONS
+   ---------------------------------------- */
+
+.procedure-card-content {
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ----------------------------------------
+   ACCESSIBILITY
+   ---------------------------------------- */
+
+.procedure-card-header:focus-visible,
+.filter-tab:focus-visible,
+.expand-btn:focus-visible,
+.view-details-link:focus-visible {
+  outline: 2px solid #8E9C78;
+  outline-offset: 2px;
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .procedure-card,
+  .procedure-card-content,
+  .chevron-icon,
+  .back-link svg,
+  .progress-fill {
+    transition: none;
+    animation: none;
+  }
+}

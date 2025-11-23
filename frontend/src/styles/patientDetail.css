@@ -1,173 +1,183 @@
+/* Fonts */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap');
+
+* {
+  box-sizing: border-box;
+}
 
 .patient-detail-page {
+  padding: 40px 50px;
+  background-color: #FAFAFA;
   min-height: 100vh;
-  background-color: #ffffff;
-  overflow-y: auto;
-  padding-bottom: 40px;
+  font-family: 'DM Sans', sans-serif;
 }
 
-.header {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  padding: 20px 40px;
-  background-color: white;
+.error-message {
+  padding: 40px;
+  text-align: center;
+  font-size: 16px;
+  color: #666666;
 }
 
-.header-back {
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-}
-
-.header-title {
-  font-size: 32px;
-  font-weight: 600;
-  margin: 0;
-  font-family: "DM Sans", system-ui, -apple-system, sans-serif;
-  color: #000;
-}
-
+/* Content Wrapper */
 .content-wrapper {
-  display: flex;
-  gap: 20px;
-  padding: 0 40px;
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 32px;
   max-width: 1400px;
 }
 
+/* Patient Info Section */
 .patient-info-section {
-  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }
 
 .patient-name {
-  font-size: 40px;
+  font-size: 32px;
   font-weight: 600;
-  color: rgba(0, 0, 0, 0.6);
-  margin-top: 20px;
-  margin-bottom: 20px;
-  padding-bottom: 20px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
-  font-family: "DM Sans", system-ui, -apple-system, sans-serif;
+  color: #1A1A1A;
+  margin: 0;
 }
 
+/* Info Columns */
 .info-columns {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 20px;
 }
 
 .info-column {
-  flex: 1;
   display: flex;
   flex-direction: column;
+  gap: 20px;
 }
 
+/* Cards */
 .card {
-  background-color: white;
-  border-radius: 12px;
-  border: 1px solid rgba(0, 0, 0, 0.15);
+  background-color: #FFFFFF;
+  border: 1px solid #E8E8E8;
+  border-radius: 8px;
   padding: 20px;
-  margin-bottom: 20px;
-}
-
-.card-medical {
-  min-height: 432px;
 }
 
 .card-title {
-  font-size: 18px;
-  font-weight: 500;
-  margin-top: 0;
-  margin-bottom: 15px;
-  font-family: "DM Sans", system-ui, -apple-system, sans-serif;
-  color: #000;
-}
-
-/* contact information */
-.contact-item {
-  margin: 8px 0;
-  color: rgba(0, 0, 0, 0.7);
   font-size: 14px;
+  font-weight: 600;
+  color: #1A1A1A;
+  margin: 0 0 16px 0;
 }
 
-/* medical information */
+/* Contact Information */
+.contact-item {
+  font-size: 14px;
+  color: #555555;
+  margin: 0 0 8px 0;
+  line-height: 1.5;
+}
+
+.contact-item:last-child {
+  margin-bottom: 0;
+}
+
+/* Medical Information */
+.card-medical {
+  padding-bottom: 16px;
+}
+
 .medical-section {
-  margin-bottom: 20px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
-padding: 10px;
+  padding: 12px 0;
+  border-bottom: 1px solid #F0F0F0;
+}
+
+.medical-section:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
 }
 
 .medical-label {
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 500;
-  margin-bottom: 10px;
-  color: rgba(0, 0, 0, 0.8);
+  color: #888888;
+  margin: 0 0 8px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
 }
 
 .medical-content {
   display: flex;
   align-items: center;
-  gap: 8px;
   flex-wrap: wrap;
-
+  gap: 8px;
 }
 
 .allergy-tag {
-  background-color: #e8f5e9;
-  padding: 6px 12px;
-  border-radius: 6px;
+  display: inline-block;
+  padding: 4px 10px;
+  background-color: #FEF3F2;
+  border: 1px solid #FEE4E2;
+  border-radius: 4px;
   font-size: 13px;
-  color: #2e7d32;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
-
+  font-weight: 500;
+  color: #B42318;
 }
 
 .medical-text {
-  font-size: 13px;
-  color: rgba(0, 0, 0, 0.7);
+  font-size: 14px;
+  color: #333333;
 }
 
 .arrow-button {
-  background-color: transparent;
+  margin-left: auto;
+  background: none;
   border: none;
+  font-size: 14px;
+  color: #AAAAAA;
   cursor: pointer;
-  font-size: 18px;
-  color: rgba(0, 0, 0, 0.5);
-  padding: 0;
+  padding: 4px;
+  transition: color 0.2s ease;
 }
 
 .arrow-button:hover {
-  color: rgba(0, 0, 0, 0.8);
+  color: #8E9C78;
 }
 
-/* vitals and lab values */
+/* Vitals and Lab Values */
 .vitals-list,
 .lab-list {
-  font-size: 13px;
-  line-height: 1.8;
-  color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .vital-item,
 .lab-item {
-  margin-bottom: 4px;
+  font-size: 14px;
+  color: #555555;
+  line-height: 1.5;
 }
 
 .vital-item strong,
 .lab-item strong {
   font-weight: 500;
+  color: #333333;
 }
 
-/* procedures section */
+/* Procedures Section */
 .procedures-section {
-  width: 380px;
+  position: sticky;
+  top: 40px;
+  height: fit-content;
 }
 
 .procedures-card {
-  background-color: white;
-  border-radius: 12px;
-  border: 1px solid rgba(0, 0, 0, 0.15);
+  background-color: #FFFFFF;
+  border: 1px solid #E8E8E8;
+  border-radius: 8px;
   padding: 20px;
-  margin-top: 20px;
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
 }
 
 .procedures-header {
@@ -175,166 +185,309 @@ padding: 10px;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #F0F0F0;
 }
 
-.add-procedure-btn {
-  background-color: transparent;
-  border: none;
-  color: #485C11;
-  font-size: 13px;
-  cursor: pointer;
-  font-weight: 500;
-  padding: 0;
-  text-decoration-line: underline;
+.procedures-header .card-title {
+  margin: 0;
+}
 
+/* Add Procedure Button  */
+.add-procedure-btn {
+  background: none!important;
+  border: none;
+  
+  color: #8E9C78 !important;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  font-family: 'DM Sans', sans-serif;
+  opacity: 1 !important;
+  visibility: visible !important;
 }
 
 .add-procedure-btn:hover {
-  color: #485C11;
+  color: #7a8966 !important;
 }
 
-/* timeline */
+.add-procedure-btn:focus {
+  outline: none;
+}
+/* Timeline */
 .timeline {
   position: relative;
+  padding: 0;
 }
 
 .timeline-item {
   position: relative;
-  padding-left: 30px;
-  padding-bottom: 30px;
+  display: flex;
+  padding-left: 28px;
+  padding-bottom: 16px;
 }
 
 .timeline-item.last {
   padding-bottom: 0;
 }
 
+/* Timeline Dot */
 .timeline-dot {
   position: absolute;
   left: 0;
-  top: 5px;
-  width: 12px;
-  height: 12px;
+  top: 6px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
-  background-color: #9e9e9e;
-  border: 2px solid white;
-  box-shadow: 0 0 0 2px #9e9e9e;
+  background-color: #D0D5C8;
+  border: 2px solid #FFFFFF;
+  box-shadow: 0 0 0 2px #E8E8E8;
+  z-index: 2;
 }
 
 .timeline-dot.active {
-  background-color: #485C11;
-  box-shadow: 0 0 0 2px #153e1f;
+  background-color: #8E9C78;
+  box-shadow: 0 0 0 2px rgba(142, 156, 120, 0.3);
 }
 
+/* Timeline Line */
 .timeline-line {
   position: absolute;
-  left: 8px;
-  top: 24px;
-  bottom: 0;
+  left: 4px;
+  top: 20px;
   width: 2px;
-  background-color: #e0e0e0;
+  height: calc(100% - 12px);
+  background-color: #E8E8E8;
+  z-index: 1;
 }
 
+/* Timeline Content */
 .timeline-content {
   flex: 1;
+  min-width: 0;
 }
 
-.procedure-date {
-  font-size: 11px;
-  color: #999;
-  margin-bottom: 5px;
-}
-
-.procedure-name {
-  font-size: 14px;
-  font-weight: 500;
-  margin-bottom: 5px;
+/* Procedure Header - Clickable */
+.procedure-header {
   display: flex;
-  align-items: center;
+  justify-content: space-between;
+  align-items: flex-start;
+  cursor: pointer;
+  margin: -8px;
+  transition: background-color 0.2s ease;
+}
+
+.procedure-header:hover {
+  background-color: #F8F8F8;
+}
+
+.procedure-header-left {
+  display: flex;
+  align-items: flex-start;
   gap: 8px;
-  color: #000;
 }
 
-.status-indicator {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background-color: #4CAF50;
+/* Collapse Arrow */
+.collapse-arrow {
+  font-size: 10px;
+  color: #888888;
+  transition: transform 0.2s ease;
+  margin-top: 4px;
 }
 
-.procedure-items {
-  margin: 8px 0;
-  padding-left: 20px;
+.collapse-arrow.expanded {
+  transform: rotate(90deg);
+}
+
+/* Procedure Date */
+.procedure-date {
   font-size: 12px;
-  color: rgba(0, 0, 0, 0.6);
-  line-height: 1.6;
-}
-
-.procedure-items li {
+  font-weight: 500;
+  color: #888888;
   margin-bottom: 2px;
 }
 
-.view-checklist-btn {
-  background-color: transparent;
-  border: none;
-  color: #485C11;
+/* Procedure Name */
+.procedure-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1A1A1A;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Procedure Physician */
+.procedure-physician {
   font-size: 12px;
-  cursor: pointer;
-  padding: 5px 0;
+  font-weight: 400;
+  color: #666666;
+  margin-top: 2px;
+}
+
+/* Status Indicator */
+.status-indicator {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #8E9C78;
+}
+
+/* Checklists Container */
+.checklists-container {
+  margin-top: 12px;
+  padding-left: 18px;
+  border-left: 1px solid #E8E8E8;
+  margin-left: 4px;
+}
+
+/* Checklist Entry */
+.checklist-entry {
+  padding: 12px 0;
+  border-bottom: 1px solid #F5F5F5;
+}
+
+.checklist-entry:last-of-type {
+  border-bottom: none;
+}
+
+.checklist-entry-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+/* Checklist Type Dot */
+.checklist-type-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-top: 4px;
+  flex-shrink: 0;
+}
+
+.checklist-type-dot.planning {
+  background-color: #8E9C78;
+}
+
+.checklist-type-dot.signin {
+  background-color: #8E9C78;
+}
+
+.checklist-type-dot.signout {
+  background-color: #8E9C78;
+}
+
+.checklist-entry-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.checklist-entry-date {
+  font-size: 11px;
+  color: #999999;
+}
+
+.checklist-entry-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: #333333;
+}
+
+.checklist-entry-items {
+  margin: 0;
+  padding: 0 0 0 18px;
+  list-style: none;
+}
+
+.checklist-entry-items li {
+  position: relative;
+  padding-left: 12px;
+  font-size: 12px;
+  color: #666666;
+  line-height: 1.6;
+  margin-bottom: 2px;
+}
+
+.checklist-entry-items li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 7px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background-color: #CCCCCC;
+}
+
+/* View Checklist Button */
+.view-checklist-btn {
+  display: inline-block;
+  margin-top: 12px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #8E9C78;
   text-decoration: underline;
+  cursor: pointer;
 }
 
 .view-checklist-btn:hover {
-  color: #333;
+  color: #7a8966;
 }
 
+/* View All Button */
 .view-all-btn {
-  margin-top: 20px;
-  background-color: transparent;
-  border: none;
-  color: #485C11;
+  display: block;
+  text-align: center;
+  padding: 12px;
+  margin-top: 16px;
+  background-color: #FAFAFA;
+  border: 1px solid #E8E8E8;
+  border-radius: 6px;
   font-size: 13px;
+  font-weight: 500;
+  color: #555555;
   cursor: pointer;
-  text-decoration: underline;
-  padding: 0;
+  transition: all 0.2s ease;
+  text-decoration: none;
 }
 
 .view-all-btn:hover {
-  color: #485C11;
+  background-color: #F0F0F0;
+  color: #333333;
 }
 
-/* error message */
-.error-message {
-  padding: 40px;
-  text-align: center;
-  font-size: 18px;
-  color: #666;
-}
-
-/* responsiveness */
-@media (max-width: 1200px) {
+/* Responsive */
+@media (max-width: 1024px) {
   .content-wrapper {
-    flex-direction: column;
+    grid-template-columns: 1fr;
   }
-  
+
   .procedures-section {
-    width: 100%;
+    position: static;
+  }
+
+  .procedures-card {
+    max-height: none;
   }
 }
 
 @media (max-width: 768px) {
-  .info-columns {
-    flex-direction: column;
+  .patient-detail-page {
+    padding: 24px 20px;
   }
-  
-  .header {
-    padding: 15px 20px;
-  }
-  
-  .content-wrapper {
-    padding: 0 20px;
-  }
-  
+
   .patient-name {
-    font-size: 28px;
+    font-size: 26px;
+  }
+
+  .info-columns {
+    grid-template-columns: 1fr;
   }
 }

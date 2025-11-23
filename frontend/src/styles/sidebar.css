@@ -1,79 +1,344 @@
-.sidebar{
-    height: 100vh;
-    width: 50px;
-    background-color: aliceblue;
-    color: black;
-    padding: 12px;
-    overflow-y: auto;
-    position: fixed;
-    border-radius: 4px;
-    border-right: 1px solid rgba(0, 0, 0, 0.11);
-    background: var(--Shades-White, #FFF);
+/* ========================================
+   SIDEBAR - Professional Medical App Theme
+   ======================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
+
+/* Sidebar Container */
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100vh;
+  width: 80px;
+  background-color: #FFFFFF;
+  border-right: 1px solid #E8E8E8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 0;
+  z-index: 100;
+  transition: width 0.3s ease;
 }
-.logo{
-    width: 45px;
-    height: 56.475px;
-    flex-shrink: 0;
+
+/* Logo Section */
+.logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  margin-bottom: 8px;
 }
-.logo p{
-    color: #000;
-    font-family: "DM Sans";
-    font-size: 40px;
-    font-style: normal;
-    font-weight: 600;
-    line-height: 100%; /* 40px */
-    margin-left: 8px;
+
+.logo p {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 32px;
+  font-weight: 700;
+  color: #1A1A1A;
+  margin: 0;
+  letter-spacing: -1px;
 }
-.line{
-    width: 48px;
-    height: 1px;
-    background: #D0D5DD;
-    margin-top: 20px;
+
+/* Divider Line */
+.line {
+  width: 40px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #E0E0E0, transparent);
+  margin: 16px 0;
 }
-.menu{
-    margin-top: 40px;
+
+/* Menu Section */
+.menu {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  width: 100%;
+  padding-top: 8px;
 }
-.menu p{
-    color: var(--Neutral-500, #64748B);
-    font-size: 12px;
-    font-style: normal;
-    font-weight: 556;
-    line-height: normal;
-    margin-left: 6px;
-    margin-bottom: 15px;
+
+.menu > p {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  color: #A0A0A0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 0 0 16px 0;
 }
-.profile-icon{
+
+/* Navigation */
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+/* Navigation Links */
+.nav-link,
+.nav-link-active {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  margin-bottom: 8px;
+  text-decoration: none;
+  color: #6B7280;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.nav-link:hover {
+  background-color: #F5F7F2;
+  color: #4B5563;
+}
+
+.nav-link-active {
+  background-color: #EEF3E8;
+  color: #5A6B4A;
+}
+
+.nav-link-active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 24px;
+  background-color: #8E9C78;
+  border-radius: 0 3px 3px 0;
+}
+
+/* Icon Containers */
+.patient-list-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  color: #6B7280;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  margin-bottom: 8px;
+}
+
+.patient-list-icon:hover,
+.dashboard-icon:hover {
+  background-color: #F5F7F2;
+  color: #4B5563;
+}
+
+.patient-list-icon.active {
+  background-color: #EEF3E8;
+  color: #5A6B4A;
+  position: relative;
+}
+
+.patient-list-icon.active::before {
+  content: '';
+  position: absolute;
+  left: -16px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 24px;
+  background-color: #8E9C78;
+  border-radius: 0 3px 3px 0;
+}
+
+/* Settings Icon */
+.settings {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  color: #6B7280;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: auto;
+  margin-bottom: 16px;
+}
+
+.settings:hover {
+  background-color: #F5F7F2;
+  color: #4B5563;
+}
+
+/* Profile Section */
+.profile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 16px;
+  border-top: 1px solid #E8E8E8;
+  width: 56px;
+}
+
+.profile p {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 10px;
+  font-weight: 500;
+  color: #A0A0A0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0 0 12px 0;
+}
+
+.profile-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #8E9C78 0%, #6B7A5A 100%);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(142, 156, 120, 0.3);
+}
+
+.profile-icon:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(142, 156, 120, 0.4);
+}
+
+/* Profile Status Indicator */
+.profile-icon::after {
+  content: '';
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 10px;
+  height: 10px;
+  background-color: #4CAF50;
+  border: 2px solid #FFFFFF;
+  border-radius: 50%;
+}
+
+/* Icon Styling */
+.sidebar .anticon {
+  font-size: 22px;
+}
+
+/* ----------------------------------------
+   RESPONSIVE DESIGN
+   ---------------------------------------- */
+
+@media (max-width: 768px) {
+  .sidebar {
+    width: 64px;
+    padding: 16px 0;
+  }
+
+  .logo {
     width: 40px;
     height: 40px;
-    flex-shrink: 0;
-    border-radius: 40px;
-    background-color: #64748B;
-    margin-left: 5px;
-    margin-top: 20px;
-}
-/* icons */
+  }
 
-.dashboard-icon{
-    margin-left: 10px;
-}
-.patient-list-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-top: 20px;
-    margin-left: 10px;
-}
+  .logo p {
+    font-size: 24px;
+  }
 
-.patient-list-icon.active{
-   margin-top: 10px;
-    margin-left: 3px;
-    color: #000; 
-    background-color: #DFECC6; 
-    border-radius: 3px;
-    padding: 8px;
+  .nav-link,
+  .nav-link-active,
+  .patient-list-icon,
+  .settings {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+  }
+
+  .profile-icon {
+    width: 36px;
+    height: 36px;
+  }
 }
 
-.settings{
-    margin-top: 340px;
-    margin-left: 10px;
+/* ----------------------------------------
+   HOVER ANIMATIONS
+   ---------------------------------------- */
+
+@keyframes pulse-indicator {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+.patient-list-icon.active .anticon {
+  animation: none;
+}
+
+/* ----------------------------------------
+   ACCESSIBILITY
+   ---------------------------------------- */
+
+.nav-link:focus,
+.nav-link-active:focus,
+.patient-list-icon:focus,
+.settings:focus,
+.profile-icon:focus {
+  outline: 2px solid #8E9C78;
+  outline-offset: 2px;
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .sidebar,
+  .nav-link,
+  .patient-list-icon,
+  .settings,
+  .profile-icon {
+    transition: none;
+  }
+}
+
+/* ----------------------------------------
+   DARK MODE SUPPORT (optional)
+   ---------------------------------------- */
+
+@media (prefers-color-scheme: dark) {
+  /* Uncomment to enable dark mode
+  .sidebar {
+    background-color: #1A1A1A;
+    border-right-color: #333333;
+  }
+
+  .logo p {
+    color: #FFFFFF;
+  }
+
+  .menu > p,
+  .profile p {
+    color: #666666;
+  }
+
+  .nav-link,
+  .patient-list-icon,
+  .settings {
+    color: #A0A0A0;
+  }
+
+  .nav-link:hover,
+  .patient-list-icon:hover,
+  .settings:hover {
+    background-color: #2A2A2A;
+    color: #FFFFFF;
+  }
+
+  .patient-list-icon.active {
+    background-color: #2D3328;
+    color: #8E9C78;
+  }
+  */
 }

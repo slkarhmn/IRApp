@@ -1,0 +1,688 @@
+/* ========================================
+   VIEW PROCEDURE CHECKLIST - Enhanced Design
+   ======================================== */
+
+/* Fonts */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
+
+* {
+  box-sizing: border-box;
+}
+
+.checklist-page {
+  font-family: 'DM Sans', sans-serif;
+  background-color: #FAFAFA;
+  min-height: 100vh;
+  padding: 40px 50px;
+}
+
+/* ----------------------------------------
+   ENHANCED HEADER SECTION
+   ---------------------------------------- */
+
+.checklist-header {
+  margin-bottom: 32px;
+}
+
+.header-top {
+  margin-bottom: 16px;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #666666;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  padding: 6px 0;
+}
+
+.back-link:hover {
+  color: #8E9C78;
+  gap: 10px;
+}
+
+.back-link svg {
+  transition: transform 0.2s ease;
+}
+
+.back-link:hover svg {
+  transform: translateX(-3px);
+}
+
+.header-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+}
+
+.header-info {
+  flex: 1;
+}
+
+.page-title {
+  font-size: 32px;
+  font-weight: 600;
+  color: #1A1A1A;
+  margin: 0 0 12px 0;
+  line-height: 1.2;
+}
+
+/* Procedure Metadata */
+.procedure-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 0;
+}
+
+.meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.meta-label {
+  font-size: 11px;
+  font-weight: 500;
+  color: #888888;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.meta-value {
+  font-size: 14px;
+  font-weight: 500;
+  color: #1A1A1A;
+}
+
+.meta-divider {
+  width: 1px;
+  height: 32px;
+  background-color: #E8E8E8;
+}
+
+/* Status Badge */
+.status-badge {
+  padding: 8px 20px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  flex-shrink: 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.status-scheduled {
+  background-color: #FFF8E6;
+  color: #B8860B;
+}
+
+.status-ready {
+  background-color: #E8F4FD;
+  color: #1976D2;
+}
+
+.status-completed {
+  background-color: #E8F5E8;
+  color: #2E7D32;
+}
+
+.status-cancelled {
+  background-color: #FEECEC;
+  color: #C62828;
+}
+
+/* ----------------------------------------
+   ENHANCED TABS
+   ---------------------------------------- */
+
+.tabs-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  background-color: #FFFFFF;
+  border: 2px solid #E8E8E8;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-family: 'DM Sans', sans-serif;
+  position: relative;
+  overflow: hidden;
+}
+
+.tab::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: transparent;
+  transition: all 0.3s ease;
+}
+
+.tab:hover {
+  border-color: #D0D5C8;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Tab Icons */
+.tab-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+}
+
+.tab-planning .tab-icon {
+  background-color: #F5F8F2;
+  color: #6B7A5A;
+}
+
+.tab-signin .tab-icon {
+  background-color: #F0F5F8;
+  color: #5A6B7A;
+}
+
+.tab-signout .tab-icon {
+  background-color: #F8F5F0;
+  color: #7A6B5A;
+}
+
+/* Tab Content */
+.tab-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tab-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333333;
+  transition: color 0.2s ease;
+}
+
+.tab-progress {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tab-progress-bar {
+  flex: 1;
+  height: 6px;
+  background-color: #F0F0F0;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.tab-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #8E9C78 0%, #A4B38E 100%);
+  border-radius: 3px;
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.tab-progress-text {
+  font-size: 12px;
+  font-weight: 500;
+  color: #666666;
+  min-width: 45px;
+  text-align: right;
+}
+
+/* Active Tab States */
+.tab.active {
+  border-color: transparent;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+}
+
+.tab-planning.active {
+  background: linear-gradient(135deg, #F5F8F2 0%, #EEF3E8 100%);
+  border-color: #C5D4B5;
+}
+
+.tab-planning.active::before {
+  background: linear-gradient(90deg, #8E9C78 0%, #A4B38E 100%);
+}
+
+.tab-planning.active .tab-icon {
+  background-color: #8E9C78;
+  color: #FFFFFF;
+  transform: scale(1.05);
+}
+
+.tab-signin.active {
+  background: linear-gradient(135deg, #F0F5F8 0%, #E8F0F3 100%);
+  border-color: #B5C5D4;
+}
+
+.tab-signin.active::before {
+  background: linear-gradient(90deg, #5A7A8E 0%, #7A9AA8 100%);
+}
+
+.tab-signin.active .tab-icon {
+  background-color: #5A7A8E;
+  color: #FFFFFF;
+  transform: scale(1.05);
+}
+
+.tab-signout.active {
+  background: linear-gradient(135deg, #F8F5F0 0%, #F3EEE8 100%);
+  border-color: #D4C5B5;
+}
+
+.tab-signout.active::before {
+  background: linear-gradient(90deg, #8E7A5A 0%, #A89A7A 100%);
+}
+
+.tab-signout.active .tab-icon {
+  background-color: #8E7A5A;
+  color: #FFFFFF;
+  transform: scale(1.05);
+}
+
+.tab.active .tab-label {
+  color: #1A1A1A;
+}
+
+.tab.active .tab-progress-text {
+  color: #333333;
+  font-weight: 600;
+}
+
+.tab:focus {
+  outline: none;
+}
+
+.tab:focus-visible {
+  outline: 2px solid #8E9C78;
+  outline-offset: 2px;
+}
+
+/* ----------------------------------------
+   TAB CONTENT WRAPPER
+   ---------------------------------------- */
+
+.tab-content-wrapper {
+  background-color: #FFFFFF;
+  border: 1px solid #E8E8E8;
+  border-radius: 12px;
+  padding: 32px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  animation: fadeInUp 0.3s ease;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ----------------------------------------
+   CHECKLIST SECTION
+   ---------------------------------------- */
+
+.checklist-section {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #F0F0F0;
+}
+
+.section-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1A1A1A;
+  margin: 0;
+}
+
+.completion-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 14px;
+  background-color: #EEF3E8;
+  color: #5A6B4A;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 20px;
+  letter-spacing: 0.3px;
+}
+
+.section-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #E8E8E8, transparent);
+  margin: 8px 0;
+}
+
+/* ----------------------------------------
+   ENHANCED CHECKLIST GRID
+   ---------------------------------------- */
+
+.checklist-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+}
+
+/* Enhanced Checklist Item */
+.checklist-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background-color: #FAFAFA;
+  border: 1px solid #F0F0F0;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  cursor: default;
+}
+
+.checklist-item:hover {
+  background-color: #F5F5F5;
+  border-color: #E8E8E8;
+}
+
+.checklist-item.checked {
+  background-color: #F5F8F2;
+  border-color: #D5E0C8;
+}
+
+.checklist-item.checked:hover {
+  background-color: #EEF3E8;
+}
+
+.checkbox-wrapper {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #D0D0D0;
+  transition: all 0.2s ease;
+}
+
+.checklist-item.checked .checkbox-wrapper {
+  color: #8E9C78;
+}
+
+.checklist-item:hover .checkbox-wrapper {
+  transform: scale(1.1);
+}
+
+.checklist-label {
+  font-size: 14px;
+  color: #555555;
+  line-height: 1.5;
+  transition: color 0.2s ease;
+}
+
+.checklist-item.checked .checklist-label {
+  color: #333333;
+  font-weight: 500;
+}
+
+/* ----------------------------------------
+   ENHANCED TEXT FIELDS
+   ---------------------------------------- */
+
+.text-fields {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.text-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.text-field.full-width {
+  grid-column: 1 / -1;
+}
+
+.field-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #555555;
+  letter-spacing: 0.2px;
+}
+
+.field-value {
+  font-size: 14px;
+  color: #333333;
+  padding: 12px 16px;
+  background-color: #FAFAFA;
+  border: 1px solid #F0F0F0;
+  border-radius: 8px;
+  line-height: 1.6;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+}
+
+.empty-value {
+  color: #AAAAAA;
+  font-style: italic;
+}
+
+/* ----------------------------------------
+   RESPONSIVE DESIGN
+   ---------------------------------------- */
+
+@media (max-width: 1200px) {
+  .checklist-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 992px) {
+  .tabs-container {
+    grid-template-columns: 1fr;
+  }
+
+  .tab {
+    padding: 14px 16px;
+  }
+
+  .text-fields {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .checklist-page {
+    padding: 24px 20px;
+  }
+
+  .page-title {
+    font-size: 26px;
+  }
+
+  .header-main {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .procedure-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 0;
+  }
+
+  .meta-divider {
+    display: none;
+  }
+
+  .status-badge {
+    align-self: flex-start;
+  }
+
+  .tab-content-wrapper {
+    padding: 24px 20px;
+  }
+
+  .checklist-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .checklist-page {
+    padding: 20px 16px;
+  }
+
+  .page-title {
+    font-size: 22px;
+  }
+
+  .tab {
+    padding: 12px;
+  }
+
+  .tab-icon {
+    width: 36px;
+    height: 36px;
+  }
+
+  .tab-label {
+    font-size: 13px;
+  }
+
+  .tab-content-wrapper {
+    padding: 20px 16px;
+  }
+
+  .checklist-item {
+    padding: 12px;
+  }
+
+  .checklist-label {
+    font-size: 13px;
+  }
+}
+
+/* ----------------------------------------
+   PRINT STYLES
+   ---------------------------------------- */
+
+@media print {
+  .checklist-page {
+    padding: 20px;
+    background-color: white;
+  }
+
+  .back-link,
+  .tabs-container {
+    display: none;
+  }
+
+  .tab-content-wrapper {
+    border: none;
+    box-shadow: none;
+    page-break-inside: avoid;
+  }
+
+  .checklist-item {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .section-header {
+    page-break-after: avoid;
+  }
+}
+
+/* ----------------------------------------
+   ACCESSIBILITY
+   ---------------------------------------- */
+
+.back-link:focus-visible,
+.tab:focus-visible {
+  outline: 2px solid #8E9C78;
+  outline-offset: 2px;
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .tab,
+  .tab-icon,
+  .tab-progress-fill,
+  .tab-content-wrapper,
+  .checklist-item,
+  .checkbox-wrapper,
+  .back-link svg {
+    animation: none;
+    transition: none;
+  }
+}
+
+/* ----------------------------------------
+   CUSTOM SCROLLBAR
+   ---------------------------------------- */
+
+.tab-content-wrapper::-webkit-scrollbar {
+  width: 8px;
+}
+
+.tab-content-wrapper::-webkit-scrollbar-track {
+  background: #F5F5F5;
+  border-radius: 4px;
+}
+
+.tab-content-wrapper::-webkit-scrollbar-thumb {
+  background: #D0D0D0;
+  border-radius: 4px;
+}
+
+.tab-content-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #BBBBBB;
+}
+
+/* Firefox scrollbar */
+.tab-content-wrapper {
+  scrollbar-width: thin;
+  scrollbar-color: #D0D0D0 #F5F5F5;
+}

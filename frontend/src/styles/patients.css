@@ -1,12 +1,9 @@
-
 .patient-list-page{
-    margin-left: 20px;
+    padding: 20px 50px;
 }
 
 .title h1{
     color: #000;
-
-    
 }
 
 .search-container{
@@ -19,16 +16,15 @@
     align-items: center;
     gap: 8px;
     align-self: stretch;
-    background: var(--Neutral-N0, #FFF);
-    
+    /* Removed white background that was causing the issue */
 }
+
 .filter{
     margin-top: 8px;
     margin-left: 20px;
 }
 
 /* body */
-
 .patient-body-container{
     display: flex;
 }

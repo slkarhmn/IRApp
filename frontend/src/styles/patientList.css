@@ -1,62 +1,135 @@
+/* Fonts */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
+
+* {
+  box-sizing: border-box;
+}
+
+/* Table Container */
+.patient-table-container {
+  padding: 0 50px 40px 50px;
+  font-family: 'DM Sans', sans-serif;
+}
+
+/* Table */
 .patient-table {
-  color: black;
-  margin-top: 40px;
-  /* margin-left: 40px; */
-      border-collapse: collapse;
-
+  width: 100%;
+  background-color: #FFFFFF;
+  border-collapse: collapse;
 }
 
-.patient-table * {
-  color: black;
-  font-family:'DM sans';
-  
+/* Table Header */
+.table-header {
 }
 
-.yes-button{
-    display: flex;
-    padding: 8px 16px;
-    justify-content: center;
-    align-items: center;
-    gap: 5px;
-    border-radius: 4px;
-    border: 1px solid #000;
-    background: #DFECC6;
-    box-shadow: 0 0 0 0 #000;
+.header-row {
+  border-bottom: 1px solid #E8E8E8;
 }
 
-.no-button{
-    display: flex;
-    padding: 8px 16px;
-    justify-content: center;
-    align-items: center;
-    gap: 5px;
-    border-radius: 4px;
-    border: 1px solid #000;
-    background: #ECD0C6;
-    box-shadow: 0 0 0 0 #000;
+.header-cell {
+  padding: 14px 16px;
+  text-align: left;
+  font-size: 12px;
+  font-weight: 600;
+  color: #888888;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-/* adding spacing bw columns */
+.header-content {
+  display: flex;
+  align-items: center;
+}
 
-.header-cell,
+/* Table Body */
+.table-body {
+  background-color: #FFFFFF;
+}
+
+.body-row {
+  border-bottom: 1px solid #F0F0F0;
+}
+
+.body-row:hover {
+  background-color: #FAFAFA;
+}
+
 .body-cell {
-    padding: 12px 34px; 
-}
-.header-cell{
-    text-align: left;
-}
-.body-row{
-    border-bottom: 1px solid rgba(0, 0, 0, 0.14);
+  padding: 16px;
+  font-size: 14px;
+  color: #333333;
+  vertical-align: middle;
 }
 
-/* style fields */
-.agengender-style,
-.phonenum-style{
-    color: rgba(0, 0, 0, 0.44);
-font-family: "DM Sans";
-font-size: 16px;
-font-style: normal;
-font-weight: 400;
-line-height: 100%; /* 16px */
+.cell-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
+/* Patient Name Link */
+.font-medium {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1A1A1A;
+  text-decoration: none;
+}
+
+.font-medium:hover {
+  color: #8E9C78;
+}
+
+/* Age/Gender */
+.agengender-style {
+  font-size: 13px;
+  color: #888888;
+}
+
+/* Email */
+.email-style {
+  font-size: 14px;
+  color: #333333;
+}
+
+/* Phone */
+.phonenum-style {
+  font-size: 13px;
+  color: #888888;
+}
+
+/* Insurance Badges */
+.yes-button,
+.no-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 12px;
+  width: 70px;
+  font-size: 12px;
+  font-weight: 500;
+  font-family: 'DM Sans', sans-serif;
+  border-radius: 4px;
+  border: none;
+}
+
+.yes-button {
+  background-color: #E8F5E8;
+  color: #2E7D32;
+}
+
+.no-button {
+  background-color: #F5F5F5;
+  color: #888888;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .patient-table-container {
+    padding: 0 20px 24px 20px;
+  }
+
+  .header-cell,
+  .body-cell {
+    padding: 12px;
+  }
+}
