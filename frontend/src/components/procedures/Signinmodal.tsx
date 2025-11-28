@@ -1,5 +1,7 @@
 import React, { useState, type ChangeEvent, type FormEvent } from 'react';
 import './Modals.css';
+// @ts-expect-error fuck ts
+import { checklistService } from "../../services/checklists";
 
 // Icon Components
 const CloseIcon = () => (
@@ -76,28 +78,35 @@ export const SignInModal: React.FC<SignInModalProps> = ({
     }));
   };
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit =async (e: FormEvent) => {
     e.preventDefault();
 
-    // Check if all critical items are completed
-    const criticalItems = checklistItems.filter(item => item.critical);
-    const allCriticalComplete = criticalItems.every(item => item.checked);
-
-    if (!allCriticalComplete) {
-      alert('Please complete all critical safety checks before proceeding.');
-      return;
-    }
-
-    const formData = {
-      procedure_id: procedureId,
-      checklist: checklistItems.reduce((acc, item) => ({
+    // prepare checklist data arr-> obj
+    const checklistData = checklistItems.reduce((acc, item) => ({
         ...acc,
         [item.key]: item.checked
-      }), {}),
+    }), {});
+
+    // combine form data
+    const formData = {
+      procedure_id: Number(procedureId),
+      ...checklistData,
       ...textFields
     };
+    console.log('sending to backend', formData)
 
-    console.log('Sign In data:', formData);
+    try {
+      // send to backend
+      const response = await checklistService.createSignIn(formData)
+      console.log('saved successfully', response)
+      // on usccess close modal
+      onSuccess()
+      
+    } catch (error) {
+      console.log('error saving sign in data', error)
+    }
+
+    console.log('sign in data:', formData);
     onSuccess();
   };
 

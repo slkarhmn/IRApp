@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Link, useParams } from 'react-router-dom';
 import "../../styles/patientDetail.css"
@@ -11,6 +12,8 @@ import { SignOutModal } from '../procedures/Signoutmodal';
 import {patientService} from "../../services/patientService"
 //@ts-expect-error fuck ts
 import {procedureService} from "../../services/procedures"
+//@ts-expect-error fuck ts
+import {checklistService} from "../../services/checklists"
 
 interface Checklist {
   id: string;
@@ -87,21 +90,101 @@ const PatientDetail = () => {
     fetchPatient()
   }, [id])
 
+  // fetch checklist for procedure
+  const fetchChecklistForProcedure = async (procedureId: number) => {
+     console.log('🔍 fetchChecklistForProcedure called with:', procedureId);
+    console.log('🔍 procedureId type:', typeof procedureId);
+    try {
+      const [planningResponse, signInResponse, signOutResponse] = await Promise.all([
+          checklistService.getProcedurePlanningByProcedure(procedureId).catch(() => ({ data: null })),
+          checklistService.getSignInByProcedure(procedureId).catch(() => ({ data: null })),
+          checklistService.getSignOutByProcedure(procedureId).catch(() => ({ data: null }))
+      ]);
+
+      const checklists = [];
+
+      if (planningResponse.data) {
+        const planning = planningResponse.data;
+        checklists.push({
+          id: `planning-${planning.id}`,
+          type: 'planning',
+          name: 'Pre-Procedural Planning',
+          date: new Date().toLocaleDateString('en-US', { 
+            month: 'short', 
+            day: 'numeric', 
+            year: 'numeric' 
+          }),
+          items: [
+            planning.discussed_with_referring_physician && 'Discussed with referring physician',
+            planning.imaging_studies_reviewed && 'Imaging studies reviewed',
+            planning.informed_consent && 'Informed consent obtained',
+            planning.relevant_medical_history && 'Medical history documented'
+          ].filter(Boolean)
+        });
+      }
+
+      if (signInResponse.data) {
+        const signIn = signInResponse.data;
+        checklists.push({
+          id: `signin-${signIn.id}`,
+          type: 'signin',
+          name: 'Sign In',
+          date: new Date().toLocaleDateString('en-US', { 
+            month: 'short', 
+            day: 'numeric', 
+            year: 'numeric' 
+          }),
+          items: [
+            signIn.correct_patient && 'Correct patient verified',
+            signIn.correct_site && 'Correct site verified',
+            signIn.allergies_checked && 'Allergies checked'
+          ].filter(Boolean)
+        });
+      }
+
+      if (signOutResponse.data) {
+        const signOut = signOutResponse.data;
+        checklists.push({
+          id: `signout-${signOut.id}`,
+          type: 'signout',
+          name: 'Sign Out',
+          date: new Date().toLocaleDateString('en-US', { 
+            month: 'short', 
+            day: 'numeric', 
+            year: 'numeric' 
+          }),
+          items: [
+            signOut.vital_signs_normal && 'Vital signs normal',
+            signOut.samples_labelled && 'Samples labelled',
+            signOut.follow_up_appt_made && 'Follow-up appointment made'
+          ].filter(Boolean)
+        });
+      }
+
+      console.log('📋 checklists found for procedure', procedureId, ':', checklists);
+      return checklists;
+    } catch (error) {
+      console.log('error fetching checklist for procedure', error)
+      return [];
+    }
+  }
+
   // Fetch procedures for this patient
   useEffect(() => {
     const fetchProcedures = async () => {
       if (!id) return;
       
       try {
-        // First, get all patient procedures
         const patientProcsResponse = await procedureService.getAllPatientProceduresForPatient(id);
         
-        // Then, for each patient procedure, fetch the full procedure details
         const transformedProcedures = await Promise.all(
           patientProcsResponse.data.map(async (proc: any) => {
+            console.log('Processing proc:', proc);
+            console.log('proc.id:', proc.id);
+            
             try {
-              // Fetch the procedure details using the procedure_id
               const procedureDetails = await procedureService.getProcedureByID(proc.procedure_id);
+              const checklists = await fetchChecklistForProcedure(proc.id);
               
               return {
                 id: proc.id,
@@ -114,11 +197,10 @@ const PatientDetail = () => {
                 code: procedureDetails.data.procedure_code,
                 physician: proc.physician,
                 status: proc.status,
-                checklists: []
+                checklists: checklists
               };
             } catch (error) {
               console.error(`Error fetching procedure details for ID ${proc.procedure_id}:`, error);
-              // Return with fallback values if procedure fetch fails
               return {
                 id: proc.id,
                 date: new Date(proc.scheduled_date).toLocaleDateString('en-US', { 
@@ -138,7 +220,6 @@ const PatientDetail = () => {
         
         setProcedures(transformedProcedures);
         
-        // Auto-expand the first procedure
         if (transformedProcedures.length > 0) {
           setExpandedProcedures([transformedProcedures[0].id]);
         }
@@ -154,7 +235,6 @@ const PatientDetail = () => {
   const handleProcedureCreated = async () => {
     setShowPrModal(false);
     
-    // Refresh procedures list
     try {
       const patientProcsResponse = await procedureService.getAllPatientProceduresForPatient(id);
       
@@ -162,6 +242,7 @@ const PatientDetail = () => {
         patientProcsResponse.data.map(async (proc: any) => {
           try {
             const procedureDetails = await procedureService.getProcedureByID(proc.procedure_id);
+            const checklists = await fetchChecklistForProcedure(proc.id);
             
             return {
               id: proc.id,
@@ -174,7 +255,7 @@ const PatientDetail = () => {
               code: procedureDetails.data.procedure_code,
               physician: proc.physician,
               status: proc.status,
-              checklists: []
+              checklists: checklists
             };
           } catch (error) {
             console.error(`Error fetching procedure details for ID ${proc.procedure_id}:`, error);
@@ -197,7 +278,6 @@ const PatientDetail = () => {
       
       setProcedures(transformedProcedures);
       
-      // Expand the newly created procedure
       if (transformedProcedures.length > 0) {
         setExpandedProcedures([transformedProcedures[0].id]);
       }
@@ -217,8 +297,51 @@ const PatientDetail = () => {
     setActiveChecklistModal(option);
   };
 
-  const handleCloseChecklistModal = () => {
+  const handleCloseChecklistModal = async () => {
     setActiveChecklistModal(null);
+    
+    if (!id) return;
+    
+    try {
+      const patientProcsResponse = await procedureService.getAllPatientProceduresForPatient(id);
+      
+      const transformedProcedures = await Promise.all(
+        patientProcsResponse.data.map(async (proc: any) => {
+          try {
+            const procedureDetails = await procedureService.getProcedureByID(proc.procedure_id);
+            const checklists = await fetchChecklistForProcedure(proc.id);
+            
+            return {
+              id: proc.id,
+              date: new Date(proc.scheduled_date).toLocaleDateString('en-US', { 
+                month: 'short', 
+                day: 'numeric', 
+                year: 'numeric' 
+              }),
+              name: procedureDetails.data.procedure_name,
+              code: procedureDetails.data.procedure_code,
+              physician: proc.physician,
+              status: proc.status,
+              checklists: checklists
+            };
+          } catch (error) {
+            return {
+              id: proc.id,
+              date: 'Unknown',
+              name: 'Unknown Procedure',
+              code: 'N/A',
+              physician: proc.physician || 'Unknown',
+              status: proc.status,
+              checklists: []
+            };
+          }
+        })
+      );
+      
+      setProcedures(transformedProcedures);
+    } catch (error) {
+      console.error('Error refreshing procedures:', error);
+    }
   };
 
   const toggleProcedure = (procedureId: number) => {
@@ -237,23 +360,18 @@ const PatientDetail = () => {
     <div className="patient-detail-page">
       <div className="content-wrapper">
         <div className="patient-info-section">
-          {/* Patient Name */}
           <h2 className="patient-name">{patient.first_name} {patient.last_name}</h2>
 
           <div className="info-columns">
-            {/* Contact Information & Medical Information */}
             <div className="info-column">
-              {/* Contact Information */}
               <div className="card">
                 <h3 className="card-title">Contact Information</h3>
                 <p className="contact-item">{patient.phone}</p>
               </div>
 
-              {/* Medical Information */}
               <div className="card card-medical">
                 <h3 className="card-title">Medical Information</h3>
 
-                {/* Allergies */}
                 <div className="medical-section">
                   <p className="medical-label">Allergies</p>
                   <div className="medical-content">
@@ -264,7 +382,6 @@ const PatientDetail = () => {
                   </div>
                 </div>
 
-                {/* Medications */}
                 <div className="medical-section">
                   <p className="medical-label">Medications</p>
                   <div className="medical-content">
@@ -273,7 +390,6 @@ const PatientDetail = () => {
                   </div>
                 </div>
 
-                {/* Family History */}
                 <div className="medical-section">
                   <p className="medical-label">Family History</p>
                   <div className="medical-content">
@@ -284,9 +400,7 @@ const PatientDetail = () => {
               </div>
             </div>
 
-            {/* Vitals and Lab Values */}
             <div className="info-column">
-              {/* Vitals */}
               <div className="card">
                 <h3 className="card-title">Vitals</h3>
                 <div className="vitals-list">
@@ -315,7 +429,6 @@ const PatientDetail = () => {
                 </div>
               </div>
 
-              {/* Lab Values */}
               <div className="card">
                 <h3 className="card-title">Lab Values</h3>
                 <div className="lab-list">
@@ -349,7 +462,6 @@ const PatientDetail = () => {
           </div>
         </div>
 
-        {/* Procedures & Checklists */}
         <div className="procedures-section">
           <div className="procedures-card">
             <div className="procedures-header">
@@ -359,7 +471,6 @@ const PatientDetail = () => {
               </span>
             </div>
 
-            {/* Timeline */}
             <div className="timeline">
               {procedures.length === 0 ? (
                 <div style={{ textAlign: 'center', padding: '20px', color: '#888' }}>
@@ -368,17 +479,13 @@ const PatientDetail = () => {
               ) : (
                 procedures.map((procedure, idx) => (
                   <div key={procedure.id} className={`timeline-item ${idx === procedures.length - 1 ? 'last' : ''}`}>
-                    {/* Timeline dot */}
                     <div className={`timeline-dot ${idx === 0 ? 'active' : ''}`} />
                     
-                    {/* Timeline line */}
                     {idx !== procedures.length - 1 && (
                       <div className="timeline-line" />
                     )}
 
-                    {/* Content */}
                     <div className="timeline-content">
-                      {/* Procedure Header - Clickable */}
                       <div 
                         className="procedure-header"
                         onClick={() => toggleProcedure(procedure.id)}
@@ -397,7 +504,6 @@ const PatientDetail = () => {
                           </div>
                         </div>
                         
-                        {/* Add Checklist Dropdown */}
                         <div onClick={(e) => e.stopPropagation()}>
                           <AddChecklistDropdown
                             procedureId={procedure.id}
@@ -407,7 +513,6 @@ const PatientDetail = () => {
                         </div>
                       </div>
 
-                      {/* Collapsible Checklists */}
                       {isProcedureExpanded(procedure.id) && (
                         <div className="checklists-container">
                           {procedure.checklists.length === 0 ? (
@@ -456,7 +561,6 @@ const PatientDetail = () => {
         
       </div>
       
-      {/* Add Procedure Modal */}
       {showPrModal && (
         <AddProcedureModal 
           patientId={id!} 
@@ -465,7 +569,6 @@ const PatientDetail = () => {
         />
       )}
 
-      {/* Checklist Modals */}
       {activeChecklistModal === 'planning' && procedures.length > 0 && (
         <PreProceduralPlanningModal
           procedureId={procedures[0].id}

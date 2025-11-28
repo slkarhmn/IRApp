@@ -52,7 +52,7 @@ export const PreProceduralPlanningModal: React.FC<PreProceduralPlanningModalProp
     { key: 'anaesthetist_necessary', label: 'Anaesthetist notified (if necessary)', checked: false },
     { key: 'anticoagulant_stopped', label: 'Anticoagulant stopped', checked: false },
     { key: 'post_precedural_bed_required', label: 'Post-procedural bed arranged', checked: false }, // Changed!
-    { key: 'contrast_allergy_prophylaxis_necessary', label: 'Contrast allergy prophylaxis (if necessary)', checked: false }, // Changed!
+    { key: 'contrast_allergy_prophylaxis_necessary', label: 'Contrast allergy prophylaxis (if necessary)', checked: false }, 
   ]);
 
   const [textFields, setTextFields] = useState({

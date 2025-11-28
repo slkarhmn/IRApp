@@ -33,6 +33,10 @@ export const checklistService = {
     deleteProcedurePlanning:(id)=>{
         return api.delete(`/checklist/procedure-planning/${id}`)
     },
+    // getProcedurePlanningByProcedure: (procedureId) => {
+    //     return api.get(`/checklist/procedure-planning/procedure/${procedureId}`)
+    // },
+
 
     // sign in 
 
@@ -55,6 +59,10 @@ export const checklistService = {
     deleteSignIn:(id)=>{
         return api.delete(`/checklist/sign-in/${id}`)
     },
+    // getSignInByProcedure: (procedureId) => {
+    //     return api.get(`/checklist/sign-in/procedure/${procedureId}`)
+    // },
+
 
 
     // sign out
@@ -80,6 +88,9 @@ export const checklistService = {
         return api.delete(`/checklist/sign-out/${id}`)
     },
 
+    // getSignOutByProcedure: (procedureId) => {
+    //     return api.get(`/checklist/sign-out/procedure/${procedureId}`)
+    // },
 
 
 }

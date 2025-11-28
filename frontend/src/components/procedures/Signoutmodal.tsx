@@ -1,5 +1,8 @@
 import React, { useState, type ChangeEvent, type FormEvent } from 'react';
 import './Modals.css';
+// @ts-expect-error fuck ts
+import { checklistService } from "../../services/checklists";
+
 
 // Icon Components
 const CloseIcon = () => (
@@ -85,29 +88,39 @@ export const SignOutModal: React.FC<SignOutModalProps> = ({
     }));
   };
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit =async (e: FormEvent) => {
     e.preventDefault();
 
-    const followUpItem = checklistItems.find(item => item.key === 'follow_up_appt_made');
-    if (followUpItem?.checked && (!followUpDate || !followUpTime)) {
-      alert('Please provide the follow-up appointment date and time.');
-      return;
-    }
-
-    const formData = {
-      procedure_id: procedureId,
-      checklist: checklistItems.reduce((acc, item) => ({
+    // prepare checklist data arr-> obj
+    const checklistData = checklistItems.reduce((acc, item) => ({
         ...acc,
         [item.key]: item.checked
-      }), {}),
-      ...textFields,
-      follow_up_appt_date: followUpDate && followUpTime ? `${followUpDate}T${followUpTime}` : null
-    };
+    }), {});
 
-    console.log('Sign Out data:', formData);
+    // combine form data
+    const formData = {
+      procedure_id: Number(procedureId),
+      ...checklistData,
+      ...textFields
+    };
+    console.log('sending to backend', formData)
+
+    try {
+      // send to backend
+      const response = await checklistService.createSignOut(formData)
+      console.log('saved successfully', response)
+      // on usccess close modal
+      onSuccess()
+      
+    } catch (error) {
+      console.log('error saving sign out data', error)
+    }
+
+    console.log('sign out data:', formData);
     onSuccess();
   };
 
+  
   const handleOverlayClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
       onClose();
