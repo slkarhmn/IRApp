@@ -1,5 +1,7 @@
 import React, { useState, type ChangeEvent, type FormEvent } from 'react';
 import './Modals.css';
+// @ts-expect-error fuck ts
+import { checklistService } from "../../services/checklists";
 
 // Icon Components
 const CloseIcon = () => (
@@ -49,15 +51,14 @@ export const PreProceduralPlanningModal: React.FC<PreProceduralPlanningModalProp
     { key: 'fasting_order', label: 'Fasting order confirmed', checked: false },
     { key: 'anaesthetist_necessary', label: 'Anaesthetist notified (if necessary)', checked: false },
     { key: 'anticoagulant_stopped', label: 'Anticoagulant stopped', checked: false },
-    { key: 'post_procedural_bed_required', label: 'Post-procedural bed arranged', checked: false },
-    { key: 'contrast_allergy_prophylaxis', label: 'Contrast allergy prophylaxis (if necessary)', checked: false },
+    { key: 'post_precedural_bed_required', label: 'Post-procedural bed arranged', checked: false }, // Changed!
+    { key: 'contrast_allergy_prophylaxis_necessary', label: 'Contrast allergy prophylaxis (if necessary)', checked: false }, // Changed!
   ]);
 
   const [textFields, setTextFields] = useState({
     relevant_medical_history: '',
     tools_requested_and_present: '',
     relevant_lab_tests: '',
-    additional_notes: ''
   });
 
   const toggleChecklistItem = (key: string) => {
@@ -76,17 +77,33 @@ export const PreProceduralPlanningModal: React.FC<PreProceduralPlanningModalProp
     }));
   };
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit =async (e: FormEvent) => {
     e.preventDefault();
 
-    const formData = {
-      procedure_id: procedureId,
-      checklist: checklistItems.reduce((acc, item) => ({
+    // prepare checklist data arr-> obj
+    const checklistData = checklistItems.reduce((acc, item) => ({
         ...acc,
         [item.key]: item.checked
-      }), {}),
+    }), {});
+
+    // combine form data
+    const formData = {
+      procedure_id: Number(procedureId),
+      ...checklistData,
       ...textFields
     };
+    console.log('sending to backend', formData)
+
+    try {
+      // send to backend
+      const response = await checklistService.createProcedurePlanning(formData)
+      console.log('saved successfully', response)
+      // on usccess close modal
+      onSuccess()
+      
+    } catch (error) {
+      console.log('error saving planning data', error)
+    }
 
     console.log('Pre-Procedural Planning data:', formData);
     onSuccess();
@@ -209,20 +226,7 @@ export const PreProceduralPlanningModal: React.FC<PreProceduralPlanningModalProp
               </div>
             </div>
 
-            <div className="form-field">
-              <label htmlFor="additional_notes">
-                <span className="label-text">Additional Notes</span>
-                <span className="optional">(optional)</span>
-              </label>
-              <textarea
-                id="additional_notes"
-                name="additional_notes"
-                value={textFields.additional_notes}
-                onChange={handleTextChange}
-                placeholder="Any other relevant information..."
-                rows={2}
-              />
-            </div>
+            ``
           </div>
 
           {/* Actions */}

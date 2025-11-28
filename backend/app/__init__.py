@@ -1,9 +1,9 @@
 from .extensions.database import db
 from .config import config as AppConfig
 from .utils import data_loader
-from flask import Flask, Blueprint
-from flask_migrate import Migrate
-from flask_restx import Api
+from flask import Flask, Blueprint # type: ignore
+from flask_migrate import Migrate # type: ignore
+from flask_restx import Api # pyright: ignore[reportMissingImports]
 from .extensions.login_manager import login_manager
 from .routes.user_routes import user_ns as UserAPI
 from .routes.staff_routes import staff_ns as StaffAPI, specialty_ns as SpecialtyAPI
@@ -11,9 +11,11 @@ from .routes.procedures_route import patient_procedure_ns as PatientProcedureAPI
 from .routes.patients_route import patient_ns as PatientsAPI
 from .routes.checklists_route import checklist_ns as ChecklistAPI
 from .routes.search_route import search_ns as SearchAPI
+from flask_cors import CORS # type: ignore
 
 def create_app(config_setting):
     app = Flask(__name__)
+    CORS(app)
     app.config.from_object(AppConfig[config_setting]) 
     
     db.init_app(app)

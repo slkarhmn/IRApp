@@ -28,8 +28,6 @@ dist
 dist-ssr
 *.local
 
-echo "backend/instance/" >> .gitignore
-
 
 # Editor directories and files
 .vscode/*
