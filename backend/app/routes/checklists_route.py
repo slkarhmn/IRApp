@@ -73,13 +73,18 @@ sign_out_model = checklist_ns.model('SignOut', {
     'procedure_results_communicated_to_referring_physician': fields.Boolean(description='Were results communicated to referring physician?')
 })
 
+complete_checklist_model = checklist_ns.model('CompleteChecklist', {
+    'procedure_planning': fields.Nested(procedure_planning_model, allow_null=True),
+    'sign_in': fields.Nested(sign_in_model, allow_null=True),
+    'sign_out': fields.Nested(sign_out_model, allow_null=True)
+})
+
 
 @checklist_ns.route('/procedure-planning')
 class ProcedurePlanningList(Resource):
     @checklist_ns.doc('list_procedure_planning', description='Retrieve all procedure planning entries')
     @checklist_ns.marshal_list_with(procedure_planning_model)
     def get(self):
-        """List all procedure planning entries"""
         logger.info("Fetching all procedure planning entries")
         entries = ProcedurePlanning.query.all()
         return procedure_planning_list_schema.dump(entries), 200
@@ -88,7 +93,6 @@ class ProcedurePlanningList(Resource):
     @checklist_ns.expect(procedure_planning_model)
     @checklist_ns.marshal_with(procedure_planning_model, code=201)
     def post(self):
-        """Create a new procedure planning entry"""
         json_data = request.get_json()
         logger.info("Creating a new procedure planning entry")
         try:
@@ -103,6 +107,18 @@ class ProcedurePlanningList(Resource):
         return procedure_planning_schema.dump(entry), 201
 
 
+@checklist_ns.route('/procedure-planning/by-procedure/<int:procedure_id>')
+@checklist_ns.response(404, 'ProcedurePlanning not found')
+@checklist_ns.param('procedure_id', 'The patient procedure identifier')
+class ProcedurePlanningByProcedure(Resource):
+    @checklist_ns.doc('get_procedure_planning_by_procedure', description='Retrieve a procedure planning entry by procedure ID')
+    @checklist_ns.marshal_with(procedure_planning_model)
+    def get(self, procedure_id):
+        logger.info("Fetching procedure planning entry for procedure ID: %d", procedure_id)
+        entry = ProcedurePlanning.query.filter_by(procedure_id=procedure_id).first_or_404()
+        return procedure_planning_schema.dump(entry), 200
+
+
 @checklist_ns.route('/procedure-planning/<int:id>')
 @checklist_ns.response(404, 'ProcedurePlanning not found')
 @checklist_ns.param('id', 'The procedure planning identifier')
@@ -110,7 +126,6 @@ class ProcedurePlanningResource(Resource):
     @checklist_ns.doc('get_procedure_planning', description='Retrieve a procedure planning entry by its ID')
     @checklist_ns.marshal_with(procedure_planning_model)
     def get(self, id):
-        """Fetch a procedure planning entry by ID"""
         logger.info("Fetching procedure planning entry with ID: %d", id)
         entry = ProcedurePlanning.query.get_or_404(id)
         return procedure_planning_schema.dump(entry), 200
@@ -119,7 +134,6 @@ class ProcedurePlanningResource(Resource):
     @checklist_ns.expect(procedure_planning_model)
     @checklist_ns.marshal_with(procedure_planning_model)
     def put(self, id):
-        """Update a procedure planning entry"""
         logger.info("Updating procedure planning entry with ID: %d", id)
         entry = ProcedurePlanning.query.get_or_404(id)
         json_data = request.get_json()
@@ -136,7 +150,6 @@ class ProcedurePlanningResource(Resource):
     @checklist_ns.doc('delete_procedure_planning', description='Delete a procedure planning entry by its ID')
     @checklist_ns.response(204, 'ProcedurePlanning deleted')
     def delete(self, id):
-        """Delete a procedure planning entry"""
         logger.info("Deleting procedure planning entry with ID: %d", id)
         entry = ProcedurePlanning.query.get_or_404(id)
         db.session.delete(entry)
@@ -150,7 +163,6 @@ class SignInList(Resource):
     @checklist_ns.doc('list_sign_in', description='Retrieve all sign-in entries')
     @checklist_ns.marshal_list_with(sign_in_model)
     def get(self):
-        """List all sign-in entries"""
         logger.info("Fetching all sign-in entries")
         entries = SignIn.query.all()
         return sign_in_list_schema.dump(entries), 200
@@ -159,7 +171,6 @@ class SignInList(Resource):
     @checklist_ns.expect(sign_in_model)
     @checklist_ns.marshal_with(sign_in_model, code=201)
     def post(self):
-        """Create a new sign-in entry"""
         json_data = request.get_json()
         logger.info("Creating a new sign-in entry")
         try:
@@ -174,6 +185,18 @@ class SignInList(Resource):
         return sign_in_schema.dump(entry), 201
 
 
+@checklist_ns.route('/sign-in/by-procedure/<int:procedure_id>')
+@checklist_ns.response(404, 'SignIn not found')
+@checklist_ns.param('procedure_id', 'The patient procedure identifier')
+class SignInByProcedure(Resource):
+    @checklist_ns.doc('get_sign_in_by_procedure', description='Retrieve a sign-in entry by procedure ID')
+    @checklist_ns.marshal_with(sign_in_model)
+    def get(self, procedure_id):
+        logger.info("Fetching sign-in entry for procedure ID: %d", procedure_id)
+        entry = SignIn.query.filter_by(procedure_id=procedure_id).first_or_404()
+        return sign_in_schema.dump(entry), 200
+
+
 @checklist_ns.route('/sign-in/<int:id>')
 @checklist_ns.response(404, 'SignIn not found')
 @checklist_ns.param('id', 'The sign-in identifier')
@@ -181,7 +204,6 @@ class SignInResource(Resource):
     @checklist_ns.doc('get_sign_in', description='Retrieve a sign-in entry by its ID')
     @checklist_ns.marshal_with(sign_in_model)
     def get(self, id):
-        """Fetch a sign-in entry by ID"""
         logger.info("Fetching sign-in entry with ID: %d", id)
         entry = SignIn.query.get_or_404(id)
         return sign_in_schema.dump(entry), 200
@@ -190,7 +212,6 @@ class SignInResource(Resource):
     @checklist_ns.expect(sign_in_model)
     @checklist_ns.marshal_with(sign_in_model)
     def put(self, id):
-        """Update a sign-in entry"""
         logger.info("Updating sign-in entry with ID: %d", id)
         entry = SignIn.query.get_or_404(id)
         json_data = request.get_json()
@@ -207,7 +228,6 @@ class SignInResource(Resource):
     @checklist_ns.doc('delete_sign_in', description='Delete a sign-in entry by its ID')
     @checklist_ns.response(204, 'SignIn deleted')
     def delete(self, id):
-        """Delete a sign-in entry"""
         logger.info("Deleting sign-in entry with ID: %d", id)
         entry = SignIn.query.get_or_404(id)
         db.session.delete(entry)
@@ -221,7 +241,6 @@ class SignOutList(Resource):
     @checklist_ns.doc('list_sign_out', description='Retrieve all sign-out entries')
     @checklist_ns.marshal_list_with(sign_out_model)
     def get(self):
-        """List all sign-out entries"""
         logger.info("Fetching all sign-out entries")
         entries = SignOut.query.all()
         return sign_out_list_schema.dump(entries), 200
@@ -230,7 +249,6 @@ class SignOutList(Resource):
     @checklist_ns.expect(sign_out_model)
     @checklist_ns.marshal_with(sign_out_model, code=201)
     def post(self):
-        """Create a new sign-out entry"""
         json_data = request.get_json()
         logger.info("Creating a new sign-out entry")
         try:
@@ -245,6 +263,18 @@ class SignOutList(Resource):
         return sign_out_schema.dump(entry), 201
 
 
+@checklist_ns.route('/sign-out/by-procedure/<int:procedure_id>')
+@checklist_ns.response(404, 'SignOut not found')
+@checklist_ns.param('procedure_id', 'The patient procedure identifier')
+class SignOutByProcedure(Resource):
+    @checklist_ns.doc('get_sign_out_by_procedure', description='Retrieve a sign-out entry by procedure ID')
+    @checklist_ns.marshal_with(sign_out_model)
+    def get(self, procedure_id):
+        logger.info("Fetching sign-out entry for procedure ID: %d", procedure_id)
+        entry = SignOut.query.filter_by(procedure_id=procedure_id).first_or_404()
+        return sign_out_schema.dump(entry), 200
+
+
 @checklist_ns.route('/sign-out/<int:id>')
 @checklist_ns.response(404, 'SignOut not found')
 @checklist_ns.param('id', 'The sign-out identifier')
@@ -252,7 +282,6 @@ class SignOutResource(Resource):
     @checklist_ns.doc('get_sign_out', description='Retrieve a sign-out entry by its ID')
     @checklist_ns.marshal_with(sign_out_model)
     def get(self, id):
-        """Fetch a sign-out entry by ID"""
         logger.info("Fetching sign-out entry with ID: %d", id)
         entry = SignOut.query.get_or_404(id)
         return sign_out_schema.dump(entry), 200
@@ -261,7 +290,6 @@ class SignOutResource(Resource):
     @checklist_ns.expect(sign_out_model)
     @checklist_ns.marshal_with(sign_out_model)
     def put(self, id):
-        """Update a sign-out entry"""
         logger.info("Updating sign-out entry with ID: %d", id)
         entry = SignOut.query.get_or_404(id)
         json_data = request.get_json()
@@ -278,10 +306,33 @@ class SignOutResource(Resource):
     @checklist_ns.doc('delete_sign_out', description='Delete a sign-out entry by its ID')
     @checklist_ns.response(204, 'SignOut deleted')
     def delete(self, id):
-        """Delete a sign-out entry"""
         logger.info("Deleting sign-out entry with ID: %d", id)
         entry = SignOut.query.get_or_404(id)
         db.session.delete(entry)
         db.session.commit()
         logger.info("Sign-out entry deleted: ID=%d", id)
         return '', 204
+
+
+@checklist_ns.route('/complete-checklist/<int:procedure_planning_id>')
+@checklist_ns.response(404, 'ProcedurePlanning not found')
+@checklist_ns.param('procedure_planning_id', 'The procedure planning identifier')
+class CompleteChecklistByProcedurePlanning(Resource):
+    @checklist_ns.doc('get_complete_checklist', description='Retrieve complete checklist (procedure planning, sign-in, sign-out) by procedure planning ID')
+    @checklist_ns.marshal_with(complete_checklist_model)
+    def get(self, procedure_planning_id):
+        logger.info("Fetching complete checklist for procedure planning ID: %d", procedure_planning_id)
+        
+        procedure_planning = ProcedurePlanning.query.get_or_404(procedure_planning_id)
+        procedure_id = procedure_planning.procedure_id
+        
+        sign_in = SignIn.query.filter_by(procedure_id=procedure_id).first()
+        sign_out = SignOut.query.filter_by(procedure_id=procedure_id).first()
+        
+        result = {
+            'procedure_planning': procedure_planning_schema.dump(procedure_planning),
+            'sign_in': sign_in_schema.dump(sign_in) if sign_in else None,
+            'sign_out': sign_out_schema.dump(sign_out) if sign_out else None
+        }
+        
+        return result, 200
