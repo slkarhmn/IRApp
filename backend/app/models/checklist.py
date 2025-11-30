@@ -5,11 +5,11 @@ from sqlalchemy.orm import relationship
 class ProcedurePlanning(db.Model):
     __tablename__ = 'procedure_planning'
     __table_args__ = (
-        UniqueConstraint('procedure_id', name='uq_procedure_planning_procedure_id'),
+        UniqueConstraint('patient_procedure_id', name='uq_procedure_planning_patient_procedure_id'),
     )
     
     id = Column(Integer, primary_key=True)
-    procedure_id = Column(Integer, ForeignKey('patient_procedures.id', name='patient_procedure_checklist_fk'))
+    patient_procedure_id = Column(Integer, ForeignKey('patient_procedures.id', name='patient_procedure_checklist_fk'))
     
     discussed_with_referring_physician= Column(Boolean)
     imaging_studies_reviewed = Column(Boolean)
@@ -28,7 +28,7 @@ class ProcedurePlanning(db.Model):
     
     def __init__( 
         self,
-        procedure_id,
+        patient_procedure_id,
         discussed_with_referring_physician=False,
         imaging_studies_reviewed=False,
         relevant_medical_history=None,
@@ -43,7 +43,7 @@ class ProcedurePlanning(db.Model):
         contrast_allergy_prophylaxis_necessary=False
     ):
         print("error here")
-        self.procedure_id = procedure_id
+        self.patient_procedure_id = patient_procedure_id
         self.discussed_with_referring_physician = discussed_with_referring_physician
         self.imaging_studies_reviewed = imaging_studies_reviewed
         self.relevant_medical_history = relevant_medical_history
@@ -61,11 +61,11 @@ class ProcedurePlanning(db.Model):
 class SignIn(db.Model):
     __tablename__ = 'sign_in'
     __table_args__ = (
-        UniqueConstraint('procedure_id', name='uq_sign_in_procedure_id'),
+        UniqueConstraint('patient_procedure_id', name='uq_sign_in_patient_procedure_id'),
     )
     
     id = Column(Integer, primary_key=True)
-    procedure_id = Column(Integer, ForeignKey('patient_procedures.id', name='patient_procedure_sign_in_fk'))
+    patient_procedure_id = Column(Integer, ForeignKey('patient_procedures.id', name='patient_procedure_sign_in_fk'))
     
     team_members_introduced = Column(Text)
     records_given_to_patient = Column(Text)
@@ -86,7 +86,7 @@ class SignIn(db.Model):
     
     def __init__(
         self,
-        procedure_id,
+        patient_procedure_id,
         team_members_introduced=None,
         records_given_to_patient=None,
         correct_patient=False,
@@ -102,7 +102,7 @@ class SignIn(db.Model):
         complications_discussed=None,
         consent_obtained=False
     ):
-        self.procedure_id = procedure_id
+        self.patient_procedure_id = patient_procedure_id
         self.team_members_introduced = team_members_introduced
         self.records_given_to_patient = records_given_to_patient
         self.correct_patient = correct_patient
@@ -122,11 +122,11 @@ class SignIn(db.Model):
 class SignOut(db.Model):
     __tablename__ = 'sign_out'
     __table_args__ = (
-        UniqueConstraint('procedure_id', name='uq_sign_out_procedure_id'),
+        UniqueConstraint('patient_procedure_id', name='uq_sign_out_patient_procedure_id'),
     )
     
     id = Column(Integer, primary_key=True)
-    procedure_id = Column(Integer, ForeignKey('patient_procedures.id', name='patient_procedure_sign_out_fk'))
+    patient_procedure_id = Column(Integer, ForeignKey('patient_procedures.id', name='patient_procedure_sign_out_fk'))
     
     post_op_note = Column(Text)
     vital_signs_normal = Column(Boolean)
@@ -145,7 +145,7 @@ class SignOut(db.Model):
     
     def __init__(
         self,
-        procedure_id,
+        patient_procedure_id,
         post_op_note=None,
         vital_signs_normal=False,
         medications_recorded=None,
@@ -159,7 +159,7 @@ class SignOut(db.Model):
         follow_up_appt_date=None,
         procedure_results_communicated_to_referring_physician=False
     ):
-        self.procedure_id = procedure_id
+        self.patient_procedure_id = patient_procedure_id
         self.post_op_note = post_op_note
         self.vital_signs_normal = vital_signs_normal
         self.medications_recorded = medications_recorded

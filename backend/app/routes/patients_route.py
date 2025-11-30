@@ -14,6 +14,41 @@ patient_ns = Namespace('patients', description='Patient records')
 patient_schema = PatientSchema()
 patients_schema = PatientSchema(many=True)
 
+
+patient_model = patient_ns.model('Patient', {
+    'mrn': fields.String(required=True, description='Medical Record Number'),
+    'first_name': fields.String(required=True, description='First name of the patient'),
+    'last_name': fields.String(required=True, description='Last name of the patient'),
+    'age': fields.Integer(required=True, description='Age of the patient'),
+    'gender': fields.String(required=True, description='Gender of the patient'),
+    'phone': fields.String(description='Phone number of the patient'),
+    'insurance': fields.Boolean(description='Whether the patient has insurance'),
+    'allergies': fields.String(description='Patient allergies'),
+    'medications': fields.String(description='Current medications'),
+    'medical_history': fields.Raw(description='Medical history in JSON format'),
+    # Optional vitals
+    'blood_pressure_systolic': fields.String(description='Systolic blood pressure'),
+    'blood_pressure_diastolic': fields.String(description='Diastolic blood pressure'),
+    'heart_rate_bpm': fields.Integer(description='Heart rate in bpm'),
+    'temperature_celsius': fields.Float(description='Temperature in Celsius'),
+    'respiratory_rate_breaths_per_min': fields.Integer(description='Respiratory rate in breaths per minute'),
+    'oxygen_saturation_percent': fields.Float(description='Oxygen saturation percentage'),
+    'weight_kg': fields.Float(description='Weight in kilograms'),
+    'height_cm': fields.Float(description='Height in centimeters'),
+    # Optional lab results
+    'hemoglobin_gL': fields.Float(description='Hemoglobin g/L'),
+    'hematocrit_LL': fields.Float(description='Hematocrit L/L'),
+    'platelet_count': fields.String(description='Platelet count'),
+    'white_blood_cell_count': fields.String(description='White blood cell count'),
+    'creatinine': fields.String(description='Creatinine level'),
+    'bun_mmolL': fields.Float(description='BUN mmol/L'),
+    'glucose_mmolL': fields.Float(description='Glucose mmol/L'),
+    'inr': fields.Float(description='INR'),
+    'pt_seconds': fields.Float(description='Prothrombin time in seconds'),
+    'ptt_seconds': fields.Float(description='Partial thromboplastin time in seconds')
+})
+
+
 patient_vitals_model = patient_ns.model('PatientVitals', {
     'blood_pressure_systolic': fields.String(),
     'blood_pressure_diastolic': fields.String(),
@@ -55,30 +90,30 @@ class PatientList(Resource):
         return patients_schema.dump(patients), 200
     
     @patient_ns.doc('create_patient', description='Create a new patient record')
+    @patient_ns.expect(patient_model)
     def post(self):
         """Create a new patient"""
         json_data = request.get_json()
         logger.info("Creating a new patient record")
 
         if not json_data:
+            logger.warning("No input data provided for patient creation")
             return {'message': 'No input data provided'}, 400
 
         try:
-            patient: Patient = patient_schema.load(json_data)  # returns Patient instance
+            data = patient_schema.load(json_data)
         except Exception as e:
             logger.error("Patient creation failed: %s", str(e))
             return {'message': 'Validation failed', 'errors': str(e)}, 422
 
         now = datetime.now(timezone.utc)
-        patient.created_date = now
-        patient.updated_date = now
+        data.created_date = now
+        data.updated_date = now
 
-        db.session.add(patient)
+        db.session.add(data)
         db.session.commit()
-
-        logger.info("Patient created successfully: MRN=%s", patient.mrn)
-        return patient_schema.dump(patient), 201
-
+        logger.info("Patient created successfully: MRN=%s", data.mrn)
+        return patient_schema.dump(data), 201
 
 
 @patient_ns.route('/<int:id>')
@@ -93,6 +128,7 @@ class PatientResource(Resource):
         return patient_schema.dump(patient), 200
 
     @patient_ns.doc('update_patient', description='Update a patient record by its ID')
+    @patient_ns.expect(patient_model)
     def put(self, id):
         """Update a patient"""
         logger.info("Updating patient with ID: %d", id)
@@ -100,18 +136,18 @@ class PatientResource(Resource):
         json_data = request.get_json()
 
         if not json_data:
+            logger.warning("No input data provided for patient update: ID %d", id)
             return {'message': 'No input data provided'}, 400
 
         try:
-            update_data = patient_schema.load(json_data, partial=True)
+            data = patient_schema.load(json_data, partial=True)
         except Exception as e:
             logger.error("Patient update failed for ID %d: %s", id, str(e))
             return {'message': 'Validation failed', 'errors': str(e)}, 422
 
-        # update only fields provided
-        update_patient_from_data(patient, update_data)
-
+        update_patient_from_data(patient, data)
         db.session.commit()
+        logger.info("Patient updated successfully: ID %d", id)
         return patient_schema.dump(patient), 200
 
     @patient_ns.doc('delete_patient', description='Delete a patient record by its ID')
