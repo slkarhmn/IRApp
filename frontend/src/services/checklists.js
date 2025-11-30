@@ -92,5 +92,19 @@ export const checklistService = {
     //     return api.get(`/checklist/sign-out/procedure/${procedureId}`)
     // },
 
+    // get procedure planning by patient procedure ID
+    getProcedurePlanningByProcedure: (procedureId) => {
+        return api.get(`/checklist/procedure-planning/by-procedure/${procedureId}`)
+    },
+
+    // get sign in by patient procedure ID
+    getSignInByProcedure: (procedureId) => {
+        return api.get(`/checklist/sign-in/by-procedure/${procedureId}`)
+    },
+
+    // get sign out by patient procedure ID
+    getSignOutByProcedure: (procedureId) => {
+        return api.get(`/checklist/sign-out/by-procedure/${procedureId}`)
+    },
 
 }

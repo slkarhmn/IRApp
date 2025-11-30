@@ -33,6 +33,7 @@ interface ProcedureWithDetails {
   checklists: Checklist[];
 }
 
+
 interface Patient {
   id: number;
   mrn: string;
@@ -73,8 +74,9 @@ const PatientDetail = () => {
   const [patient, setPatient] = useState<Patient | null>(null);
   const [loading, setLoading] = useState(true);
   const [procedures, setProcedures] = useState<ProcedureWithDetails[]>([]);
+  const [activeProcedureId, setActiveProcedureId] = useState<number | null>(null); // ← ADD THIS
 
-  // Fetch patient data
+  // fetch patient data
   useEffect(() => {
     const fetchPatient = async ()=>{
       try {
@@ -92,84 +94,82 @@ const PatientDetail = () => {
 
   // fetch checklist for procedure
   const fetchChecklistForProcedure = async (procedureId: number) => {
-     console.log('🔍 fetchChecklistForProcedure called with:', procedureId);
-    console.log('🔍 procedureId type:', typeof procedureId);
-    try {
-      const [planningResponse, signInResponse, signOutResponse] = await Promise.all([
-          checklistService.getProcedurePlanningByProcedure(procedureId).catch(() => ({ data: null })),
-          checklistService.getSignInByProcedure(procedureId).catch(() => ({ data: null })),
-          checklistService.getSignOutByProcedure(procedureId).catch(() => ({ data: null }))
-      ]);
+      
+      try {
+          const [planningResponse, signInResponse, signOutResponse] = await Promise.all([
+              checklistService.getProcedurePlanningByProcedure(procedureId).catch(() => ({ data: null })),
+              checklistService.getSignInByProcedure(procedureId).catch(() => ({ data: null })),
+              checklistService.getSignOutByProcedure(procedureId).catch(() => ({ data: null }))
+          ]);
 
-      const checklists = [];
+          const checklists: Checklist[] = [];
 
-      if (planningResponse.data) {
-        const planning = planningResponse.data;
-        checklists.push({
-          id: `planning-${planning.id}`,
-          type: 'planning',
-          name: 'Pre-Procedural Planning',
-          date: new Date().toLocaleDateString('en-US', { 
-            month: 'short', 
-            day: 'numeric', 
-            year: 'numeric' 
-          }),
-          items: [
-            planning.discussed_with_referring_physician && 'Discussed with referring physician',
-            planning.imaging_studies_reviewed && 'Imaging studies reviewed',
-            planning.informed_consent && 'Informed consent obtained',
-            planning.relevant_medical_history && 'Medical history documented'
-          ].filter(Boolean)
-        });
+          if (planningResponse.data) {
+              const planning = planningResponse.data;
+              checklists.push({
+                  id: `planning-${planning.id}`,
+                  type: 'planning',
+                  name: 'Pre-Procedural Planning',
+                  date: new Date().toLocaleDateString('en-US', { 
+                      month: 'short', 
+                      day: 'numeric', 
+                      year: 'numeric' 
+                  }),
+                  items: [
+                      planning.discussed_with_referring_physician && 'Discussed with referring physician',
+                      planning.imaging_studies_reviewed && 'Imaging studies reviewed',
+                      planning.informed_consent && 'Informed consent obtained',
+                      planning.relevant_medical_history && 'Medical history documented'
+                  ].filter(Boolean) as string[]
+              });
+          }
+
+          if (signInResponse.data) {
+              const signIn = signInResponse.data;
+              checklists.push({
+                  id: `signin-${signIn.id}`,
+                  type: 'signin',
+                  name: 'Sign In',
+                  date: new Date().toLocaleDateString('en-US', { 
+                      month: 'short', 
+                      day: 'numeric', 
+                      year: 'numeric' 
+                  }),
+                  items: [
+                      signIn.correct_patient && 'Correct patient verified',
+                      signIn.correct_site && 'Correct site verified',
+                      signIn.allergies_checked && 'Allergies checked'
+                  ].filter(Boolean) as string[]
+              });
+          }
+
+          if (signOutResponse.data) {
+              const signOut = signOutResponse.data;
+              checklists.push({
+                  id: `signout-${signOut.id}`,
+                  type: 'signout',
+                  name: 'Sign Out',
+                  date: new Date().toLocaleDateString('en-US', { 
+                      month: 'short', 
+                      day: 'numeric', 
+                      year: 'numeric' 
+                  }),
+                  items: [
+                      signOut.vital_signs_normal && 'Vital signs normal',
+                      signOut.samples_labelled && 'Samples labelled',
+                      signOut.follow_up_appt_made && 'Follow-up appointment made'
+                  ].filter(Boolean) as string[]
+              });
+          }
+
+          return checklists;
+      } catch (error) {
+          console.log('error fetching checklist for procedure', error);
+          return [];
       }
-
-      if (signInResponse.data) {
-        const signIn = signInResponse.data;
-        checklists.push({
-          id: `signin-${signIn.id}`,
-          type: 'signin',
-          name: 'Sign In',
-          date: new Date().toLocaleDateString('en-US', { 
-            month: 'short', 
-            day: 'numeric', 
-            year: 'numeric' 
-          }),
-          items: [
-            signIn.correct_patient && 'Correct patient verified',
-            signIn.correct_site && 'Correct site verified',
-            signIn.allergies_checked && 'Allergies checked'
-          ].filter(Boolean)
-        });
-      }
-
-      if (signOutResponse.data) {
-        const signOut = signOutResponse.data;
-        checklists.push({
-          id: `signout-${signOut.id}`,
-          type: 'signout',
-          name: 'Sign Out',
-          date: new Date().toLocaleDateString('en-US', { 
-            month: 'short', 
-            day: 'numeric', 
-            year: 'numeric' 
-          }),
-          items: [
-            signOut.vital_signs_normal && 'Vital signs normal',
-            signOut.samples_labelled && 'Samples labelled',
-            signOut.follow_up_appt_made && 'Follow-up appointment made'
-          ].filter(Boolean)
-        });
-      }
-
-      console.log('📋 checklists found for procedure', procedureId, ':', checklists);
-      return checklists;
-    } catch (error) {
-      console.log('error fetching checklist for procedure', error)
-      return [];
-    }
   }
 
-  // Fetch procedures for this patient
+  // fetch procedures for patient
   useEffect(() => {
     const fetchProcedures = async () => {
       if (!id) return;
@@ -240,6 +240,7 @@ const PatientDetail = () => {
       
       const transformedProcedures = await Promise.all(
         patientProcsResponse.data.map(async (proc: any) => {
+
           try {
             const procedureDetails = await procedureService.getProcedureByID(proc.procedure_id);
             const checklists = await fetchChecklistForProcedure(proc.id);
@@ -293,13 +294,14 @@ const PatientDetail = () => {
     return <div className="error-message">Patient not found</div>;
   }
 
-  const handleSelectChecklistType = (option: string) => {
+  const handleSelectChecklistType = (procedureId: number, option: string) => { 
+    setActiveProcedureId(procedureId); 
     setActiveChecklistModal(option);
   };
 
   const handleCloseChecklistModal = async () => {
     setActiveChecklistModal(null);
-    
+    setActiveProcedureId(null);
     if (!id) return;
     
     try {
@@ -507,7 +509,7 @@ const PatientDetail = () => {
                         <div onClick={(e) => e.stopPropagation()}>
                           <AddChecklistDropdown
                             procedureId={procedure.id}
-                            onSelectOption={handleSelectChecklistType}
+                            onSelectOption={(option) => handleSelectChecklistType(procedure.id, option)} // ← Pass procedure.id
                             onClose={handleCloseChecklistModal}
                           />
                         </div>
@@ -571,7 +573,7 @@ const PatientDetail = () => {
 
       {activeChecklistModal === 'planning' && procedures.length > 0 && (
         <PreProceduralPlanningModal
-          procedureId={procedures[0].id}
+          procedureId={activeProcedureId} 
           onClose={handleCloseChecklistModal}
           onSuccess={handleCloseChecklistModal}
         />
@@ -579,7 +581,7 @@ const PatientDetail = () => {
 
       {activeChecklistModal === 'signin' && procedures.length > 0 && (
         <SignInModal
-          procedureId={procedures[0].id}
+          procedureId={activeProcedureId} 
           onClose={handleCloseChecklistModal}
           onSuccess={handleCloseChecklistModal}
         />
@@ -587,7 +589,7 @@ const PatientDetail = () => {
 
       {activeChecklistModal === 'signout' && procedures.length > 0 && (
         <SignOutModal
-          procedureId={procedures[0].id}
+          procedureId={activeProcedureId} 
           onClose={handleCloseChecklistModal}
           onSuccess={handleCloseChecklistModal}
         />

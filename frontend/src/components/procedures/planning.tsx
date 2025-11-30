@@ -88,12 +88,12 @@ export const PreProceduralPlanningModal: React.FC<PreProceduralPlanningModalProp
 
     // combine form data
     const formData = {
-      procedure_id: Number(procedureId),
+      procedure_id: procedureId,
       ...checklistData,
       ...textFields
     };
     console.log('sending to backend', formData)
-
+    
     try {
       // send to backend
       const response = await checklistService.createProcedurePlanning(formData)
