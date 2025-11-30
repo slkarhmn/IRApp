@@ -88,7 +88,7 @@ export const PreProceduralPlanningModal: React.FC<PreProceduralPlanningModalProp
 
     // combine form data
     const formData = {
-      procedure_id: procedureId,
+      patient_procedure_id: procedureId,
       ...checklistData,
       ...textFields
     };

@@ -25,6 +25,7 @@ procedure_schema = ProcedureSchema()
 procedures_schema = ProcedureSchema(many=True)
 
 patient_procedure_model = patient_procedure_ns.model('PatientProcedures', {
+    'id': fields.Integer(readonly=True),
     'patient_id': fields.Integer(required=True),
     'procedure_id': fields.Integer(required=True),
     'physician': fields.String(required=True),

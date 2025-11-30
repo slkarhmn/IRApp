@@ -184,6 +184,7 @@ const PatientDetail = () => {
             
             try {
               const procedureDetails = await procedureService.getProcedureByID(proc.procedure_id);
+              console.log('proc.id before fetching checklist:', proc.id);
               const checklists = await fetchChecklistForProcedure(proc.id);
               
               return {

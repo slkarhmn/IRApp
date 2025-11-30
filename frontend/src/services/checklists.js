@@ -1,110 +1,101 @@
 import axios from "axios";
 
-const apiURL = "http://localhost:5000/api"
+const apiURL = "http://localhost:5000/api";
 
 const api = axios.create({
-    baseURL: apiURL,
-    headers: {
-        'Content-Type': 'application/json'
-    }
-})
+  baseURL: apiURL,
+  headers: {
+    'Content-Type': 'application/json'
+  }
+});
 
 export const checklistService = {
 
-    // procedure planning
+  // ------------------------
+  // Procedure Planning
+  // ------------------------
 
-    // create
-    createProcedurePlanning:(planningData)=>{
-        return api.post('/checklist/procedure-planning', planningData)
-    },
-    // list all planning entries
-    getAllProcedurePlanning:()=>{
-        return api.get('/checklist/procedure-planning')
-    },
-    // update a procedure planning entry
-    updateProcedurePlanning:(id, data)=>{
-        return api.put(`/checklist/procedure-planning/${id}`, data)
-    },
-    // fetch procedure planning entry by id
-    getProcedurePlanning:(id)=>{
-        return api.get(`/checklist/procedure-planning/${id}`)
-    },
-    // delete procedure planning entry
-    deleteProcedurePlanning:(id)=>{
-        return api.delete(`/checklist/procedure-planning/${id}`)
-    },
-    // getProcedurePlanningByProcedure: (procedureId) => {
-    //     return api.get(`/checklist/procedure-planning/procedure/${procedureId}`)
-    // },
+  createProcedurePlanning: (planningData) => {
+    // planningData must include patient_procedure_id
+    return api.post('/checklist/procedure-planning', planningData);
+  },
 
+  getAllProcedurePlanning: () => {
+    return api.get('/checklist/procedure-planning');
+  },
 
-    // sign in 
+  updateProcedurePlanning: (id, data) => {
+    return api.put(`/checklist/procedure-planning/${id}`, data);
+  },
 
-    // create new sign in entry
-    createSignIn:(signInData)=>{
-        return api.post(`/checklist/sign-in/`, signInData)
-    },
-    // get all sign in entries
-    getAllSignIns:()=>{
-        return api.get(`/checklist/sign-in/`)
-    },
-    // update sign in entry
-    updateSignIn:(id,data)=>{
-        return api.put(`/checklist/sign-in/${id}`,data)
-    },
-    getSignIn:(id)=>{
-        return api.get(`/checklist/sign-in/${id}`)
-    },
-    // delete sign in entry by id
-    deleteSignIn:(id)=>{
-        return api.delete(`/checklist/sign-in/${id}`)
-    },
-    // getSignInByProcedure: (procedureId) => {
-    //     return api.get(`/checklist/sign-in/procedure/${procedureId}`)
-    // },
+  getProcedurePlanning: (id) => {
+    return api.get(`/checklist/procedure-planning/${id}`);
+  },
 
+  deleteProcedurePlanning: (id) => {
+    return api.delete(`/checklist/procedure-planning/${id}`);
+  },
 
+  getProcedurePlanningByProcedure: (patientProcedureId) => {
+    return api.get(`/checklist/procedure-planning/by-procedure/${patientProcedureId}`);
+  },
 
-    // sign out
+  // ------------------------
+  // Sign In
+  // ------------------------
 
+  createSignIn: (signInData) => {
+    // signInData must include patient_procedure_id
+    return api.post('/checklist/sign-in/', signInData);
+  },
 
-    // create new sign out entry
-    createSignOut:(signOutData)=>{
-        return api.post(`/checklist/sign-out/`, signOutData)
-    },
-    // get all sign out entries
-    getAllSignOuts:()=>{
-        return api.get(`/checklist/sign-out/`)
-    },
-    // update sign in entry
-    updateSignOut:(id,data)=>{
-        return api.put(`/checklist/sign-out/${id}`,data)
-    },
-    getSignOut:(id)=>{
-        return api.get(`/checklist/sign-out/${id}`)
-    },
-    // delete sign in entry by id
-    deleteSignOut:(id)=>{
-        return api.delete(`/checklist/sign-out/${id}`)
-    },
+  getAllSignIns: () => {
+    return api.get('/checklist/sign-in/');
+  },
 
-    // getSignOutByProcedure: (procedureId) => {
-    //     return api.get(`/checklist/sign-out/procedure/${procedureId}`)
-    // },
+  updateSignIn: (id, data) => {
+    return api.put(`/checklist/sign-in/${id}`, data);
+  },
 
-    // get procedure planning by patient procedure ID
-    getProcedurePlanningByProcedure: (procedureId) => {
-        return api.get(`/checklist/procedure-planning/by-procedure/${procedureId}`)
-    },
+  getSignIn: (id) => {
+    return api.get(`/checklist/sign-in/${id}`);
+  },
 
-    // get sign in by patient procedure ID
-    getSignInByProcedure: (procedureId) => {
-        return api.get(`/checklist/sign-in/by-procedure/${procedureId}`)
-    },
+  deleteSignIn: (id) => {
+    return api.delete(`/checklist/sign-in/${id}`);
+  },
 
-    // get sign out by patient procedure ID
-    getSignOutByProcedure: (procedureId) => {
-        return api.get(`/checklist/sign-out/by-procedure/${procedureId}`)
-    },
+  getSignInByProcedure: (patientProcedureId) => {
+    return api.get(`/checklist/sign-in/by-procedure/${patientProcedureId}`);
+  },
 
-}
+  // ------------------------
+  // Sign Out
+  // ------------------------
+
+  createSignOut: (signOutData) => {
+    // signOutData must include patient_procedure_id
+    return api.post('/checklist/sign-out/', signOutData);
+  },
+
+  getAllSignOuts: () => {
+    return api.get('/checklist/sign-out/');
+  },
+
+  updateSignOut: (id, data) => {
+    return api.put(`/checklist/sign-out/${id}`, data);
+  },
+
+  getSignOut: (id) => {
+    return api.get(`/checklist/sign-out/${id}`);
+  },
+
+  deleteSignOut: (id) => {
+    return api.delete(`/checklist/sign-out/${id}`);
+  },
+
+  getSignOutByProcedure: (patientProcedureId) => {
+    return api.get(`/checklist/sign-out/by-procedure/${patientProcedureId}`);
+  }
+
+};
