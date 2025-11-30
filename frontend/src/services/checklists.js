@@ -46,11 +46,11 @@ export const checklistService = {
 
   createSignIn: (signInData) => {
     // signInData must include patient_procedure_id
-    return api.post('/checklist/sign-in/', signInData);
+    return api.post('/checklist/sign-in', signInData);
   },
 
   getAllSignIns: () => {
-    return api.get('/checklist/sign-in/');
+    return api.get('/checklist/sign-in');
   },
 
   updateSignIn: (id, data) => {
@@ -75,11 +75,11 @@ export const checklistService = {
 
   createSignOut: (signOutData) => {
     // signOutData must include patient_procedure_id
-    return api.post('/checklist/sign-out/', signOutData);
+    return api.post('/checklist/sign-out', signOutData);
   },
 
   getAllSignOuts: () => {
-    return api.get('/checklist/sign-out/');
+    return api.get('/checklist/sign-out');
   },
 
   updateSignOut: (id, data) => {

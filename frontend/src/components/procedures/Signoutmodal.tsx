@@ -58,15 +58,15 @@ export const SignOutModal: React.FC<SignOutModalProps> = ({
     { key: 'samples_labelled', label: 'Samples properly labelled', checked: false },
     { key: 'samples_sent_to_lab', label: 'Samples sent to lab', checked: false },
     { key: 'follow_up_appt_made', label: 'Follow-up appointment scheduled', checked: false },
-    { key: 'results_communicated', label: 'Results communicated to referring physician', checked: false },
+    { key: 'procedure_results_communicated_to_referring_physician', label: 'Results communicated to referring physician', checked: false }, // Changed from results_communicated
   ]);
 
   const [textFields, setTextFields] = useState({
     post_op_note: '',
     medications_recorded: '',
     contrast_media_recorded: '',
-    procedure_results_discussed: '',
-    post_discharge_instructions: ''
+    procedure_results_discussed_with_patients: '', 
+    post_discharge_instructions_given_to_patient: '' 
   });
 
   const [followUpDate, setFollowUpDate] = useState('');
@@ -88,20 +88,26 @@ export const SignOutModal: React.FC<SignOutModalProps> = ({
     }));
   };
 
-  const handleSubmit =async (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
     // prepare checklist data arr-> obj
     const checklistData = checklistItems.reduce((acc, item) => ({
-        ...acc,
-        [item.key]: item.checked
+      ...acc,
+      [item.key]: item.checked
     }), {});
+
+    let followUpDateTime = null;
+    if (followUpDate && followUpTime) {
+      followUpDateTime = `${followUpDate}T${followUpTime}:00`;
+    }
 
     // combine form data
     const formData = {
-      procedure_id: Number(procedureId),
+      patient_procedure_id: procedureId,
       ...checklistData,
-      ...textFields
+      ...textFields,
+      follow_up_appt_date: followUpDateTime // Add this field
     };
     console.log('sending to backend', formData)
 
@@ -109,17 +115,13 @@ export const SignOutModal: React.FC<SignOutModalProps> = ({
       // send to backend
       const response = await checklistService.createSignOut(formData)
       console.log('saved successfully', response)
-      // on usccess close modal
+      // on success close modal
       onSuccess()
       
     } catch (error) {
       console.log('error saving sign out data', error)
     }
-
-    console.log('sign out data:', formData);
-    onSuccess();
   };
-
   
   const handleOverlayClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
@@ -280,13 +282,13 @@ export const SignOutModal: React.FC<SignOutModalProps> = ({
             </div>
 
             <div className="form-field">
-              <label htmlFor="procedure_results_discussed">
+              <label htmlFor="procedure_results_discussed_with_patients">
                 <span className="label-text">Results Discussed with Patient</span>
               </label>
               <textarea
-                id="procedure_results_discussed"
-                name="procedure_results_discussed"
-                value={textFields.procedure_results_discussed}
+                id="procedure_results_discussed_with_patients"
+                name="procedure_results_discussed_with_patients" 
+                value={textFields.procedure_results_discussed_with_patients} 
                 onChange={handleTextChange}
                 placeholder="What was discussed with the patient..."
                 rows={2}
@@ -294,13 +296,13 @@ export const SignOutModal: React.FC<SignOutModalProps> = ({
             </div>
 
             <div className="form-field">
-              <label htmlFor="post_discharge_instructions">
+              <label htmlFor="post_discharge_instructions_given_to_patient">
                 <span className="label-text">Post-Discharge Instructions</span>
               </label>
               <textarea
-                id="post_discharge_instructions"
-                name="post_discharge_instructions"
-                value={textFields.post_discharge_instructions}
+                id="post_discharge_instructions_given_to_patient"
+                name="post_discharge_instructions_given_to_patient"
+                value={textFields.post_discharge_instructions_given_to_patient}
                 onChange={handleTextChange}
                 placeholder="Instructions provided to the patient..."
                 rows={3}

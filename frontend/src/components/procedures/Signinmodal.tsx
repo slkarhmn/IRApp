@@ -89,7 +89,7 @@ export const SignInModal: React.FC<SignInModalProps> = ({
 
     // combine form data
     const formData = {
-      procedure_id: Number(procedureId),
+      patient_procedure_id: procedureId,
       ...checklistData,
       ...textFields
     };
