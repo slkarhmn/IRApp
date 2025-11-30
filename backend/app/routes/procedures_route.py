@@ -29,8 +29,10 @@ patient_procedure_model = patient_procedure_ns.model('PatientProcedures', {
     'procedure_id': fields.Integer(required=True),
     'physician': fields.String(required=True),
     'status': fields.String(required=True, enum=['scheduled', 'ready', 'completed', 'cancelled']),
-    'urgency': fields.String(required=True, enum=['routine', 'urgent', 'emergent'])
+    'urgency': fields.String(required=True, enum=['routine', 'urgent', 'emergent']),
+    'scheduled_date': fields.DateTime(required=False)
 })
+
 
 patient_procedure_schema = PatientProcedureSchema()
 patient_procedures_schema = PatientProcedureSchema(many=True)
