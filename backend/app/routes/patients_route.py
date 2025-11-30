@@ -61,23 +61,24 @@ class PatientList(Resource):
         logger.info("Creating a new patient record")
 
         if not json_data:
-            logger.warning("No input data provided for patient creation")
             return {'message': 'No input data provided'}, 400
 
         try:
-            data = patient_schema.load(json_data)
+            patient: Patient = patient_schema.load(json_data)  # returns Patient instance
         except Exception as e:
             logger.error("Patient creation failed: %s", str(e))
             return {'message': 'Validation failed', 'errors': str(e)}, 422
 
         now = datetime.now(timezone.utc)
-        data.created_date = now
-        data.updated_date = now
+        patient.created_date = now
+        patient.updated_date = now
 
-        db.session.add(data)
+        db.session.add(patient)
         db.session.commit()
-        logger.info("Patient created successfully: MRN=%s", data.mrn)
-        return patient_schema.dump(data), 201
+
+        logger.info("Patient created successfully: MRN=%s", patient.mrn)
+        return patient_schema.dump(patient), 201
+
 
 
 @patient_ns.route('/<int:id>')
@@ -99,18 +100,18 @@ class PatientResource(Resource):
         json_data = request.get_json()
 
         if not json_data:
-            logger.warning("No input data provided for patient update: ID %d", id)
             return {'message': 'No input data provided'}, 400
 
         try:
-            data = patient_schema.load(json_data, partial=True)
+            update_data = patient_schema.load(json_data, partial=True)
         except Exception as e:
             logger.error("Patient update failed for ID %d: %s", id, str(e))
             return {'message': 'Validation failed', 'errors': str(e)}, 422
 
-        update_patient_from_data(patient, data)
+        # update only fields provided
+        update_patient_from_data(patient, update_data)
+
         db.session.commit()
-        logger.info("Patient updated successfully: ID %d", id)
         return patient_schema.dump(patient), 200
 
     @patient_ns.doc('delete_patient', description='Delete a patient record by its ID')

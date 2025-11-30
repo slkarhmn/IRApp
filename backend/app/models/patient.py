@@ -10,40 +10,42 @@ class Patient(db.Model):
     )
 
     id = Column(Integer, primary_key=True)
+
     mrn = Column(String(20), nullable=False, index=True)
     first_name = Column(String(50), nullable=False, index=True)
     last_name = Column(String(50), nullable=False, index=True)
     age = Column(Integer, nullable=False)
     gender = Column(String(10), nullable=False)
-    phone = Column(String(20))
-    insurance = Column(Boolean)
 
-    allergies = Column(Text)
-    medications = Column(Text)
-    medical_history = Column(JSON)
+    phone = Column(String(20), nullable=False)  
+    insurance = Column(Boolean, nullable=False)   
 
-    blood_pressure_systolic = Column(String(10))
-    blood_pressure_diastolic = Column(String(10))
-    heart_rate_bpm = Column(Integer)
-    temperature_celsius = Column(Float)
-    respiratory_rate_breaths_per_min = Column(Integer)
-    oxygen_saturation_percent = Column(Float)
-    weight_kg = Column(Float)
-    height_cm = Column(Float)
+    allergies = Column(Text, nullable=False)       
 
-    hemoglobin_gL = Column(Float)
-    hematocrit_LL = Column(Float)
-    platelet_count = Column(String)
-    white_blood_cell_count = Column(String)
-    creatinine = Column(String)
-    bun_mmolL = Column(Float)
-    glucose_mmolL = Column(Float)
-    inr = Column(Float)
-    pt_seconds = Column(Float)
-    ptt_seconds = Column(Float)
+    medications = Column(Text, nullable=True)
+    medical_history = Column(JSON, nullable=True)
+    blood_pressure_systolic = Column(String(10), nullable=True)
+    blood_pressure_diastolic = Column(String(10), nullable=True)
+    heart_rate_bpm = Column(Integer, nullable=True)
+    temperature_celsius = Column(Float, nullable=True)
+    respiratory_rate_breaths_per_min = Column(Integer, nullable=True)
+    oxygen_saturation_percent = Column(Float, nullable=True)
+    weight_kg = Column(Float, nullable=True)
+    height_cm = Column(Float, nullable=True)
+    hemoglobin_gL = Column(Float, nullable=True)
+    hematocrit_LL = Column(Float, nullable=True)
+    platelet_count = Column(String, nullable=True)
+    white_blood_cell_count = Column(String, nullable=True)
+    creatinine = Column(String, nullable=True)
+    bun_mmolL = Column(Float, nullable=True)
+    glucose_mmolL = Column(Float, nullable=True)
+    inr = Column(Float, nullable=True)
+    pt_seconds = Column(Float, nullable=True)
+    ptt_seconds = Column(Float, nullable=True)
 
     created_date = Column(DateTime)
     updated_date = Column(DateTime)
+
 
     procedures = relationship('PatientProcedures')
 
@@ -54,9 +56,9 @@ class Patient(db.Model):
         last_name,
         age,
         gender,
-        phone=None,
-        insurance=False,
-        allergies=None,
+        phone,
+        insurance,
+        allergies,
         medications=None,
         medical_history=None,
         blood_pressure_systolic=None,
@@ -78,6 +80,7 @@ class Patient(db.Model):
         pt_seconds=None,
         ptt_seconds=None
     ):
+
         self.mrn = mrn
         self.first_name = first_name
         self.last_name = last_name
