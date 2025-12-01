@@ -1,7 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import './Viewprocedurechecklist.css';
+// @ts-expect-error fuck ts
+import { checklistService } from "../../services/checklists";
+// @ts-expect-error fuck ts
+import { procedureService } from "../../services/procedures";
+// @ts-expect-error fuck ts
+import { patientService } from "../../services/patientService";
 
 // Icon Components
 const BackArrowIcon = () => (
@@ -71,22 +77,80 @@ interface TabInfo {
 
 export const ViewProcedureChecklist = () => {
   const { id } = useParams<{ id: string }>();
-  const patientId = id || '1';
+  const patientProcedureId = parseInt(id || '0');
   
-  const [activeTab, setActiveTab] = useState<TabType>('planning');
+  const [activeTab, setActiveTab] = useState<TabType | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [availableTabs, setAvailableTabs] = useState<TabType[]>([]);
+  
+  const [procedureData, setProcedureData] = useState<any>(null);
+  const [patientData, setPatientData] = useState<any>(null);
+  const [procedureDetails, setProcedureDetails] = useState<any>(null);
+  
+  const [planningData, setPlanningData] = useState<any>(null);
+  const [signInData, setSignInData] = useState<any>(null);
+  const [signOutData, setSignOutData] = useState<any>(null);
 
-  // Mock data - you'll fetch this from your API
-  const procedureData = {
-    patient_name: "John Doe",
-    procedure_name: "Appendectomy",
-    procedure_code: "APX-001",
-    scheduled_date: "Jan 15, 2025",
-    scheduled_time: "2:30 PM",
-    physician: "Dr. Smith",
-    status: "Completed" as const
-  };
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Fetch patient procedure
+        const procResponse = await procedureService.getPatientProcedureByID(patientProcedureId);
+        setProcedureData(procResponse.data);
+        
+        // Fetch patient details
+        const patientResponse = await patientService.getPatient(procResponse.data.patient_id);
+        setPatientData(patientResponse.data);
+        
+        // Fetch procedure details
+        const detailsResponse = await procedureService.getProcedureByID(procResponse.data.procedure_id);
+        setProcedureDetails(detailsResponse.data);
+        
+        // Fetch checklists
+        const tabs: TabType[] = [];
+        
+        try {
+          const planningResponse = await checklistService.getProcedurePlanningByProcedure(patientProcedureId);
+          setPlanningData(planningResponse.data);
+          tabs.push('planning');
+        } catch (error) {
+          console.log('No planning checklist found');
+        }
+        
+        try {
+          const signInResponse = await checklistService.getSignInByProcedure(patientProcedureId);
+          setSignInData(signInResponse.data);
+          tabs.push('signin');
+        } catch (error) {
+          console.log('No sign-in checklist found');
+        }
+        
+        try {
+          const signOutResponse = await checklistService.getSignOutByProcedure(patientProcedureId);
+          setSignOutData(signOutResponse.data);
+          tabs.push('signout');
+        } catch (error) {
+          console.log('No sign-out checklist found');
+        }
+        
+        setAvailableTabs(tabs);
+        if (tabs.length > 0) {
+          setActiveTab(tabs[0]);
+        }
+        
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        setLoading(false);
+      }
+    };
 
-  const tabs: TabInfo[] = [
+    if (patientProcedureId) {
+      fetchData();
+    }
+  }, [patientProcedureId]);
+
+  const allTabs: TabInfo[] = [
     {
       id: 'planning',
       label: 'Pre-Procedural Planning',
@@ -107,68 +171,21 @@ export const ViewProcedureChecklist = () => {
     }
   ];
 
-  const planningData = {
-    discussed_with_referring_physician: true,
-    imaging_studies_reviewed: true,
-    relevant_medical_history: "Patient has history of hypertension",
-    informed_consent: true,
-    prophylaxis: true,
-    tools_requested_and_present: "Surgical instruments, anesthesia equipment",
-    fasting_order: true,
-    relevant_lab_tests: "CBC, Blood Type, Coagulation Panel",
-    anaesthetist_necessary: true,
-    anticoagulant_stopped: true,
-    post_precedural_bed_required: true,
-    contrast_allergy_prophylaxis_necessary: false
-  };
+  const tabs = allTabs.filter(tab => availableTabs.includes(tab.id));
 
-  const signInData = {
-    team_members_introduced: "Dr. Smith, Nurse Johnson, Anesthesiologist Dr. Lee",
-    records_given_to_patient: "Consent forms, procedure information",
-    correct_patient: true,
-    correct_side: true,
-    correct_site: true,
-    patient_fasting_order_followed: true,
-    iv_access_necessary: true,
-    monitoring_equipment_attached: true,
-    checked_lab_tests: "CBC results reviewed",
-    allergies_checked: true,
-    prophylaxis_checked: true,
-    drugs_administered: "Midazolam 2mg IV, Fentanyl 50mcg IV",
-    complications_discussed: "Bleeding, infection, anesthesia risks",
-    consent_obtained: true
-  };
-
-  const signOutData = {
-    post_op_note: "Procedure completed without complications. Patient stable.",
-    vital_signs_normal: true,
-    medications_recorded: "Morphine 5mg IV, Ondansetron 4mg IV",
-    contrast_media_recorded: "None used",
-    lab_tests_requested: true,
-    samples_labelled: true,
-    samples_sent_to_lab: true,
-    procedure_results_discussed_with_patients: "Successful appendectomy, no complications",
-    post_discharge_instructions_given_to_patient: "Rest for 2 weeks, no heavy lifting, wound care instructions",
-    follow_up_appt_made: true,
-    follow_up_appt_date: "Jan 29, 2025 at 10:00 AM",
-    procedure_results_communicated_to_referring_physician: true
-  };
-
-  // Calculate completion stats for each tab
   const getCompletionStats = (tab: TabType) => {
     let completed = 0;
     let total = 0;
+    let data = null;
 
-    if (tab === 'planning') {
-      const booleanFields = Object.entries(planningData).filter(([_, value]) => typeof value === 'boolean');
-      total = booleanFields.length;
-      completed = booleanFields.filter(([_, value]) => value === true).length;
-    } else if (tab === 'signin') {
-      const booleanFields = Object.entries(signInData).filter(([_, value]) => typeof value === 'boolean');
-      total = booleanFields.length;
-      completed = booleanFields.filter(([_, value]) => value === true).length;
-    } else if (tab === 'signout') {
-      const booleanFields = Object.entries(signOutData).filter(([_, value]) => typeof value === 'boolean');
+    if (tab === 'planning') data = planningData;
+    else if (tab === 'signin') data = signInData;
+    else if (tab === 'signout') data = signOutData;
+
+    if (data) {
+      const booleanFields = Object.entries(data).filter(([key, value]) => 
+        typeof value === 'boolean' && key !== 'id' && key !== 'patient_procedure_id'
+      );
       total = booleanFields.length;
       completed = booleanFields.filter(([_, value]) => value === true).length;
     }
@@ -176,12 +193,77 @@ export const ViewProcedureChecklist = () => {
     return { completed, total, percentage: total > 0 ? (completed / total) * 100 : 0 };
   };
 
+  if (loading) {
+    return (
+      <div className="checklist-page">
+        <div style={{ padding: '60px', textAlign: 'center', color: '#888' }}>
+          Loading...
+        </div>
+      </div>
+    );
+  }
+
+  if (!procedureData || !patientData || !procedureDetails) {
+    return (
+      <div className="checklist-page">
+        <div style={{ padding: '60px', textAlign: 'center', color: '#888' }}>
+          Procedure not found
+        </div>
+      </div>
+    );
+  }
+
+  if (availableTabs.length === 0) {
+    return (
+      <div className="checklist-page">
+        <div className="checklist-header">
+          <div className="header-top">
+            <Link to={`/patients/${procedureData.patient_id}`} className="back-link">
+              <BackArrowIcon />
+              <span>Back to Patient</span>
+            </Link>
+          </div>
+          <div className="header-main">
+            <div className="header-info">
+              <h1 className="page-title">Procedure Checklist</h1>
+            </div>
+          </div>
+        </div>
+        <div style={{ padding: '60px', textAlign: 'center', color: '#888' }}>
+          No checklists available for this procedure
+        </div>
+      </div>
+    );
+  }
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  };
+
+  const formatTime = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+  };
+
+  const formatDateTime = (dateString: string | null) => {
+    if (!dateString) return null;
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { 
+      month: 'short', 
+      day: 'numeric', 
+      year: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true
+    });
+  };
+
   return (
     <div className="checklist-page">
-      {/* Header */}
       <div className="checklist-header">
         <div className="header-top">
-          <Link to={`/patients/${patientId}`} className="back-link">
+          <Link to={`/patients/${procedureData.patient_id}`} className="back-link">
             <BackArrowIcon />
             <span>Back to Patient</span>
           </Link>
@@ -193,12 +275,12 @@ export const ViewProcedureChecklist = () => {
             <div className="procedure-meta">
               <div className="meta-item">
                 <span className="meta-label">Patient</span>
-                <span className="meta-value">{procedureData.patient_name}</span>
+                <span className="meta-value">{patientData.first_name} {patientData.last_name}</span>
               </div>
               <div className="meta-divider" />
               <div className="meta-item">
                 <span className="meta-label">Procedure</span>
-                <span className="meta-value">{procedureData.procedure_name} ({procedureData.procedure_code})</span>
+                <span className="meta-value">{procedureDetails.procedure_name} ({procedureDetails.procedure_code})</span>
               </div>
               <div className="meta-divider" />
               <div className="meta-item">
@@ -208,7 +290,9 @@ export const ViewProcedureChecklist = () => {
               <div className="meta-divider" />
               <div className="meta-item">
                 <span className="meta-label">Date & Time</span>
-                <span className="meta-value">{procedureData.scheduled_date} at {procedureData.scheduled_time}</span>
+                <span className="meta-value">
+                  {formatDate(procedureData.scheduled_date)} at {formatTime(procedureData.scheduled_date)}
+                </span>
               </div>
             </div>
           </div>
@@ -218,7 +302,6 @@ export const ViewProcedureChecklist = () => {
         </div>
       </div>
 
-      {/* Enhanced Tabs */}
       <div className="tabs-container">
         {tabs.map((tab) => {
           const stats = getCompletionStats(tab.id);
@@ -248,10 +331,8 @@ export const ViewProcedureChecklist = () => {
         })}
       </div>
 
-      {/* Tab Content */}
       <div className="tab-content-wrapper">
-        {/* Pre-Procedural Planning Tab */}
-        {activeTab === 'planning' && (
+        {activeTab === 'planning' && planningData && (
           <div className="checklist-section">
             <div className="section-header">
               <h2 className="section-title">Checklist Items</h2>
@@ -323,8 +404,7 @@ export const ViewProcedureChecklist = () => {
           </div>
         )}
 
-        {/* Sign In Tab */}
-        {activeTab === 'signin' && (
+        {activeTab === 'signin' && signInData && (
           <div className="checklist-section">
             <div className="section-header">
               <h2 className="section-title">Safety Verification</h2>
@@ -404,8 +484,7 @@ export const ViewProcedureChecklist = () => {
           </div>
         )}
 
-        {/* Sign Out Tab */}
-        {activeTab === 'signout' && (
+        {activeTab === 'signout' && signOutData && (
           <div className="checklist-section">
             <div className="section-header">
               <h2 className="section-title">Post-Procedure Verification</h2>
@@ -474,7 +553,7 @@ export const ViewProcedureChecklist = () => {
               {signOutData.follow_up_appt_date && (
                 <TextField
                   label="Follow-Up Appointment"
-                  value={signOutData.follow_up_appt_date}
+                  value={formatDateTime(signOutData.follow_up_appt_date)}
                 />
               )}
             </div>
@@ -485,7 +564,6 @@ export const ViewProcedureChecklist = () => {
   );
 };
 
-// Enhanced ChecklistItem Component
 const ChecklistItem: React.FC<ChecklistItemProps> = ({ label, value }) => (
   <div className={`checklist-item ${value ? 'checked' : 'unchecked'}`}>
     <div className="checkbox-wrapper">
@@ -495,7 +573,6 @@ const ChecklistItem: React.FC<ChecklistItemProps> = ({ label, value }) => (
   </div>
 );
 
-// Enhanced TextField Component
 const TextField: React.FC<TextFieldProps> = ({ label, value, fullWidth = false }) => (
   <div className={`text-field ${fullWidth ? 'full-width' : ''}`}>
     <label className="field-label">{label}</label>

@@ -1,6 +1,13 @@
-import { useState } from 'react';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import './ChecklistView.css';
+// @ts-expect-error fuck ts
+import { checklistService } from "../../services/checklists";
+// @ts-expect-error fuck ts
+import { procedureService } from "../../services/procedures";
+// @ts-expect-error fuck ts
+import { patientService } from "../../services/patientService";
 
 // Type definitions
 type ChecklistType = 'planning' | 'signin' | 'signout';
@@ -24,180 +31,6 @@ interface Procedure {
   status: 'scheduled' | 'ready' | 'completed' | 'cancelled';
   checklists: Checklist[];
 }
-
-// Mock data
-const MOCK_PROCEDURES: Procedure[] = [
-  {
-    id: 1,
-    name: 'Appendectomy',
-    code: 'APX-001',
-    date: 'Feb 21, 2025',
-    physician: 'Dr. Smith',
-    status: 'completed',
-    checklists: [
-      {
-        id: 'planning-1',
-        type: 'planning',
-        name: 'Pre-Procedural Planning',
-        date: 'Feb 18, 2025',
-        completedItems: 12,
-        totalItems: 12,
-        items: [
-          'Discussed with referring physician',
-          'Imaging studies reviewed',
-          'Relevant medical history documented',
-          'Informed consent obtained'
-        ]
-      },
-      {
-        id: 'signin-1',
-        type: 'signin',
-        name: 'Sign In',
-        date: 'Feb 21, 2025',
-        completedItems: 14,
-        totalItems: 14,
-        items: [
-          'All team members introduced',
-          'Correct patient verified',
-          'Correct site confirmed',
-          'Allergies checked'
-        ]
-      },
-      {
-        id: 'signout-1',
-        type: 'signout',
-        name: 'Sign Out',
-        date: 'Feb 21, 2025',
-        completedItems: 12,
-        totalItems: 12,
-        items: [
-          'Post-op note written',
-          'Vital signs normal',
-          'Medications recorded',
-          'Follow-up scheduled'
-        ]
-      }
-    ]
-  },
-  {
-    id: 2,
-    name: 'Cholecystectomy',
-    code: 'CHO-002',
-    date: 'Jan 27, 2025',
-    physician: 'Dr. Johnson',
-    status: 'completed',
-    checklists: [
-      {
-        id: 'planning-2',
-        type: 'planning',
-        name: 'Pre-Procedural Planning',
-        date: 'Jan 24, 2025',
-        completedItems: 11,
-        totalItems: 12,
-        items: [
-          'Discussed with referring physician',
-          'Imaging studies reviewed',
-          'Consent obtained'
-        ]
-      },
-      {
-        id: 'signin-2',
-        type: 'signin',
-        name: 'Sign In',
-        date: 'Jan 27, 2025',
-        completedItems: 14,
-        totalItems: 14,
-        items: [
-          'All team members introduced',
-          'Correct patient verified',
-          'IV access established'
-        ]
-      },
-      {
-        id: 'signout-2',
-        type: 'signout',
-        name: 'Sign Out',
-        date: 'Jan 27, 2025',
-        completedItems: 10,
-        totalItems: 12,
-        items: [
-          'Procedure completed successfully',
-          'Samples sent to lab',
-          'Instructions provided'
-        ]
-      }
-    ]
-  },
-  {
-    id: 3,
-    name: 'Hernia Repair',
-    code: 'HRN-003',
-    date: 'Mar 15, 2025',
-    physician: 'Dr. Williams',
-    status: 'scheduled',
-    checklists: [
-      {
-        id: 'planning-3',
-        type: 'planning',
-        name: 'Pre-Procedural Planning',
-        date: 'Mar 10, 2025',
-        completedItems: 8,
-        totalItems: 12,
-        items: [
-          'Imaging studies reviewed',
-          'Lab tests ordered',
-          'Fasting instructions given'
-        ]
-      }
-    ]
-  },
-  {
-    id: 4,
-    name: 'Colonoscopy',
-    code: 'COL-004',
-    date: 'Dec 10, 2024',
-    physician: 'Dr. Smith',
-    status: 'completed',
-    checklists: [
-      {
-        id: 'planning-4',
-        type: 'planning',
-        name: 'Pre-Procedural Planning',
-        date: 'Dec 5, 2024',
-        completedItems: 10,
-        totalItems: 10,
-        items: [
-          'Bowel prep instructions provided',
-          'Medical history reviewed'
-        ]
-      },
-      {
-        id: 'signin-4',
-        type: 'signin',
-        name: 'Sign In',
-        date: 'Dec 10, 2024',
-        completedItems: 12,
-        totalItems: 12,
-        items: [
-          'Patient identity confirmed',
-          'Sedation administered'
-        ]
-      },
-      {
-        id: 'signout-4',
-        type: 'signout',
-        name: 'Sign Out',
-        date: 'Dec 10, 2024',
-        completedItems: 11,
-        totalItems: 11,
-        items: [
-          'No abnormalities found',
-          'Recovery instructions given'
-        ]
-      }
-    ]
-  }
-];
 
 // Arrow icon component
 const BackArrowIcon = () => (
@@ -307,44 +140,50 @@ const ProcedureCard: React.FC<{
       {isExpanded && (
         <div className="procedure-card-content">
           <div className="checklists-list">
-            {procedure.checklists.map((checklist) => (
-              <div key={checklist.id} className="checklist-card">
-                <div className="checklist-card-header">
-                  <div className="checklist-card-left">
-                    <span className={`checklist-dot ${checklist.type}`} />
-                    <div className="checklist-card-info">
-                      <div className="checklist-card-name">{checklist.name}</div>
-                      <div className="checklist-card-date">{checklist.date}</div>
+            {procedure.checklists.length === 0 ? (
+              <div style={{ padding: '20px', textAlign: 'center', color: '#888', fontStyle: 'italic' }}>
+                No checklists added yet
+              </div>
+            ) : (
+              procedure.checklists.map((checklist) => (
+                <div key={checklist.id} className="checklist-card">
+                  <div className="checklist-card-header">
+                    <div className="checklist-card-left">
+                      <span className={`checklist-dot ${checklist.type}`} />
+                      <div className="checklist-card-info">
+                        <div className="checklist-card-name">{checklist.name}</div>
+                        <div className="checklist-card-date">{checklist.date}</div>
+                      </div>
+                    </div>
+                    <div className="checklist-card-right">
+                      <ChecklistTypeLabel type={checklist.type} />
+                      <ProgressBar 
+                        completed={checklist.completedItems} 
+                        total={checklist.totalItems} 
+                      />
                     </div>
                   </div>
-                  <div className="checklist-card-right">
-                    <ChecklistTypeLabel type={checklist.type} />
-                    <ProgressBar 
-                      completed={checklist.completedItems} 
-                      total={checklist.totalItems} 
-                    />
+                  <div className="checklist-card-items">
+                    <ul>
+                      {checklist.items.slice(0, 4).map((item, idx) => (
+                        <li key={idx}>{item}</li>
+                      ))}
+                      {checklist.items.length > 4 && (
+                        <li className="more-items">
+                          +{checklist.items.length - 4} more items
+                        </li>
+                      )}
+                    </ul>
                   </div>
+                  <Link 
+                    to={`/patients/${patientId}/view-procedure/${procedure.id}`}
+                    className="view-details-link"
+                  >
+                    View Details →
+                  </Link>
                 </div>
-                <div className="checklist-card-items">
-                  <ul>
-                    {checklist.items.slice(0, 4).map((item, idx) => (
-                      <li key={idx}>{item}</li>
-                    ))}
-                    {checklist.items.length > 4 && (
-                      <li className="more-items">
-                        +{checklist.items.length - 4} more items
-                      </li>
-                    )}
-                  </ul>
-                </div>
-                <Link 
-                  to={`/patients/${patientId}/view-procedure/${procedure.id}/${checklist.type}`}
-                  className="view-details-link"
-                >
-                  View Details →
-                </Link>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </div>
       )}
@@ -353,19 +192,195 @@ const ProcedureCard: React.FC<{
 };
 
 // Filter tabs
-type FilterTab = 'all' | 'scheduled' | 'completed' | 'cancelled';
+type FilterTab = 'all' | 'scheduled' | 'ready' | 'completed' | 'cancelled';
 
 // Main component
 export const AllProceduresChecklists: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const patientId = id || '1';
   
-  const [expandedProcedures, setExpandedProcedures] = useState<number[]>([1]);
+  const [expandedProcedures, setExpandedProcedures] = useState<number[]>([]);
   const [activeFilter, setActiveFilter] = useState<FilterTab>('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [loading, setLoading] = useState(true);
+  
+  const [procedures, setProcedures] = useState<Procedure[]>([]);
+  const [patientData, setPatientData] = useState<any>(null);
 
-  // Patient info (mock)
-  const patientName = "John Doe";
+  // Fetch checklist for a procedure
+  const fetchChecklistForProcedure = async (procedureId: number) => {
+    try {
+      const [planningResponse, signInResponse, signOutResponse] = await Promise.all([
+        checklistService.getProcedurePlanningByProcedure(procedureId).catch(() => ({ data: null })),
+        checklistService.getSignInByProcedure(procedureId).catch(() => ({ data: null })),
+        checklistService.getSignOutByProcedure(procedureId).catch(() => ({ data: null }))
+      ]);
+
+      const checklists: Checklist[] = [];
+
+      if (planningResponse.data) {
+        const planning = planningResponse.data;
+        const booleanFields = Object.entries(planning).filter(([key, value]) => 
+          typeof value === 'boolean' && key !== 'id' && key !== 'patient_procedure_id'
+        );
+        const totalItems = booleanFields.length;
+        const completedItems = booleanFields.filter(([_, value]) => value === true).length;
+        
+        const items = [
+          planning.discussed_with_referring_physician && 'Discussed with referring physician',
+          planning.imaging_studies_reviewed && 'Imaging studies reviewed',
+          planning.informed_consent && 'Informed consent obtained',
+          planning.prophylaxis && 'Prophylaxis administered'
+        ].filter(Boolean) as string[];
+
+        checklists.push({
+          id: `planning-${planning.id}`,
+          type: 'planning',
+          name: 'Pre-Procedural Planning',
+          date: new Date().toLocaleDateString('en-US', { 
+            month: 'short', 
+            day: 'numeric', 
+            year: 'numeric' 
+          }),
+          completedItems,
+          totalItems,
+          items: items.slice(0, 4)
+        });
+      }
+
+      if (signInResponse.data) {
+        const signIn = signInResponse.data;
+        const booleanFields = Object.entries(signIn).filter(([key, value]) => 
+          typeof value === 'boolean' && key !== 'id' && key !== 'patient_procedure_id'
+        );
+        const totalItems = booleanFields.length;
+        const completedItems = booleanFields.filter(([_, value]) => value === true).length;
+        
+        const items = [
+          signIn.correct_patient && 'Correct patient verified',
+          signIn.correct_site && 'Correct site verified',
+          signIn.allergies_checked && 'Allergies checked',
+          signIn.consent_obtained && 'Consent obtained'
+        ].filter(Boolean) as string[];
+
+        checklists.push({
+          id: `signin-${signIn.id}`,
+          type: 'signin',
+          name: 'Sign In',
+          date: new Date().toLocaleDateString('en-US', { 
+            month: 'short', 
+            day: 'numeric', 
+            year: 'numeric' 
+          }),
+          completedItems,
+          totalItems,
+          items: items.slice(0, 4)
+        });
+      }
+
+      if (signOutResponse.data) {
+        const signOut = signOutResponse.data;
+        const booleanFields = Object.entries(signOut).filter(([key, value]) => 
+          typeof value === 'boolean' && key !== 'id' && key !== 'patient_procedure_id'
+        );
+        const totalItems = booleanFields.length;
+        const completedItems = booleanFields.filter(([_, value]) => value === true).length;
+        
+        const items = [
+          signOut.vital_signs_normal && 'Vital signs normal',
+          signOut.samples_labelled && 'Samples labelled',
+          signOut.follow_up_appt_made && 'Follow-up appointment made',
+          signOut.procedure_results_communicated_to_referring_physician && 'Results communicated to physician'
+        ].filter(Boolean) as string[];
+
+        checklists.push({
+          id: `signout-${signOut.id}`,
+          type: 'signout',
+          name: 'Sign Out',
+          date: new Date().toLocaleDateString('en-US', { 
+            month: 'short', 
+            day: 'numeric', 
+            year: 'numeric' 
+          }),
+          completedItems,
+          totalItems,
+          items: items.slice(0, 4)
+        });
+      }
+
+      return checklists;
+    } catch (error) {
+      console.log('error fetching checklist for procedure', error);
+      return [];
+    }
+  };
+
+  // Fetch procedures for patient
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!patientId) return;
+      
+      try {
+        // Fetch patient data
+        const patientResponse = await patientService.getPatient(patientId);
+        setPatientData(patientResponse.data);
+
+        // Fetch patient procedures
+        const patientProcsResponse = await procedureService.getAllPatientProceduresForPatient(patientId);
+        
+        const transformedProcedures = await Promise.all(
+          patientProcsResponse.data.map(async (proc: any) => {
+            try {
+              const procedureDetails = await procedureService.getProcedureByID(proc.procedure_id);
+              const checklists = await fetchChecklistForProcedure(proc.id);
+              
+              return {
+                id: proc.id,
+                date: new Date(proc.scheduled_date).toLocaleDateString('en-US', { 
+                  month: 'short', 
+                  day: 'numeric', 
+                  year: 'numeric' 
+                }),
+                name: procedureDetails.data.procedure_name,
+                code: procedureDetails.data.procedure_code,
+                physician: proc.physician,
+                status: proc.status.toLowerCase() as 'scheduled' | 'ready' | 'completed' | 'cancelled',
+                checklists: checklists
+              };
+            } catch (error) {
+              console.error(`Error fetching procedure details for ID ${proc.procedure_id}:`, error);
+              return {
+                id: proc.id,
+                date: new Date(proc.scheduled_date).toLocaleDateString('en-US', { 
+                  month: 'short', 
+                  day: 'numeric', 
+                  year: 'numeric' 
+                }),
+                name: 'Unknown Procedure',
+                code: 'N/A',
+                physician: proc.physician,
+                status: proc.status.toLowerCase() as 'scheduled' | 'ready' | 'completed' | 'cancelled',
+                checklists: []
+              };
+            }
+          })
+        );
+        
+        setProcedures(transformedProcedures);
+        
+        if (transformedProcedures.length > 0) {
+          setExpandedProcedures([transformedProcedures[0].id]);
+        }
+        
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching procedures:', error);
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [patientId]);
 
   const toggleProcedure = (procedureId: number) => {
     setExpandedProcedures(prev =>
@@ -376,7 +391,7 @@ export const AllProceduresChecklists: React.FC = () => {
   };
 
   const expandAll = () => {
-    setExpandedProcedures(MOCK_PROCEDURES.map(p => p.id));
+    setExpandedProcedures(procedures.map(p => p.id));
   };
 
   const collapseAll = () => {
@@ -384,7 +399,7 @@ export const AllProceduresChecklists: React.FC = () => {
   };
 
   // Filter procedures
-  const filteredProcedures = MOCK_PROCEDURES.filter(procedure => {
+  const filteredProcedures = procedures.filter(procedure => {
     const matchesFilter = activeFilter === 'all' || procedure.status === activeFilter;
     const matchesSearch = searchQuery === '' || 
       procedure.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -394,10 +409,24 @@ export const AllProceduresChecklists: React.FC = () => {
   });
 
   // Stats
-  const totalProcedures = MOCK_PROCEDURES.length;
-  const completedProcedures = MOCK_PROCEDURES.filter(p => p.status === 'completed').length;
-  const scheduledProcedures = MOCK_PROCEDURES.filter(p => p.status === 'scheduled').length;
-  const totalChecklists = MOCK_PROCEDURES.reduce((acc, p) => acc + p.checklists.length, 0);
+  const totalProcedures = procedures.length;
+  const completedProcedures = procedures.filter(p => p.status === 'completed').length;
+  const scheduledProcedures = procedures.filter(p => p.status === 'scheduled').length;
+  const totalChecklists = procedures.reduce((acc, p) => acc + p.checklists.length, 0);
+
+  if (loading) {
+    return (
+      <div className="all-procedures-page">
+        <div style={{ padding: '60px', textAlign: 'center', color: '#888' }}>
+          Loading...
+        </div>
+      </div>
+    );
+  }
+
+  const patientName = patientData 
+    ? `${patientData.first_name} ${patientData.last_name}`
+    : 'Unknown Patient';
 
   return (
     <div className="all-procedures-page">
@@ -454,6 +483,12 @@ export const AllProceduresChecklists: React.FC = () => {
             onClick={() => setActiveFilter('scheduled')}
           >
             Scheduled
+          </button>
+          <button
+            className={`filter-tab ${activeFilter === 'ready' ? 'active' : ''}`}
+            onClick={() => setActiveFilter('ready')}
+          >
+            Ready
           </button>
           <button
             className={`filter-tab ${activeFilter === 'completed' ? 'active' : ''}`}

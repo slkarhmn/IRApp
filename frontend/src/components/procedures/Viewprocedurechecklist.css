@@ -1,7 +1,3 @@
-/* ========================================
-   VIEW PROCEDURE CHECKLIST - Enhanced Design
-   ======================================== */
-
 /* Fonts */
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
 
@@ -17,7 +13,7 @@
 }
 
 /* ----------------------------------------
-   ENHANCED HEADER SECTION
+   HEADER SECTION
    ---------------------------------------- */
 
 .checklist-header {
@@ -112,11 +108,11 @@
   padding: 8px 20px;
   font-size: 12px;
   font-weight: 600;
-  border-radius: 6px;
+  border-radius: 2px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   flex-shrink: 0;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
 .status-scheduled {
@@ -140,7 +136,7 @@
 }
 
 /* ----------------------------------------
-   ENHANCED TABS
+   TABS
    ---------------------------------------- */
 
 .tabs-container {
@@ -156,13 +152,25 @@
   gap: 12px;
   padding: 16px 20px;
   background-color: #FFFFFF;
-  border: 2px solid #E8E8E8;
-  border-radius: 12px;
+  border: 1px solid #E8E8E8;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.2s ease;
   font-family: 'DM Sans', sans-serif;
   position: relative;
   overflow: hidden;
+  outline: none;
+}
+
+.tab:hover {
+  border-color: #D0D5C8;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.tab:focus,
+.tab:active {
+  outline: none;
+  border: 1px solid #E8E8E8;
 }
 
 .tab::before {
@@ -176,22 +184,17 @@
   transition: all 0.3s ease;
 }
 
-.tab:hover {
-  border-color: #D0D5C8;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-}
-
 /* Tab Icons */
 .tab-icon {
   width: 40px;
   height: 40px;
-  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
   transition: all 0.3s ease;
+  background-color: #F5F5F5;
+  padding: 10px;
 }
 
 .tab-planning .tab-icon {
@@ -234,14 +237,12 @@
   flex: 1;
   height: 6px;
   background-color: #F0F0F0;
-  border-radius: 3px;
   overflow: hidden;
 }
 
 .tab-progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #8E9C78 0%, #A4B38E 100%);
-  border-radius: 3px;
+  background: #8E9C78;
   transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -255,54 +256,51 @@
 
 /* Active Tab States */
 .tab.active {
-  border-color: transparent;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  border-color: #D0D5C8;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
   transform: translateY(-2px);
 }
 
 .tab-planning.active {
-  background: linear-gradient(135deg, #F5F8F2 0%, #EEF3E8 100%);
+  background: #FFFFFF;
   border-color: #C5D4B5;
 }
 
 .tab-planning.active::before {
-  background: linear-gradient(90deg, #8E9C78 0%, #A4B38E 100%);
+  background: #8E9C78;
 }
 
 .tab-planning.active .tab-icon {
   background-color: #8E9C78;
   color: #FFFFFF;
-  transform: scale(1.05);
 }
 
 .tab-signin.active {
-  background: linear-gradient(135deg, #F0F5F8 0%, #E8F0F3 100%);
+  background: #FFFFFF;
   border-color: #B5C5D4;
 }
 
 .tab-signin.active::before {
-  background: linear-gradient(90deg, #5A7A8E 0%, #7A9AA8 100%);
+  background: #5A7A8E;
 }
 
 .tab-signin.active .tab-icon {
   background-color: #5A7A8E;
   color: #FFFFFF;
-  transform: scale(1.05);
 }
 
 .tab-signout.active {
-  background: linear-gradient(135deg, #F8F5F0 0%, #F3EEE8 100%);
+  background: #FFFFFF;
   border-color: #D4C5B5;
 }
 
 .tab-signout.active::before {
-  background: linear-gradient(90deg, #8E7A5A 0%, #A89A7A 100%);
+  background: #8E7A5A;
 }
 
 .tab-signout.active .tab-icon {
   background-color: #8E7A5A;
   color: #FFFFFF;
-  transform: scale(1.05);
 }
 
 .tab.active .tab-label {
@@ -314,13 +312,9 @@
   font-weight: 600;
 }
 
-.tab:focus {
-  outline: none;
-}
-
+.tab:focus,
 .tab:focus-visible {
-  outline: 2px solid #8E9C78;
-  outline-offset: 2px;
+  outline: none;
 }
 
 /* ----------------------------------------
@@ -330,9 +324,8 @@
 .tab-content-wrapper {
   background-color: #FFFFFF;
   border: 1px solid #E8E8E8;
-  border-radius: 12px;
   padding: 32px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
   animation: fadeInUp 0.3s ease;
 }
 
@@ -362,7 +355,7 @@
   justify-content: space-between;
   align-items: center;
   padding-bottom: 12px;
-  border-bottom: 2px solid #F0F0F0;
+  border-bottom: 1px solid #F0F0F0;
 }
 
 .section-title {
@@ -380,7 +373,6 @@
   color: #5A6B4A;
   font-size: 12px;
   font-weight: 600;
-  border-radius: 20px;
   letter-spacing: 0.3px;
 }
 
@@ -391,7 +383,7 @@
 }
 
 /* ----------------------------------------
-   ENHANCED CHECKLIST GRID
+   CHECKLIST GRID
    ---------------------------------------- */
 
 .checklist-grid {
@@ -400,7 +392,7 @@
   gap: 12px;
 }
 
-/* Enhanced Checklist Item */
+/* Checklist Item */
 .checklist-item {
   display: flex;
   align-items: center;
@@ -408,7 +400,6 @@
   padding: 14px 16px;
   background-color: #FAFAFA;
   border: 1px solid #F0F0F0;
-  border-radius: 8px;
   transition: all 0.2s ease;
   cursor: default;
 }
@@ -441,7 +432,7 @@
 }
 
 .checklist-item:hover .checkbox-wrapper {
-  transform: scale(1.1);
+  transform: scale(1.05);
 }
 
 .checklist-label {
@@ -457,7 +448,7 @@
 }
 
 /* ----------------------------------------
-   ENHANCED TEXT FIELDS
+   TEXT FIELDS
    ---------------------------------------- */
 
 .text-fields {
@@ -489,7 +480,6 @@
   padding: 12px 16px;
   background-color: #FAFAFA;
   border: 1px solid #F0F0F0;
-  border-radius: 8px;
   line-height: 1.6;
   min-height: 48px;
   display: flex;
@@ -636,13 +626,22 @@
 }
 
 /* ----------------------------------------
-   ACCESSIBILITY
+   ACCESSIBILITY & FOCUS REMOVAL
    ---------------------------------------- */
 
-.back-link:focus-visible,
-.tab:focus-visible {
-  outline: 2px solid #8E9C78;
-  outline-offset: 2px;
+button:focus,
+button:focus-visible,
+.tab:focus,
+.tab:focus-visible,
+a:focus,
+a:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+*:focus,
+*:focus-visible {
+  outline: none !important;
 }
 
 /* Reduced motion preference */
@@ -669,12 +668,10 @@
 
 .tab-content-wrapper::-webkit-scrollbar-track {
   background: #F5F5F5;
-  border-radius: 4px;
 }
 
 .tab-content-wrapper::-webkit-scrollbar-thumb {
   background: #D0D0D0;
-  border-radius: 4px;
 }
 
 .tab-content-wrapper::-webkit-scrollbar-thumb:hover {

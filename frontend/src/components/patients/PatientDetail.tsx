@@ -4,6 +4,7 @@ import { Link, useParams } from 'react-router-dom';
 import "../../styles/patientDetail.css"
 import { useEffect, useState } from 'react';
 import { AddProcedureModal } from '../procedures/addProcedureModal';
+import { EditProcedureModal } from '../procedures/EditProcedureModal';
 import { AddChecklistDropdown } from '../procedures/Addchecklistdropdown';
 import { PreProceduralPlanningModal } from '../procedures/planning';
 import { SignInModal } from '../procedures/Signinmodal';
@@ -17,6 +18,7 @@ import {checklistService} from "../../services/checklists"
 
 interface Checklist {
   id: string;
+  realId: number; // The actual database ID for deletion
   type: 'planning' | 'signin' | 'signout';
   name: string;
   date: string;
@@ -30,6 +32,9 @@ interface ProcedureWithDetails {
   code: string;
   physician: string;
   status: string;
+  scheduled_date: string;
+  procedure_id: number;
+  urgency: string;
   checklists: Checklist[];
 }
 
@@ -66,15 +71,34 @@ interface Patient {
   ptt_seconds: number;
 }
 
+// Icon components for edit and delete
+const EditIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+  </svg>
+);
+
+const DeleteIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="3 6 5 6 21 6" />
+    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+    <line x1="10" y1="11" x2="10" y2="17" />
+    <line x1="14" y1="11" x2="14" y2="17" />
+  </svg>
+);
+
 const PatientDetail = () => {
   const { id } = useParams();
   const [showPrModal, setShowPrModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editingProcedure, setEditingProcedure] = useState<ProcedureWithDetails | null>(null);
   const [activeChecklistModal, setActiveChecklistModal] = useState<string | null>(null);
   const [expandedProcedures, setExpandedProcedures] = useState<number[]>([]); 
   const [patient, setPatient] = useState<Patient | null>(null);
   const [loading, setLoading] = useState(true);
   const [procedures, setProcedures] = useState<ProcedureWithDetails[]>([]);
-  const [activeProcedureId, setActiveProcedureId] = useState<number | null>(null); // ← ADD THIS
+  const [activeProcedureId, setActiveProcedureId] = useState<number | null>(null);
 
   // fetch patient data
   useEffect(() => {
@@ -108,6 +132,7 @@ const PatientDetail = () => {
               const planning = planningResponse.data;
               checklists.push({
                   id: `planning-${planning.id}`,
+                  realId: planning.id,
                   type: 'planning',
                   name: 'Pre-Procedural Planning',
                   date: new Date().toLocaleDateString('en-US', { 
@@ -128,6 +153,7 @@ const PatientDetail = () => {
               const signIn = signInResponse.data;
               checklists.push({
                   id: `signin-${signIn.id}`,
+                  realId: signIn.id,
                   type: 'signin',
                   name: 'Sign In',
                   date: new Date().toLocaleDateString('en-US', { 
@@ -147,6 +173,7 @@ const PatientDetail = () => {
               const signOut = signOutResponse.data;
               checklists.push({
                   id: `signout-${signOut.id}`,
+                  realId: signOut.id,
                   type: 'signout',
                   name: 'Sign Out',
                   date: new Date().toLocaleDateString('en-US', { 
@@ -170,78 +197,16 @@ const PatientDetail = () => {
   }
 
   // fetch procedures for patient
-  useEffect(() => {
-    const fetchProcedures = async () => {
-      if (!id) return;
-      
-      try {
-        const patientProcsResponse = await procedureService.getAllPatientProceduresForPatient(id);
-        
-        const transformedProcedures = await Promise.all(
-          patientProcsResponse.data.map(async (proc: any) => {
-            console.log('Processing proc:', proc);
-            console.log('proc.id:', proc.id);
-            
-            try {
-              const procedureDetails = await procedureService.getProcedureByID(proc.procedure_id);
-              console.log('proc.id before fetching checklist:', proc.id);
-              const checklists = await fetchChecklistForProcedure(proc.id);
-              
-              return {
-                id: proc.id,
-                date: new Date(proc.scheduled_date).toLocaleDateString('en-US', { 
-                  month: 'short', 
-                  day: 'numeric', 
-                  year: 'numeric' 
-                }),
-                name: procedureDetails.data.procedure_name,
-                code: procedureDetails.data.procedure_code,
-                physician: proc.physician,
-                status: proc.status,
-                checklists: checklists
-              };
-            } catch (error) {
-              console.error(`Error fetching procedure details for ID ${proc.procedure_id}:`, error);
-              return {
-                id: proc.id,
-                date: new Date(proc.scheduled_date).toLocaleDateString('en-US', { 
-                  month: 'short', 
-                  day: 'numeric', 
-                  year: 'numeric' 
-                }),
-                name: 'Unknown Procedure',
-                code: 'N/A',
-                physician: proc.physician,
-                status: proc.status,
-                checklists: []
-              };
-            }
-          })
-        );
-        
-        setProcedures(transformedProcedures);
-        
-        if (transformedProcedures.length > 0) {
-          setExpandedProcedures([transformedProcedures[0].id]);
-        }
-      } catch (error) {
-        console.error('Error fetching procedures:', error);
-      }
-    };
-
-    fetchProcedures();
-  }, [id]);
-
-  // Handle successful procedure creation
-  const handleProcedureCreated = async () => {
-    setShowPrModal(false);
+  const fetchProcedures = async () => {
+    if (!id) return;
     
     try {
       const patientProcsResponse = await procedureService.getAllPatientProceduresForPatient(id);
       
       const transformedProcedures = await Promise.all(
         patientProcsResponse.data.map(async (proc: any) => {
-
+          console.log('Processing proc:', proc);
+          
           try {
             const procedureDetails = await procedureService.getProcedureByID(proc.procedure_id);
             const checklists = await fetchChecklistForProcedure(proc.id);
@@ -257,6 +222,9 @@ const PatientDetail = () => {
               code: procedureDetails.data.procedure_code,
               physician: proc.physician,
               status: proc.status,
+              scheduled_date: proc.scheduled_date,
+              procedure_id: proc.procedure_id,
+              urgency: proc.urgency,
               checklists: checklists
             };
           } catch (error) {
@@ -272,6 +240,9 @@ const PatientDetail = () => {
               code: 'N/A',
               physician: proc.physician,
               status: proc.status,
+              scheduled_date: proc.scheduled_date,
+              procedure_id: 0,
+              urgency: proc.urgency || 'routine',
               checklists: []
             };
           }
@@ -284,7 +255,68 @@ const PatientDetail = () => {
         setExpandedProcedures([transformedProcedures[0].id]);
       }
     } catch (error) {
-      console.error('Error refreshing procedures:', error);
+      console.error('Error fetching procedures:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchProcedures();
+  }, [id]);
+
+  // Handle successful procedure creation
+  const handleProcedureCreated = async () => {
+    setShowPrModal(false);
+    await fetchProcedures();
+  };
+
+  // Handle procedure edit
+  const handleEditProcedure = (procedure: ProcedureWithDetails) => {
+    setEditingProcedure(procedure);
+    setShowEditModal(true);
+  };
+
+  // Handle successful procedure edit
+  const handleProcedureEdited = async () => {
+    setShowEditModal(false);
+    setEditingProcedure(null);
+    await fetchProcedures();
+  };
+
+  // Handle procedure delete
+  const handleDeleteProcedure = async (procedureId: number) => {
+    if (!window.confirm('Are you sure you want to delete this procedure? All associated checklists will also be deleted.')) {
+      return;
+    }
+
+    try {
+      await procedureService.deletePatientProcedure(procedureId);
+      console.log('Procedure deleted successfully');
+      await fetchProcedures();
+    } catch (error) {
+      console.error('Error deleting procedure:', error);
+      alert('Failed to delete procedure. Please try again.');
+    }
+  };
+
+  // Handle checklist delete
+  const handleDeleteChecklist = async (checklistId: number, checklistType: 'planning' | 'signin' | 'signout') => {
+    if (!window.confirm('Are you sure you want to delete this checklist?')) {
+      return;
+    }
+
+    try {
+      if (checklistType === 'planning') {
+        await checklistService.deleteProcedurePlanning(checklistId);
+      } else if (checklistType === 'signin') {
+        await checklistService.deleteSignIn(checklistId);
+      } else if (checklistType === 'signout') {
+        await checklistService.deleteSignOut(checklistId);
+      }
+      console.log('Checklist deleted successfully');
+      await fetchProcedures();
+    } catch (error) {
+      console.error('Error deleting checklist:', error);
+      alert('Failed to delete checklist. Please try again.');
     }
   };
   
@@ -303,48 +335,7 @@ const PatientDetail = () => {
   const handleCloseChecklistModal = async () => {
     setActiveChecklistModal(null);
     setActiveProcedureId(null);
-    if (!id) return;
-    
-    try {
-      const patientProcsResponse = await procedureService.getAllPatientProceduresForPatient(id);
-      
-      const transformedProcedures = await Promise.all(
-        patientProcsResponse.data.map(async (proc: any) => {
-          try {
-            const procedureDetails = await procedureService.getProcedureByID(proc.procedure_id);
-            const checklists = await fetchChecklistForProcedure(proc.id);
-            
-            return {
-              id: proc.id,
-              date: new Date(proc.scheduled_date).toLocaleDateString('en-US', { 
-                month: 'short', 
-                day: 'numeric', 
-                year: 'numeric' 
-              }),
-              name: procedureDetails.data.procedure_name,
-              code: procedureDetails.data.procedure_code,
-              physician: proc.physician,
-              status: proc.status,
-              checklists: checklists
-            };
-          } catch (error) {
-            return {
-              id: proc.id,
-              date: 'Unknown',
-              name: 'Unknown Procedure',
-              code: 'N/A',
-              physician: proc.physician || 'Unknown',
-              status: proc.status,
-              checklists: []
-            };
-          }
-        })
-      );
-      
-      setProcedures(transformedProcedures);
-    } catch (error) {
-      console.error('Error refreshing procedures:', error);
-    }
+    await fetchProcedures();
   };
 
   const toggleProcedure = (procedureId: number) => {
@@ -507,10 +498,24 @@ const PatientDetail = () => {
                           </div>
                         </div>
                         
-                        <div onClick={(e) => e.stopPropagation()}>
+                        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }} onClick={(e) => e.stopPropagation()}>
+                          <button 
+                            className="icon-button edit-button"
+                            onClick={() => handleEditProcedure(procedure)}
+                            title="Edit procedure"
+                          >
+                            <EditIcon />
+                          </button>
+                          <button 
+                            className="icon-button delete-button"
+                            onClick={() => handleDeleteProcedure(procedure.id)}
+                            title="Delete procedure"
+                          >
+                            <DeleteIcon />
+                          </button>
                           <AddChecklistDropdown
                             procedureId={procedure.id}
-                            onSelectOption={(option) => handleSelectChecklistType(procedure.id, option)} // ← Pass procedure.id
+                            onSelectOption={(option) => handleSelectChecklistType(procedure.id, option)}
                             onClose={handleCloseChecklistModal}
                           />
                         </div>
@@ -526,11 +531,20 @@ const PatientDetail = () => {
                             procedure.checklists.map((checklist) => (
                               <div key={checklist.id} className="checklist-entry">
                                 <div className="checklist-entry-header">
-                                  <span className={`checklist-type-dot ${checklist.type}`} />
-                                  <div className="checklist-entry-info">
-                                    <span className="checklist-entry-date">{checklist.date}</span>
-                                    <span className="checklist-entry-name">{checklist.name}</span>
+                                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', flex: 1 }}>
+                                    <span className={`checklist-type-dot ${checklist.type}`} />
+                                    <div className="checklist-entry-info">
+                                      <span className="checklist-entry-date">{checklist.date}</span>
+                                      <span className="checklist-entry-name">{checklist.name}</span>
+                                    </div>
                                   </div>
+                                  <button 
+                                    className="icon-button delete-button-small"
+                                    onClick={() => handleDeleteChecklist(checklist.realId, checklist.type)}
+                                    title="Delete checklist"
+                                  >
+                                    <DeleteIcon />
+                                  </button>
                                 </div>
                                 <ul className="checklist-entry-items">
                                   {checklist.items.map((item, itemIdx) => (
@@ -569,6 +583,22 @@ const PatientDetail = () => {
           patientId={id!} 
           onClose={() => setShowPrModal(false)} 
           onSuccess={handleProcedureCreated}
+        />
+      )}
+
+      {showEditModal && editingProcedure && (
+        <EditProcedureModal 
+          procedureId={editingProcedure.id}
+          initialData={{
+            procedure_id: editingProcedure.procedure_id,
+            patient_id: Number(id),                  
+            physician: editingProcedure.physician      
+          }}
+          onClose={() => {
+            setShowEditModal(false);
+            setEditingProcedure(null);
+          }}
+          onSuccess={handleProcedureEdited}
         />
       )}
 

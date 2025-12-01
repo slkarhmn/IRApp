@@ -44,8 +44,8 @@ export const procedureService = {
     },
 
     // update a patient procedure
-    updatePatientProcedure:(id)=>{
-        return api.put(`/patient-procedures/${id}`)
+    updatePatientProcedure:(id,updateData)=>{
+        return api.put(`/patient-procedures/${id}`,updateData)
     },
 
     // delete patient procedure
