@@ -4,7 +4,7 @@ import { Link, useParams } from 'react-router-dom';
 import "../../styles/patientDetail.css"
 import { useEffect, useState } from 'react';
 import { AddProcedureModal } from '../procedures/addProcedureModal';
-import { EditProcedureModal } from '../procedures/EditProcedureModal';
+import { EditProcedureModal } from '../procedures/Editproceduremodal';
 import { AddChecklistDropdown } from '../procedures/Addchecklistdropdown';
 import { PreProceduralPlanningModal } from '../procedures/planning';
 import { SignInModal } from '../procedures/Signinmodal';
@@ -15,6 +15,7 @@ import {patientService} from "../../services/patientService"
 import {procedureService} from "../../services/procedures"
 //@ts-expect-error fuck ts
 import {checklistService} from "../../services/checklists"
+import EditChecklistModal from '../procedures/Editchecklistmodal';
 
 interface Checklist {
   id: string;
@@ -88,6 +89,8 @@ const DeleteIcon = () => (
   </svg>
 );
 
+
+
 const PatientDetail = () => {
   const { id } = useParams();
   const [showPrModal, setShowPrModal] = useState(false);
@@ -99,6 +102,16 @@ const PatientDetail = () => {
   const [loading, setLoading] = useState(true);
   const [procedures, setProcedures] = useState<ProcedureWithDetails[]>([]);
   const [activeProcedureId, setActiveProcedureId] = useState<number | null>(null);
+
+  const [editChecklistData, setEditChecklistData] = useState<{
+    checklistId: number;
+    type: 'planning' | 'signin' | 'signout';
+    procedureId: number;
+  } | null>(null);
+
+  const handleEditChecklist = (checklistId: number, type: 'planning' | 'signin' | 'signout', procedureId: number) => {
+    setEditChecklistData({ checklistId, type, procedureId });
+  };
 
   // fetch patient data
   useEffect(() => {
@@ -538,13 +551,26 @@ const PatientDetail = () => {
                                       <span className="checklist-entry-name">{checklist.name}</span>
                                     </div>
                                   </div>
-                                  <button 
-                                    className="icon-button delete-button-small"
-                                    onClick={() => handleDeleteChecklist(checklist.realId, checklist.type)}
-                                    title="Delete checklist"
-                                  >
-                                    <DeleteIcon />
-                                  </button>
+                                  
+
+                                  <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }} onClick={(e) => e.stopPropagation()}>
+                                    <button 
+                                      className="icon-button edit-button-small"
+                                      onClick={() => handleEditChecklist(checklist.realId, checklist.type, procedure.id)}
+                                      title="Edit checklist"
+                                    >
+                                      <EditIcon />
+                                    </button>
+
+                                    <button 
+                                      className="icon-button delete-button-small"
+                                      onClick={() => handleDeleteChecklist(checklist.realId, checklist.type)}
+                                      title="Delete checklist"
+                                    >
+                                      <DeleteIcon />
+                                    </button>
+                                  </div>
+
                                 </div>
                                 <ul className="checklist-entry-items">
                                   {checklist.items.map((item, itemIdx) => (
@@ -625,6 +651,18 @@ const PatientDetail = () => {
           onSuccess={handleCloseChecklistModal}
         />
       )}
+      {editChecklistData && (
+      <EditChecklistModal
+        checklistId={editChecklistData.checklistId}
+        checklistType={editChecklistData.type}
+        procedureId={editChecklistData.procedureId}
+        onClose={() => setEditChecklistData(null)}
+        onSuccess={async () => {
+          setEditChecklistData(null);
+          await fetchProcedures();
+        }}
+      />
+    )}
     </div>
   );
 };
