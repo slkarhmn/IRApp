@@ -1,42 +1,916 @@
 {
   "Vascular": [
-    { "procedure_code": "P001", "name": "Angiogram", "specialised_checklist": [{"step": "sample_boolean_step", "completed": false}, {"step": "sample_text_step", "notes": "notes"}] },
-    { "procedure_code": "P002", "name": "Angioplasty", "specialised_checklist": [] },
-    { "procedure_code": "P003", "name": "Venogram", "specialised_checklist": [] },
-    { "procedure_code": "P004", "name": "Venoplasty", "specialised_checklist": [] },
-    { "procedure_code": "P005", "name": "Fistulogram", "specialised_checklist": [] },
-    { "procedure_code": "P006", "name": "Fistuloplasty", "specialised_checklist": [] },
-    { "procedure_code": "P007", "name": "Stenting", "specialised_checklist": [] },
-    { "procedure_code": "P008", "name": "EVAR/ TEVAR", "specialised_checklist": [] },
-    { "procedure_code": "P009", "name": "Embolisation", "specialised_checklist": [] },
-    { "procedure_code": "P010", "name": "ChemoEmbolisation (TACE)", "specialised_checklist": [] },
-    { "procedure_code": "P011", "name": "RadioEmbolisation(SIRT)", "specialised_checklist": [] },
-    { "procedure_code": "P012", "name": "Shockwave", "specialised_checklist": [] },
-    { "procedure_code": "P013", "name": "Thrombolysis", "specialised_checklist": [] },
-    { "procedure_code": "P014", "name": "Thrombectomy", "specialised_checklist": [] },
-    { "procedure_code": "P015", "name": "Thrombininjection", "specialised_checklist": [] },
-    { "procedure_code": "P016", "name": "Sclerotherapy", "specialised_checklist": [] },
-    { "procedure_code": "P017", "name": "Ablation(RFA/Laser)", "specialised_checklist": [] },
-    { "procedure_code": "P018", "name": "IVCfilter placement/ retrieval", "specialised_checklist": [] },
+    {
+      "procedure_code": "P001",
+      "name": "Angiogram",
+      "specialised_checklist": [
+        {
+          "phase": "pre_procedural_planning",
+          "steps": [
+            {"step": "Vascular access route selected (radial/femoral/brachial)", "completed": false},
+            {"step": "Contrast volume and injection rates planned", "completed": false},
+            {"step": "Catheter types selected based on territory", "completed": false}
+          ]
+        },
+        {
+          "phase": "sign_in",
+          "steps": [
+            {"step": "Imaging roadmap loaded or prepared", "completed": false},
+            {"step": "Catheters, sheaths and guidewires opened and flushed", "completed": false}
+          ]
+        },
+        {
+          "phase": "sign_out",
+          "steps": [
+            {"step": "Access site haemostasis method confirmed", "completed": false},
+            {"step": "Patient limb perfusion reassessed post-access", "completed": false}
+          ]
+        }
+      ]
+    },
+
+    {
+      "procedure_code": "P002",
+      "name": "Angioplasty",
+      "specialised_checklist": [
+        {
+          "phase": "pre_procedural_planning",
+          "steps": [
+            {"step": "Balloon diameter and length selected for target vessel", "completed": false},
+            {"step": "Inflation pressures and duration planned", "completed": false},
+            {"step": "Backup high-pressure or cutting balloon available", "completed": false}
+          ]
+        },
+        {
+          "phase": "sign_in",
+          "steps": [
+            {"step": "Balloon catheter flushed and integrity checked", "completed": false},
+            {"step": "Anticoagulation strategy prepared if indicated", "completed": false}
+          ]
+        },
+        {
+          "phase": "sign_out",
+          "steps": [
+            {"step": "Post-angioplasty run-off imaging done", "completed": false},
+            {"step": "Assessment for dissection or recoil documented", "completed": false}
+          ]
+        }
+      ]
+    },
+
+    {
+      "procedure_code": "P003",
+      "name": "Venogram",
+      "specialised_checklist": [
+        {
+          "phase": "pre_procedural_planning",
+          "steps": [
+            {"step": "Venous access site selected (upper vs lower limb)", "completed": false},
+            {"step": "Compression technique planned if required for opacification", "completed": false}
+          ]
+        },
+        {
+          "phase": "sign_in",
+          "steps": [
+            {"step": "Low-osmolar contrast prepared for venous use", "completed": false}
+          ]
+        },
+        {
+          "phase": "sign_out",
+          "steps": [
+            {"step": "Evaluation for thrombosis or extravasation documented", "completed": false}
+          ]
+        }
+      ]
+    },
+
+    {
+      "procedure_code": "P004",
+      "name": "Venoplasty",
+      "specialised_checklist": [
+        {
+          "phase": "pre_procedural_planning",
+          "steps": [
+            {"step": "Balloon size chosen for target vein", "completed": false},
+            {"step": "Plan for post-dilatation imaging to assess recoil", "completed": false}
+          ]
+        },
+        {
+          "phase": "sign_in",
+          "steps": [
+            {"step": "Pressure-measurement setup prepared if required", "completed": false}
+          ]
+        },
+        {
+          "phase": "sign_out",
+          "steps": [
+            {"step": "Immediate symptom response checked (swelling, pain)", "completed": false}
+          ]
+        }
+      ]
+    },
+
+    {
+      "procedure_code": "P005",
+      "name": "Fistulogram",
+      "specialised_checklist": [
+        {
+          "phase": "pre_procedural_planning",
+          "steps": [
+            {"step": "Target inflow/outflow segments identified", "completed": false},
+            {"step": "Plan for potential intervention (plasty or stent)", "completed": false}
+          ]
+        },
+        {
+          "phase": "sign_in",
+          "steps": [
+            {"step": "AVF limb positioned and access point marked", "completed": false}
+          ]
+        },
+        {
+          "phase": "sign_out",
+          "steps": [
+            {"step": "Post-procedure thrill or bruit checked", "completed": false}
+          ]
+        }
+      ]
+    },
+
+    {
+      "procedure_code": "P006",
+      "name": "Fistuloplasty",
+      "specialised_checklist": [
+        {
+          "phase": "pre_procedural_planning",
+          "steps": [
+            {"step": "Balloon diameter selected for stenotic segment", "completed": false},
+            {"step": "Plan for stent-graft use in case of rupture", "completed": false}
+          ]
+        },
+        {
+          "phase": "sign_in",
+          "steps": [
+            {"step": "High-pressure balloon prepared and flushed", "completed": false}
+          ]
+        },
+        {
+          "phase": "sign_out",
+          "steps": [
+            {"step": "Post-dilatation AVF flow reassessed", "completed": false}
+          ]
+        }
+      ]
+    },
+
+    {
+      "procedure_code": "P007",
+      "name": "Stenting",
+      "specialised_checklist": [
+        {
+          "phase": "pre_procedural_planning",
+          "steps": [
+            {"step": "Stent type chosen (covered vs bare metal)", "completed": false},
+            {"step": "Landing zones identified on imaging", "completed": false},
+            {"step": "Backup stent prepared in case of misdeployment", "completed": false}
+          ]
+        },
+        {
+          "phase": "sign_in",
+          "steps": [
+            {"step": "Stent delivery system flushed and checked", "completed": false}
+          ]
+        },
+        {
+          "phase": "sign_out",
+          "steps": [
+            {"step": "Post-deployment expansion confirmed", "completed": false},
+            {"step": "Run-off imaging reviewed", "completed": false}
+          ]
+        }
+      ]
+    },
+
+    {
+      "procedure_code": "P008",
+      "name": "EVAR/ TEVAR",
+      "specialised_checklist": [
+        {
+          "phase": "pre_procedural_planning",
+          "steps": [
+            {"step": "Endograft components selected and sizing confirmed", "completed": false},
+            {"step": "Bilateral femoral access approach planned", "completed": false},
+            {"step": "Spinal cord protection plan considered (TEVAR)", "completed": false}
+          ]
+        },
+        {
+          "phase": "sign_in",
+          "steps": [
+            {"step": "All graft modules opened and displayed", "completed": false},
+            {"step": "Fusion or centreline imaging setup verified", "completed": false}
+          ]
+        },
+        {
+          "phase": "sign_out",
+          "steps": [
+            {"step": "Completion angiogram reviewed for endoleak", "completed": false},
+            {"step": "Distal pulses and limb perfusion reassessed", "completed": false}
+          ]
+        }
+      ]
+    },
+
+    {
+      "procedure_code": "P009",
+      "name": "Embolisation",
+      "specialised_checklist": [
+        {
+          "phase": "pre_procedural_planning",
+          "steps": [
+            {"step": "Embolic agent selected (coils, particles, glue, Onyx)", "completed": false},
+            {"step": "Non-target embolisation risk assessed", "completed": false},
+            {"step": "Microcatheter and microwire selection planned", "completed": false}
+          ]
+        },
+        {
+          "phase": "sign_in",
+          "steps": [
+            {"step": "Embolic materials prepared and labelled", "completed": false},
+            {"step": "D5W or non-ionic flush prepared for Onyx if applicable", "completed": false}
+          ]
+        },
+        {
+          "phase": "sign_out",
+          "steps": [
+            {"step": "Post-embolisation angiogram obtained", "completed": false},
+            {"step": "Assessment for non-target embolisation documented", "completed": false}
+          ]
+        }
+      ]
+    },
+
+    {
+      "procedure_code": "P010",
+      "name": "ChemoEmbolisation (TACE)",
+      "specialised_checklist": [
+        {
+          "phase": "pre_procedural_planning",
+          "steps": [
+            {"step": "Chemotherapy agent confirmed and mixed with lipiodol/emulsion", "completed": false},
+            {"step": "Tumour feeders identified on cross-sectional imaging", "completed": false},
+            {"step": "Plan for peri-procedural antiemetics/analgesia", "completed": false}
+          ]
+        },
+        {
+          "phase": "sign_in",
+          "steps": [
+            {"step": "Chemotherapeutic mixture labelled and prepared", "completed": false},
+            {"step": "Microcatheter position for selective delivery planned", "completed": false}
+          ]
+        },
+        {
+          "phase": "sign_out",
+          "steps": [
+            {"step": "Lipiodol deposition pattern documented", "completed": false},
+            {"step": "Post-procedure symptom management instructions given", "completed": false}
+          ]
+        }
+      ]
+    },
+
+    {
+      "procedure_code": "P011",
+      "name": "RadioEmbolisation (SIRT)",
+      "specialised_checklist": [
+        {
+          "phase": "pre_procedural_planning",
+          "steps": [
+            {"step": "Radiation activity dose confirmed", "completed": false},
+            {"step": "Shunt fraction assessment completed and reviewed", "completed": false},
+            {"step": "Non-target artery coil-occlusion planned if required", "completed": false}
+          ]
+        },
+        {
+          "phase": "sign_in",
+          "steps": [
+            {"step": "Y-90 vial checked with nuclear medicine team", "completed": false},
+            {"step": "Radiation handling equipment prepared", "completed": false}
+          ]
+        },
+        {
+          "phase": "sign_out",
+          "steps": [
+            {"step": "Residual radioactivity disposal confirmed", "completed": false},
+            {"step": "Radiation precautions communicated to ward", "completed": false}
+          ]
+        }
+      ]
+    },
+
+    {
+      "procedure_code": "P012",
+      "name": "Shockwave Angioplasty",
+      "specialised_checklist": [
+        {
+          "phase": "pre_procedural_planning",
+          "steps": [
+            {"step": "Shockwave balloon size selected for calcified segment", "completed": false},
+            {"step": "Inflation and pulse cycle numbers planned", "completed": false}
+          ]
+        },
+        {
+          "phase": "sign_in",
+          "steps": [
+            {"step": "Shockwave generator connected and tested", "completed": false}
+          ]
+        },
+        {
+          "phase": "sign_out",
+          "steps": [
+            {"step": "Final lumen gain documented on imaging", "completed": false}
+          ]
+        }
+      ]
+    },
+
+    {
+      "procedure_code": "P013",
+      "name": "Thrombolysis",
+      "specialised_checklist": [
+        {
+          "phase": "pre_procedural_planning",
+          "steps": [
+            {"step": "Thrombolytic drug and infusion catheter selected", "completed": false},
+            {"step": "Monitoring requirements planned (ITU/HDU)", "completed": false},
+            {"step": "Plan for relook angiogram scheduled", "completed": false}
+          ]
+        },
+        {
+          "phase": "sign_in",
+          "steps": [
+            {"step": "Infusion pump setup confirmed", "completed": false},
+            {"step": "Catheter side holes position confirmed in clot", "completed": false}
+          ]
+        },
+        {
+          "phase": "sign_out",
+          "steps": [
+            {"step": "Thrombolytic infusion parameters recorded", "completed": false},
+            {"step": "Complication risk (bleeding) discussed with nursing staff", "completed": false}
+          ]
+        }
+      ]
+    },
+
+    {
+      "procedure_code": "P014",
+      "name": "Thrombectomy",
+      "specialised_checklist": [
+        {
+          "phase": "pre_procedural_planning",
+          "steps": [
+            {"step": "Device selected (mechanical aspiration/rotational/mechanical)", "completed": false},
+            {"step": "Plan for adjunct balloon angioplasty or stent if needed", "completed": false},
+            {"step": "Embolic protection strategy planned", "completed": false}
+          ]
+        },
+        {
+          "phase": "sign_in",
+          "steps": [
+            {"step": "Thrombectomy device prepared and flushed", "completed": false},
+            {"step": "Suction pump tested if aspiration system used", "completed": false}
+          ]
+        },
+        {
+          "phase": "sign_out",
+          "steps": [
+            {"step": "Residual clot burden assessed", "completed": false},
+            {"step": "Distal embolisation check completed", "completed": false}
+          ]
+        }
+      ]
+    },
+
+    {
+      "procedure_code": "P015",
+      "name": "Thrombin Injection",
+      "specialised_checklist": [
+        {
+          "phase": "pre_procedural_planning",
+          "steps": [
+            {"step": "Pseudoaneurysm characteristics assessed on ultrasound", "completed": false},
+            {"step": "Thrombin concentration and dose calculated", "completed": false},
+            {"step": "Plan for immediate post-injection Doppler assessment", "completed": false}
+          ]
+        },
+        {
+          "phase": "sign_in",
+          "steps": [
+            {"step": "Thrombin syringe prepared under sterile technique", "completed": false},
+            {"step": "Needle position planned to avoid sac neck", "completed": false}
+          ]
+        },
+        {
+          "phase": "sign_out",
+          "steps": [
+            {"step": "Post-injection Doppler confirming thrombosis performed", "completed": false},
+            {"step": "Distal limb perfusion reassessed", "completed": false}
+          ]
+        }
+      ]
+    },
+
+    {
+      "procedure_code": "P016",
+      "name": "Sclerotherapy",
+      "specialised_checklist": [
+        {
+          "phase": "pre_procedural_planning",
+          "steps": [
+            {"step": "Foam vs liquid sclerosant selected", "completed": false},
+            {"step": "Target vein mapping done with ultrasound", "completed": false},
+            {"step": "Compression strategy post-procedure planned", "completed": false}
+          ]
+        },
+        {
+          "phase": "sign_in",
+          "steps": [
+            {"step": "Sclerosant mixture prepared and labelled", "completed": false},
+            {"step": "Needle or catheter access route planned", "completed": false}
+          ]
+        },
+        {
+          "phase": "sign_out",
+          "steps": [
+            {"step": "Immediate vein response documented", "completed": false},
+            {"step": "Compression garment application instructions given", "completed": false}
+          ]
+        }
+      ]
+    },
+
+    {
+      "procedure_code": "P017",
+      "name": "Ablation (RFA / Laser)",
+      "specialised_checklist": [
+        {
+          "phase": "pre_procedural_planning",
+          "steps": [
+            {"step": "Target vein segment mapped with ultrasound", "completed": false},
+            {"step": "Ablation catheter type and length selected", "completed": false},
+            {"step": "Tumescent anaesthesia volume and distribution planned", "completed": false}
+          ]
+        },
+        {
+          "phase": "sign_in",
+          "steps": [
+            {"step": "Ablation generator settings confirmed", "completed": false},
+            {"step": "Catheter tip heating function tested", "completed": false}
+          ]
+        },
+        {
+          "phase": "sign_out",
+          "steps": [
+            {"step": "Post-ablation ultrasound performed if protocol requires", "completed": false},
+            {"step": "Compression garment instructions provided", "completed": false}
+          ]
+        }
+      ]
+    },
+
+    {
+      "procedure_code": "P018",
+      "name": "IVC Filter Placement / Retrieval",
+      "specialised_checklist": [
+        {
+          "phase": "pre_procedural_planning",
+          "steps": [
+            {"step": "Filter type chosen based on retrievability", "completed": false},
+            {"step": "IVC diameter measured to ensure compatibility", "completed": false},
+            {"step": "Renal vein landing zone confirmed", "completed": false}
+          ]
+        },
+        {
+          "phase": "sign_in",
+          "steps": [
+            {"step": "Filter deployment system flushed", "completed": false},
+            {"step": "Snare kit prepared for retrieval cases", "completed": false}
+          ]
+        },
+        {
+          "phase": "sign_out",
+          "steps": [
+            {"step": "Filter position or retrieval success confirmed on imaging", "completed": false},
+            {"step": "Plan for follow-up or reattempt if retrieval incomplete", "completed": false}
+          ]
+        }
+      ]
+    },
+
     {
       "procedure_code": "P019",
-      "name": "Centrallines (PICC, Midline, Permacath, Portacath)",
-      "specialised_checklist": []
+      "name": "Central Lines (PICC, Midline, Permacath, Portacath)",
+      "specialised_checklist": [
+        {
+          "phase": "pre_procedural_planning",
+          "steps": [
+            {"step": "Vein selected under ultrasound guidance", "completed": false},
+            {"step": "Catheter type, length and lumen number selected", "completed": false},
+            {"step": "Plan for fluoroscopic tip positioning", "completed": false}
+          ]
+        },
+        {
+          "phase": "sign_in",
+          "steps": [
+            {"step": "All catheter components flushed and prepared", "completed": false},
+            {"step": "Pocket creation tools prepared for portacath", "completed": false}
+          ]
+        },
+        {
+          "phase": "sign_out",
+          "steps": [
+            {"step": "Final tip position confirmed (SVC/RA junction)", "completed": false},
+            {"step": "Line patency and blood return checked", "completed": false}
+          ]
+        }
+      ]
     }
   ],
-  "Non-vascular": [
-    { "procedure_code": "P020", "name": "FineNeedle aspiration/ FNA", "specialised_checklist": [] },
-    { "procedure_code": "P021", "name": "CoreBiopsy", "specialised_checklist": [] },
-    { "procedure_code": "P022", "name": "Abscessdrainage", "specialised_checklist": [] },
-    { "procedure_code": "P023", "name": "Thoraco/Paracentesis", "specialised_checklist": [] },
-    { "procedure_code": "P024", "name": "Biliarydrainage", "specialised_checklist": [] },
-    { "procedure_code": "P025", "name": "Nephrostomy", "specialised_checklist": [] },
-    { "procedure_code": "P026", "name": "Lithotripsy", "specialised_checklist": [] },
-    { "procedure_code": "P027", "name": "GIGUStents (Oeso/ Duodenum/ Colon)", "specialised_checklist": [] },
-    { "procedure_code": "P028", "name": "Gastrostomy/ GJ", "specialised_checklist": [] },
-    { "procedure_code": "P029", "name": "Ablation(RFA/ Microwave /Cryo)", "specialised_checklist": [] },
-    { "procedure_code": "P030", "name": "Vert/kyphoplasty", "specialised_checklist": [] },
-    { "procedure_code": "P031", "name": "Nerveblocks", "specialised_checklist": [] },
-    { "procedure_code": "P032", "name": "Jointinjections", "specialised_checklist": [] }
+
+"Non-vascular": [
+    {
+      "procedure_code": "P020",
+      "name": "Fine Needle Aspiration / FNA",
+      "specialised_checklist": [
+        {
+          "phase": "pre_procedural_planning",
+          "steps": [
+            {"step": "Target lesion imaging reviewed to confirm safest needle path", "completed": false},
+            {"step": "Needle gauge selected for cytology requirements", "completed": false},
+            {"step": "Cytology team availability confirmed if rapid on-site evaluation required", "completed": false}
+          ]
+        },
+        {
+          "phase": "sign_in",
+          "steps": [
+            {"step": "Ultrasound or CT guidance setup confirmed", "completed": false},
+            {"step": "Slides, fixatives and specimen pots arranged", "completed": false}
+          ]
+        },
+        {
+          "phase": "sign_out",
+          "steps": [
+            {"step": "Number of passes documented", "completed": false},
+            {"step": "Specimens labelled for cytology/histology", "completed": false}
+          ]
+        }
+      ]
+    },
+
+    {
+      "procedure_code": "P021",
+      "name": "Core Biopsy",
+      "specialised_checklist": [
+        {
+          "phase": "pre_procedural_planning",
+          "steps": [
+            {"step": "Biopsy tract planned to avoid critical structures", "completed": false},
+            {"step": "Coaxial needle system and core device selected", "completed": false},
+            {"step": "Haemostasis method planned (manual, gelfoam, tract plugging)", "completed": false}
+          ]
+        },
+        {
+          "phase": "sign_in",
+          "steps": [
+            {"step": "Device throw length checked", "completed": false},
+            {"step": "Haemostatic agents prepared", "completed": false}
+          ]
+        },
+        {
+          "phase": "sign_out",
+          "steps": [
+            {"step": "Post-biopsy imaging to exclude bleeding completed", "completed": false},
+            {"step": "Number of cores and adequacy discussed with pathology", "completed": false}
+          ]
+        }
+      ]
+    },
+
+    {
+      "procedure_code": "P022",
+      "name": "Abscess Drainage",
+      "specialised_checklist": [
+        {
+          "phase": "pre_procedural_planning",
+          "steps": [
+            {"step": "Drain size selected based on abscess viscosity", "completed": false},
+            {"step": "Access route planned considering organ displacement", "completed": false},
+            {"step": "Plan for catheter flushing frequency", "completed": false}
+          ]
+        },
+        {
+          "phase": "sign_in",
+          "steps": [
+            {"step": "Guidewire and pigtail catheter prepared", "completed": false},
+            {"step": "Specimen pots for fluid culture readied", "completed": false}
+          ]
+        },
+        {
+          "phase": "sign_out",
+          "steps": [
+            {"step": "Catheter position confirmed on imaging", "completed": false},
+            {"step": "Drain care instructions communicated", "completed": false}
+          ]
+        }
+      ]
+    },
+
+    {
+      "procedure_code": "P023",
+      "name": "Thoracocentesis / Paracentesis",
+      "specialised_checklist": [
+        {
+          "phase": "pre_procedural_planning",
+          "steps": [
+            {"step": "Safe ultrasound window identified", "completed": false},
+            {"step": "Large-volume vs diagnostic drainage planned", "completed": false},
+            {"step": "Plan for albumin replacement (paracentesis) if required", "completed": false}
+          ]
+        },
+        {
+          "phase": "sign_in",
+          "steps": [
+            {"step": "Appropriate catheter/needle selected (thoracic or abdominal)", "completed": false},
+            {"step": "Sample tubes for lab analysis prepared", "completed": false}
+          ]
+        },
+        {
+          "phase": "sign_out",
+          "steps": [
+            {"step": "Drainage volume documented", "completed": false},
+            {"step": "Post-procedure ultrasound to check for residual fluid as needed", "completed": false}
+          ]
+        }
+      ]
+    },
+
+    {
+      "procedure_code": "P024",
+      "name": "Biliary Drainage",
+      "specialised_checklist": [
+        {
+          "phase": "pre_procedural_planning",
+          "steps": [
+            {"step": "Target duct (left/right) selected based on imaging", "completed": false},
+            {"step": "Internal vs external drainage strategy confirmed", "completed": false},
+            {"step": "Plan for cholangioplasty or stenting if obstruction identified", "completed": false}
+          ]
+        },
+        {
+          "phase": "sign_in",
+          "steps": [
+            {"step": "Contrast dilution for cholangiography prepared", "completed": false},
+            {"step": "Biliary drain sizes and locking mechanism checked", "completed": false}
+          ]
+        },
+        {
+          "phase": "sign_out",
+          "steps": [
+            {"step": "Drain position confirmed fluoroscopically", "completed": false},
+            {"step": "Drainage output expectations and care explained", "completed": false}
+          ]
+        }
+      ]
+    },
+
+    {
+      "procedure_code": "P025",
+      "name": "Nephrostomy",
+      "specialised_checklist": [
+        {
+          "phase": "pre_procedural_planning",
+          "steps": [
+            {"step": "Target calyx selected (usually posterior lower pole)", "completed": false},
+            {"step": "Plan for nephrostogram post-placement", "completed": false},
+            {"step": "Consideration for eventual stenting/nephroureteral catheter", "completed": false}
+          ]
+        },
+        {
+          "phase": "sign_in",
+          "steps": [
+            {"step": "Dilators and nephrostomy catheter checked", "completed": false},
+            {"step": "Pressure transducer/urine sampling equipment prepared", "completed": false}
+          ]
+        },
+        {
+          "phase": "sign_out",
+          "steps": [
+            {"step": "Urine output and colour monitored immediately post-procedure", "completed": false},
+            {"step": "Catheter flushing schedule communicated", "completed": false}
+          ]
+        }
+      ]
+    },
+
+    {
+      "procedure_code": "P026",
+      "name": "Lithotripsy",
+      "specialised_checklist": [
+        {
+          "phase": "pre_procedural_planning",
+          "steps": [
+            {"step": "Stone location confirmed and trajectory planned", "completed": false},
+            {"step": "Appropriate lithotripsy modality selected", "completed": false},
+            {"step": "Plan for residual fragment clearance", "completed": false}
+          ]
+        },
+        {
+          "phase": "sign_in",
+          "steps": [
+            {"step": "Laser or mechanical device tested", "completed": false},
+            {"step": "Protective eyewear for staff if laser used", "completed": false}
+          ]
+        },
+        {
+          "phase": "sign_out",
+          "steps": [
+            {"step": "Stone fragmentation success documented", "completed": false},
+            {"step": "Plan for follow-up imaging to confirm clearance", "completed": false}
+          ]
+        }
+      ]
+    },
+
+    {
+      "procedure_code": "P027",
+      "name": "GI/GU Stents (Oesophageal / Duodenal / Colonic)",
+      "specialised_checklist": [
+        {
+          "phase": "pre_procedural_planning",
+          "steps": [
+            {"step": "Stent length and diameter measured according to stricture", "completed": false},
+            {"step": "Fluoroscopic markers and landing zones marked", "completed": false},
+            {"step": "Management of tumour ingrowth vs overgrowth considered", "completed": false}
+          ]
+        },
+        {
+          "phase": "sign_in",
+          "steps": [
+            {"step": "Stent deployment system flushed and prepared", "completed": false},
+            {"step": "Contrast for intraluminal mapping prepared", "completed": false}
+          ]
+        },
+        {
+          "phase": "sign_out",
+          "steps": [
+            {"step": "Stent expansion confirmed on imaging", "completed": false},
+            {"step": "Post-stent swallow or passage ability monitored", "completed": false}
+          ]
+        }
+      ]
+    },
+
+    {
+      "procedure_code": "P028",
+      "name": "Gastrostomy / GJ Tube",
+      "specialised_checklist": [
+        {
+          "phase": "pre_procedural_planning",
+          "steps": [
+            {"step": "Stomach distension method selected (air vs contrast)", "completed": false},
+            {"step": "Tube type chosen (pull vs push technique)", "completed": false},
+            {"step": "Plan for gastropexy if required", "completed": false}
+          ]
+        },
+        {
+          "phase": "sign_in",
+          "steps": [
+            {"step": "Gastropexy device and G/GJ tube opened", "completed": false},
+            {"step": "Antireflux valve function checked", "completed": false}
+          ]
+        },
+        {
+          "phase": "sign_out",
+          "steps": [
+            {"step": "Final tube position confirmed with contrast", "completed": false},
+            {"step": "Feeding instructions and tube care given", "completed": false}
+          ]
+        }
+      ]
+    },
+
+    {
+      "procedure_code": "P029",
+      "name": "Ablation (RFA / Microwave / Cryo)",
+      "specialised_checklist": [
+        {
+          "phase": "pre_procedural_planning",
+          "steps": [
+            {"step": "Ablation zone planned based on tumour margins", "completed": false},
+            {"step": "Probe type and number selected", "completed": false},
+            {"step": "Thermal protection strategy (hydrodissection, CO2) arranged", "completed": false}
+          ]
+        },
+        {
+          "phase": "sign_in",
+          "steps": [
+            {"step": "Ablation generator settings tested", "completed": false},
+            {"step": "Temperature/impedance monitoring equipment prepared", "completed": false}
+          ]
+        },
+        {
+          "phase": "sign_out",
+          "steps": [
+            {"step": "Ablation zone confirmed on post-treatment imaging", "completed": false},
+            {"step": "Adjacent organ injury assessment documented", "completed": false}
+          ]
+        }
+      ]
+    },
+
+    {
+      "procedure_code": "P030",
+      "name": "Vertebroplasty / Kyphoplasty",
+      "specialised_checklist": [
+        {
+          "phase": "pre_procedural_planning",
+          "steps": [
+            {"step": "Fracture level and side confirmed with imaging", "completed": false},
+            {"step": "Bone cement type and volume planned", "completed": false},
+            {"step": "Kyphoplasty balloon availability checked if needed", "completed": false}
+          ]
+        },
+        {
+          "phase": "sign_in",
+          "steps": [
+            {"step": "Balloon inflation device and cement mixer prepared", "completed": false},
+            {"step": "Biopsy tools prepared if sampling planned", "completed": false}
+          ]
+        },
+        {
+          "phase": "sign_out",
+          "steps": [
+            {"step": "Cement leakage assessment documented", "completed": false},
+            {"step": "Neurological status reassessed", "completed": false}
+          ]
+        }
+      ]
+    },
+
+    {
+      "procedure_code": "P031",
+      "name": "Nerve Blocks",
+      "specialised_checklist": [
+        {
+          "phase": "pre_procedural_planning",
+          "steps": [
+            {"step": "Target nerve path and safe window identified", "completed": false},
+            {"step": "Local anaesthetic selection and dose confirmed", "completed": false},
+            {"step": "Steroid requirement confirmed if indicated", "completed": false}
+          ]
+        },
+        {
+          "phase": "sign_in",
+          "steps": [
+            {"step": "Echogenic needle prepared", "completed": false},
+            {"step": "Real-time ultrasound/CT guidance settings checked", "completed": false}
+          ]
+        },
+        {
+          "phase": "sign_out",
+          "steps": [
+            {"step": "Immediate sensory/motor response documented", "completed": false},
+            {"step": "Complication screening (vascular uptake, nerve irritation) completed", "completed": false}
+          ]
+        }
+      ]
+    },
+
+    {
+      "procedure_code": "P032",
+      "name": "Joint Injections",
+      "specialised_checklist": [
+        {
+          "phase": "pre_procedural_planning",
+          "steps": [
+            {"step": "Joint approach planned using imaging", "completed": false},
+            {"step": "Medication type selected (local anaesthetic, steroid, viscosupplement)", "completed": false}
+          ]
+        },
+        {
+          "phase": "sign_in",
+          "steps": [
+            {"step": "Image-guided needle approach confirmed", "completed": false},
+            {"step": "Correct syringe labelling for multiple injectates", "completed": false}
+          ]
+        },
+        {
+          "phase": "sign_out",
+          "steps": [
+            {"step": "Post-injection mobility and pain response documented", "completed": false},
+            {"step": "Activity restrictions or physiotherapy instructions given", "completed": false}
+          ]
+        }
+      ]
+    }
   ]
 }
